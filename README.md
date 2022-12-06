@@ -9,7 +9,7 @@
     - 데이터 서버로 전송
     - 전송된 데이터는 DB에 Insert됨
     - 비밀번호는 md5로 암호화 한 값 저장
-[221206 velog 정리](https://velog.io/@lhj9520/221206-%ED%94%84%EC%97%946-%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B82)
+<br/>[221206 velog 정리](https://velog.io/@lhj9520/221206-%ED%94%84%EC%97%946-%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B82)
 
 추가해야 할 기능
 - 자동로그인
