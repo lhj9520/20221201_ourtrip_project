@@ -1,0 +1,167 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: Handot;
+}
+
+u,
+li {
+  list-style: none;
+  text-decoration: none;
+}
+
+button {
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+}
+
+.login-container {
+  width: 100%;
+  height: 100vh;
+}
+
+.login-container .centerfix {
+  width: 790px;
+  height: 100%;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-container .centerfix > div {
+  /* border: solid 1px red; */
+  margin-bottom: 36px;
+}
+
+.login-container .centerfix .logininfo {
+  /* border: solid 1px red; */
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-container .centerfix .logininfo img {
+  margin-top: 42px;
+  margin-bottom: 42px;
+  cursor: pointer;
+}
+
+.login-container .centerfix .logininfo .title {
+  font-size: 1.75rem;
+  font-weight: bold;
+  margin-bottom: 62px;
+}
+
+.login-container .centerfix .logininfo .item {
+  border: none;
+  outline: none;
+  border-bottom: solid 1px lightgrey;
+  width: 100%;
+  font-size: 1rem;
+  padding-bottom: 6px;
+}
+.login-container .centerfix .logininfo .pwbox {
+  margin-top: 26px;
+}
+.login-container .centerfix .logininfo .item:focus {
+  border-bottom: solid 1px black;
+}
+
+.login-container .centerfix .logininfo .msg {
+  /* border: solid 1px red; */
+  width: 100%;
+  font-size: 0.8rem;
+  letter-spacing: -0.6px;
+  font-weight: bold;
+  color: #dc3545;
+  margin-top: 12px;
+}
+
+.login-container .centerfix .logininfo .close {
+  display: none;
+}
+
+.login-container .centerfix .logininfo .autologincheck {
+  /* border: solid 1px red; */
+  font-size: 1rem;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.login-container .centerfix .logininfo .autologincheck > input {
+  /* border: solid 1px red; */
+  appearance: none;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 1.5px solid lightgrey;
+  border-radius: 0.2rem;
+  margin-right: 8px;
+}
+
+.login-container .centerfix .logininfo .autologincheck > input:checked {
+  border-color: transparent;
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z'/%3e%3c/svg%3e");
+  background-size: 100% 100%;
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-color: #015c56;
+}
+.login-container .centerfix .logininfo .loginbtn {
+  width: 100%;
+  height: 56px;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #015c56;
+  color: #ffffff;
+  border-radius: 30px;
+  margin-top: 42px;
+}
+
+.login-container .centerfix .logininfo .loginbtn:hover {
+  background-color: rgba(1, 92, 86, 0.8);
+}
+
+.login-container .centerfix .more {
+  border: solid 1px #ffffff;
+  font-size: 0.8rem;
+}
+.login-container .centerfix .more > span {
+  cursor: pointer;
+}
+.login-container .centerfix .more > span:hover {
+  color: #015c56;
+  border-bottom: solid 1px #015c56;
+}
+
+.login-container .centerfix .more span:nth-child(2) {
+  margin: 0 16px;
+}
+
+.hr-sect {
+  width: 360px;
+  height: 36px;
+  display: flex;
+  /* flex-basis: 100%; */
+  align-items: center;
+  /* color: rgba(0, 0, 0, 0.35); */
+  font-size: 0.75rem;
+  margin: 8px 0px;
+}
+.hr-sect::before,
+.hr-sect::after {
+  content: "";
+  flex-grow: 1;
+  background: rgba(0, 0, 0, 0.35);
+  height: 1px;
+  font-size: 0px;
+  line-height: 0px;
+  margin: 0px 16px;
+}
+
+.login-container .centerfix .easylogin {
+  /* border: solid 1px red; */
+}
