@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "classnames": "^2.3.2",
+    "jquery": "^3.6.1",
+    "md5": "^2.3.0",
+    "qs": "^6.11.0",
+    "sweetalert": "^2.1.2",
+    "sweetalert2": "^11.6.15"
+  }
+}
