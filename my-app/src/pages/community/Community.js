@@ -1,13 +1,12 @@
 import React from "react";
-import "./Main.css";
-import logoimg from "../img/logo_oco.png";
+import "./Community.css";
+import logoimg from "../../img/logo_oco.png";
 
-import { StoreContext, 세션정보가져오기, 세션삭제하기 } from "../App";
+import { StoreContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 
-function Main() {
+function Community() {
   const navigation = useNavigate();
-
   //App에서 StoreContext 받아온 후 로그인세션 사용
   const { loginUser } = React.useContext(StoreContext);
   //   console.log(loginUser.id);
@@ -19,8 +18,6 @@ function Main() {
     // console.log("loginUser 바뀜");
     if (loginUser.mem_userid !== undefined) {
       setState({ session: "마이페이지" });
-    } else {
-      setState({ session: "로그인" });
     }
   }, [loginUser]);
 
@@ -86,11 +83,11 @@ function Main() {
         </div>
       </header>
       <div className="contents-container">
-        <div>메인페이지입니다.</div>
+        <div>커뮤니티페이지입니다.</div>
         {/* <img src={imgimg} alt="" /> */}
       </div>
     </div>
   );
 }
 
-export default Main;
+export default Community;

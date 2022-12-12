@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import classnames from "classnames";
 import "./Login.css";
-import logoimg from "../img/yeohaengGo(logo)_crop.png";
+import logoimg from "../img/logo_oco.png";
 
 import { 세션정보가져오기 } from "../App";
 import { useNavigate } from "react-router-dom";

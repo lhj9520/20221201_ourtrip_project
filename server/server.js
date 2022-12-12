@@ -178,7 +178,7 @@ app.post("/login", async (req, res) => {
 
   //비밀번호 hash 암호화 MD5로
   const hashpw = md5(pw);
-  console.log(hashpw);
+  // console.log(hashpw);
 
   const queryresult = await runDB(
     `SELECT * FROM user WHERE mem_userid = '${id}' and mem_password = '${hashpw}'`

@@ -1,12 +1,16 @@
 import React from "react";
-import "./App.css";
 import axios from "axios";
+import "./App.css";
+
+import { Route, Routes } from "react-router-dom";
 
 import Join from "./pages/Join";
 import Login from "./pages/Login";
 import Main from "./pages/Main";
-
-import { Route, Routes } from "react-router-dom";
+import Create from "./pages/plan/Create";
+import Howtouse from "./pages/Howtouse";
+import Community from "./pages/community/Community";
+import My from "./pages/my/My";
 
 axios.defaults.withCredentials = true;
 
@@ -48,6 +52,10 @@ function App() {
         <Route exact path="/main" element={<Main />} />
         <Route exact path="/join" element={<Join />} />
         <Route exact path="/login" element={<Login />} />
+        <Route exact path="/create" element={<Create />} />
+        <Route exact path="/howtouse" element={<Howtouse />} />
+        <Route exact path="/community" element={<Community />} />
+        <Route exact path="/my" element={<My />} />
       </Routes>
     </StoreContext.Provider>
   );

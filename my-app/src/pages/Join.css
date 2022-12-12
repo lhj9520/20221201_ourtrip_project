@@ -34,8 +34,9 @@ button {
 }
 
 .join-container .centerfix img {
-  margin-top: 32px;
-  margin-bottom: 48px;
+  width: 172px;
+  object-fit: contain;
+  margin: 58px 0;
   cursor: pointer;
 }
 .join-container .centerfix .title {
@@ -124,16 +125,16 @@ select::-ms-expand {
 }
 
 .join-container .centerfix .userinfo div .overlapbtn:hover {
-  background-color: rgba(1, 92, 86, 0.1);
+  background-color: rgba(74, 133, 34, 0.1);
 }
 
 .join-container .centerfix .userinfo div .over {
-  border: solid 1px #015c56;
-  background-color: #015c56;
+  border: solid 1px #4a8522;
+  background-color: #4a8522;
   color: #ffffff;
 }
 .join-container .centerfix .userinfo div .over:hover {
-  background-color: rgba(1, 92, 86, 1);
+  background-color: rgba(74, 133, 34, 1);
   cursor: auto;
 }
 .join-container .centerfix .userinfo div .msgtitle {
@@ -181,7 +182,7 @@ select::-ms-expand {
   width: 180px;
   height: 45px;
   margin: auto;
-  background-color: #015c56;
+  background-color: #4a8522;
   color: #ffffff;
   font-size: 1rem;
   border-radius: 7px;
@@ -189,5 +190,5 @@ select::-ms-expand {
 }
 
 .join-container .centerfix .userinfo .joinbtn:hover {
-  background-color: rgba(1, 92, 86, 0.8);
+  background-color: rgba(74, 133, 34, 0.8);
 }

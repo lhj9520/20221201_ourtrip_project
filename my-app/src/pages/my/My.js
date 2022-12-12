@@ -1,13 +1,12 @@
 import React from "react";
-import "./Main.css";
-import logoimg from "../img/logo_oco.png";
+import "./My.css";
+import logoimg from "../../img/logo_oco.png";
 
-import { StoreContext, 세션정보가져오기, 세션삭제하기 } from "../App";
+import { StoreContext, 세션정보가져오기, 세션삭제하기 } from "../../App";
 import { useNavigate } from "react-router-dom";
 
-function Main() {
+function My() {
   const navigation = useNavigate();
-
   //App에서 StoreContext 받아온 후 로그인세션 사용
   const { loginUser } = React.useContext(StoreContext);
   //   console.log(loginUser.id);
@@ -16,20 +15,16 @@ function Main() {
   });
 
   React.useEffect(() => {
-    // console.log("loginUser 바뀜");
     if (loginUser.mem_userid !== undefined) {
-      setState({ session: "마이페이지" });
-    } else {
-      setState({ session: "로그인" });
+      setState({ session: "로그아웃" });
     }
   }, [loginUser]);
 
   const login = () => {
-    if (State.session === "로그인") {
-      navigation("/login");
-      setState({ session: "마이페이지" });
-    } else if (State.session === "마이페이지") {
-      navigation("/my");
+    if (State.session === "로그아웃") {
+      //세션 해제
+      세션삭제하기();
+      navigation("/main", { replace: true });
     }
   };
 
@@ -63,7 +58,6 @@ function Main() {
                   } else {
                     navigation("/create");
                   }
-                  // navigation("/Create");
                 }}
               >
                 일정 만들기
@@ -86,11 +80,10 @@ function Main() {
         </div>
       </header>
       <div className="contents-container">
-        <div>메인페이지입니다.</div>
-        {/* <img src={imgimg} alt="" /> */}
+        <div>내정보페이지입니다.</div>
       </div>
     </div>
   );
 }
 
-export default Main;
+export default My;

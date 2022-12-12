@@ -3,7 +3,7 @@ import axios from "axios";
 import $ from "jquery";
 import classnames from "classnames";
 import "./Join.css";
-import logoimg from "../img/yeohaengGo(logo)_crop.png";
+import logoimg from "../img/logo_oco.png";
 
 import { useNavigate } from "react-router-dom";
 

@@ -45,8 +45,9 @@ button {
 }
 
 .login-container .centerfix .logininfo img {
-  margin-top: 42px;
-  margin-bottom: 42px;
+  width: 172px;
+  object-fit: contain;
+  margin: 58px 0;
   cursor: pointer;
 }
 
@@ -108,21 +109,21 @@ button {
   background-size: 100% 100%;
   background-position: 50%;
   background-repeat: no-repeat;
-  background-color: #015c56;
+  background-color: #4a8522;
 }
 .login-container .centerfix .logininfo .loginbtn {
   width: 100%;
   height: 56px;
   font-size: 1rem;
   font-weight: bold;
-  background-color: #015c56;
+  background-color: #4a8522;
   color: #ffffff;
   border-radius: 30px;
   margin-top: 42px;
 }
 
 .login-container .centerfix .logininfo .loginbtn:hover {
-  background-color: rgba(1, 92, 86, 0.8);
+  background-color: rgba(74, 133, 34, 0.8);
 }
 
 .login-container .centerfix .more {
@@ -133,8 +134,8 @@ button {
   cursor: pointer;
 }
 .login-container .centerfix .more > span:hover {
-  color: #015c56;
-  border-bottom: solid 1px #015c56;
+  color: #4a8522;
+  border-bottom: solid 1px #4a8522;
 }
 
 .login-container .centerfix .more span:nth-child(2) {
@@ -147,7 +148,6 @@ button {
   display: flex;
   /* flex-basis: 100%; */
   align-items: center;
-  /* color: rgba(0, 0, 0, 0.35); */
   font-size: 0.75rem;
   margin: 8px 0px;
 }
