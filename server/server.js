@@ -211,6 +211,81 @@ app.get("/userdelete", (req, res) => {
   res.send(req.session.loginUser);
 });
 
+app.post("/matelist", async (req, res) => {
+  console.log(req.body);
+  const idx = req.body.idx;
+  // const id = req.body.id;
+
+  const result = {
+    code: "success",
+    message: "메이트 목록 업데이트",
+    data: "",
+  };
+
+  const queryresult = await runDB(
+    `(SELECT mem_idx2,mem_userid,mem_nickname FROM mate,USER WHERE mem_idx1 = ${idx} AND reqstate = 'A' AND matestate = TRUE AND mem_idx2 = mem_idx) UNION (SELECT mem_idx1 AS mem_idx2,mem_userid,mem_nickname FROM mate,USER WHERE mem_idx2 = ${idx} AND reqstate = 'A' AND matestate = TRUE AND mem_idx1 = mem_idx)
+    `
+  );
+
+  // console.log(queryresult);
+  result.data = queryresult;
+  res.send(result);
+});
+
+app.post("/matereqlist", async (req, res) => {
+  // console.log(req.body);
+  const idx = req.body.idx;
+  // const id = req.body.id;
+
+  const result = {
+    code: "success",
+    message: "메이트 요청 목록 업데이트",
+    data: "",
+  };
+
+  const queryresult = await runDB(
+    `SELECT mem_idx,mem_userid, mem_nickname FROM mate, USER WHERE mem_idx2 = ${idx} AND mem_idx1 = mem_idx AND reqstate = 'R' AND matestate = FALSE`
+  );
+
+  // console.log(queryresult);
+  result.data = queryresult;
+  res.send(result);
+});
+
+app.post("/mateaccept", async (req, res) => {
+  // console.log(req.body);
+  const idx = req.body.idx;
+  const mateidx = req.body.mateidx;
+
+  const result = {
+    code: "success",
+    message: "메이트 수락 완료",
+  };
+
+  const queryresult = await runDB(
+    `UPDATE mate SET reqstate = 'A', matestate = TRUE WHERE ((mem_idx1 = ${mateidx} AND mem_idx2 = ${idx}) OR (mem_idx2 = ${mateidx} AND mem_idx1 = ${idx}))`
+  );
+
+  res.send(result);
+});
+
+app.post("/matedecline", async (req, res) => {
+  // console.log(req.body);
+  const idx = req.body.idx;
+  const mateidx = req.body.mateidx;
+
+  const result = {
+    code: "success",
+    message: "메이트 거절 완료",
+  };
+
+  const queryresult = await runDB(
+    `UPDATE mate SET reqstate = 'D', matestate = FALSE WHERE ((mem_idx1 = ${mateidx} AND mem_idx2 = ${idx}) OR (mem_idx2 = ${mateidx} AND mem_idx1 = ${idx}))`
+  );
+
+  res.send(result);
+});
+
 app.listen(port, () => {
   console.log("서버가 시작되었습니다");
 });

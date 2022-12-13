@@ -1,0 +1,130 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: Handot;
+}
+
+u,
+li {
+  list-style: none;
+  text-decoration: none;
+}
+
+button {
+  border: 0;
+  outline: 0;
+  cursor: pointer;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  margin-top: 82px;
+}
+
+.contents-container {
+  /* border: solid 1px red; */
+  width: 100%;
+  height: 100%;
+}
+
+.contents-container .title {
+  width: 100%;
+  height: 218px;
+  text-align: center;
+  margin: auto;
+  /* border: solid 1px red; */
+  background-color: rgba(74, 133, 34, 0.5);
+}
+
+.contents-container .title > span {
+  display: block;
+  font-size: 2.75rem;
+  padding-top: 62px;
+  padding-bottom: 34px;
+}
+
+.contents-container .title > div > span {
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 0 10px;
+}
+
+.contents-container .title > div > span:hover {
+  text-decoration-line: underline;
+}
+
+.contents-container .content {
+  /* border: solid 1px blue; */
+  width: 60%;
+  height: calc(100vh - 300px);
+  margin: auto;
+  border-left: solid 1px lightgray;
+  border-right: solid 1px lightgray;
+}
+
+.contents-container .content ul {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 64px 32px;
+  padding: 42px 32px;
+  /* justify-content: center; */
+}
+
+.contents-container .content ul > span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  font-size: 1.375rem;
+}
+
+.contents-container .content ul .item {
+  width: 244.5px;
+  height: 130px;
+  border: solid 1px black;
+  border-radius: 10px;
+  box-shadow: 0 2px 2px 2px lightgrey;
+  display: flex;
+  /* margin: auto; */
+}
+
+.contents-container .content ul .item .img {
+  width: 35%;
+  height: 100%;
+  text-align: center;
+  /* border: solid 1px red; */
+}
+
+.contents-container .content ul .item .img .imgicon {
+  width: 100%;
+  height: 30%;
+  margin-top: 20px;
+  /* border: solid 1px red; */
+}
+.contents-container .content ul .item .info {
+  width: 65%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  /* border: solid 1px red; */
+}
+.contents-container .content ul .item div .nickname {
+  /* border: solid 1px red; */
+  width: 100%;
+  height: 50%;
+  padding-top: 15px;
+}
+
+.contents-container .content ul .item div .id {
+  /* border: solid 1px red; */
+  width: 100%;
+  height: 50%;
+  padding-top: 15px;
+}

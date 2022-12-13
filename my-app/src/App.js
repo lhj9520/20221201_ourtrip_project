@@ -11,6 +11,7 @@ import Create from "./pages/plan/Create";
 import Howtouse from "./pages/Howtouse";
 import Community from "./pages/community/Community";
 import My from "./pages/my/My";
+import Mymate from "./pages/my/Mymate";
 
 axios.defaults.withCredentials = true;
 
@@ -25,7 +26,7 @@ function App() {
     await axios({
       url: "http://localhost:5000/user",
     }).then((res) => {
-      // console.log(res.data);
+      // console.log("세션정보가져오기", res.data);
       setLoginUser(res.data);
     });
   };
@@ -35,6 +36,7 @@ function App() {
       url: "http://localhost:5000/userdelete",
     }).then((res) => {
       setLoginUser(res.data);
+      console.log("세션이 삭제됩니다");
     });
   };
 
@@ -56,6 +58,7 @@ function App() {
         <Route exact path="/howtouse" element={<Howtouse />} />
         <Route exact path="/community" element={<Community />} />
         <Route exact path="/my" element={<My />} />
+        <Route exact path="/mymate" element={<Mymate />} />
       </Routes>
     </StoreContext.Provider>
   );
