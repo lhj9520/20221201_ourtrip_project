@@ -3,30 +3,27 @@ import "./menubar.css";
 import logoimg from "../img/logo_oco.png";
 
 import { StoreContext, 세션정보가져오기, 세션삭제하기 } from "../App";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
-function Menubar(props) {
+function Menubar() {
   const navigation = useNavigate();
-  const loginstate = props.session;
+  const location = useLocation();
 
   //App에서 StoreContext 받아온 후 로그인세션 사용
   const { loginUser } = React.useContext(StoreContext);
-  //   console.log(loginUser.id);
+
   const [State, setState] = React.useState({
     session: "로그인",
   });
 
   React.useEffect(() => {
-    if (loginstate === "마이페이지") {
+    console.log("메뉴바 이팩트");
+    if (loginUser.mem_userid !== undefined) {
       setState({ session: "마이페이지" });
-    } else if (loginstate === "마이") {
-      setState({ session: "로그아웃" });
-    }
-    // console.log("loginstate 새로고침댐");
-  }, [loginstate]);
-
-  React.useEffect(() => {
-    if (loginUser.mem_userid === undefined) {
+      if (location.pathname === "/my") {
+        setState({ session: "로그아웃" });
+      }
+    } else {
       setState({ session: "로그인" });
     }
   }, [loginUser]);
@@ -38,7 +35,6 @@ function Menubar(props) {
       navigation("/my");
     } else if (State.session === "로그아웃") {
       세션삭제하기();
-      세션정보가져오기();
       navigation("/main");
     }
   };
@@ -52,6 +48,7 @@ function Menubar(props) {
             alt="logo이미지"
             className="item"
             onClick={() => {
+              세션정보가져오기();
               navigation("/main");
             }}
           />
@@ -83,11 +80,11 @@ function Menubar(props) {
                   if (loginUser.mem_userid === undefined) {
                     alert("로그인 후 이용가능합니다.");
                   } else {
-                    navigation("/create");
+                    navigation("/mytrip");
                   }
                 }}
               >
-                모임 만들기
+                나의 여행
               </li>
               <li
                 className="item"

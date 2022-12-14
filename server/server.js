@@ -212,7 +212,7 @@ app.get("/userdelete", (req, res) => {
 });
 
 app.post("/matelist", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const idx = req.body.idx;
   // const id = req.body.id;
 
@@ -277,6 +277,148 @@ app.post("/matedecline", async (req, res) => {
   const result = {
     code: "success",
     message: "메이트 거절 완료",
+  };
+
+  const queryresult = await runDB(
+    `UPDATE mate SET reqstate = 'D', matestate = FALSE WHERE ((mem_idx1 = ${mateidx} AND mem_idx2 = ${idx}) OR (mem_idx2 = ${mateidx} AND mem_idx1 = ${idx}))`
+  );
+
+  res.send(result);
+});
+
+app.post("/findidreq", async (req, res) => {
+  // console.log(req.body);
+  const idx = req.body.idx;
+  const mateid = req.body.mateid;
+
+  const result = {
+    code: "success",
+    message: "메이트 조회 완료",
+    data: "",
+  };
+
+  const query1 = await runDB(
+    `SELECT * FROM USER WHERE mem_userid = '${mateid}'`
+  );
+
+  //아이디 없음
+  if (query1.length === 0) {
+    result.code = "error";
+    result.message = "해당 메이트가 존재하지 않습니다.";
+    res.send(result);
+    return;
+  }
+  // console.log(query1);
+  const mateidx = query1[0].mem_idx;
+
+  // 로그인한 유저의 아이디를 입력한 경우
+  if (idx === mateidx) {
+    result.code = "error";
+    result.message = "나 자신은 영원한 인생의 친구입니다.";
+    res.send(result);
+    return;
+  }
+
+  const clonedata = {
+    idx: query1[0].mem_idx,
+    id: query1[0].mem_userid,
+    nickname: query1[0].mem_nickname,
+  };
+  result.data = { ...clonedata };
+  // console.log(result.data);
+
+  // mate 테이블에 idx 데이터 있는지 확인
+  const query2 = await runDB(
+    `SELECT * FROM mate WHERE (mem_idx1 = ${idx} AND mem_idx2 = ${mateidx}) OR (mem_idx2 = ${idx} AND mem_idx1 = ${mateidx})`
+  );
+
+  // console.log(query2);
+
+  for (let v of query2) {
+    // console.log(v);
+
+    //이미 내가 요청한 상태
+    if (v.mem_idx1 === idx && v.reqstate === "R" && v.matestate === 0) {
+      result.message = "requested";
+      res.send(result);
+      return;
+    }
+
+    //이미 친구인 상태
+    if (
+      (v.mem_idx1 === idx || v.mem_idx2 === idx) &&
+      v.reqstate === "A" &&
+      v.matestate === 1
+    ) {
+      result.message = "mate";
+      res.send(result);
+      return;
+    }
+
+    //삭제된 상태
+    if (
+      (v.mem_idx1 === idx || v.mem_idx2 === idx) &&
+      v.reqstate === "D" &&
+      v.matestate === 0
+    ) {
+      // console.log("삭제된상태");
+      result.message = "true";
+      res.send(result);
+      return;
+    }
+  }
+
+  result.message = "true";
+  res.send(result);
+});
+
+app.post("/matereq", async (req, res) => {
+  // console.log(req.body);
+
+  const idx = req.body.idx;
+  const mateidx = req.body.mateidx;
+
+  const result = {
+    code: "success",
+    message: "requested",
+  };
+
+  const query = await runDB(
+    `SELECT * FROM mate WHERE (mem_idx1 = ${idx} AND mem_idx2 = ${mateidx}) OR (mem_idx2 = ${idx} AND mem_idx1 = ${mateidx})`
+  );
+
+  for (let v of query) {
+    //삭제된 상태
+    if (
+      (v.mem_idx1 === idx || v.mem_idx2 === idx) &&
+      v.reqstate === "D" &&
+      v.matestate === 0
+    ) {
+      const query = await runDB(
+        `UPDATE mate SET reqstate = 'R', matestate = FALSE WHERE ((mem_idx1 = ${mateidx} AND mem_idx2 = ${idx}) OR (mem_idx2 = ${mateidx} AND mem_idx1 = ${idx}))`
+      );
+      res.send(result);
+      return;
+    }
+  }
+
+  const queryresult = await runDB(
+    `INSERT INTO mate(mem_idx1,mem_idx2,reqstate,matestate) VALUES(${idx},${mateidx},'R',FALSE)`
+  );
+
+  res.send(result);
+});
+
+app.post("/matedelete", async (req, res) => {
+  console.log(req.body);
+
+  const idx = req.body.idx;
+  const mateidx = req.body.mateidx;
+
+  console.log(idx, mateidx);
+  const result = {
+    code: "success",
+    message: "메이트 삭제 완료",
   };
 
   const queryresult = await runDB(

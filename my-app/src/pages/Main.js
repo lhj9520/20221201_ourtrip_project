@@ -2,7 +2,7 @@ import React, { startTransition } from "react";
 import "./Main.css";
 import Menubar from "../component/menubar";
 
-import { StoreContext, 세션정보가져오기 } from "../App";
+import { StoreContext } from "../App";
 import { useNavigate } from "react-router-dom";
 
 function Main() {
@@ -16,7 +16,6 @@ function Main() {
   });
 
   React.useEffect(() => {
-    // 세션정보가져오기();
     if (loginUser.mem_userid !== undefined) {
       setState({ session: "마이페이지" });
     }
@@ -24,7 +23,7 @@ function Main() {
 
   return (
     <div className="container">
-      <Menubar session={State.session} />
+      <Menubar />
       <div className="contents-container">
         <div>메인페이지입니다.</div>
       </div>

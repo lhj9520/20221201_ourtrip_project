@@ -17,13 +17,13 @@ function My() {
 
   React.useEffect(() => {
     if (loginUser.mem_userid !== undefined) {
-      setState({ session: "마이" });
+      // setState({ session: "마이" });
     }
   }, [loginUser]);
 
   return (
     <div className="container">
-      <Menubar session={State.session} />
+      <Menubar />
       <div className="contents-container">
         <div>마이페이지입니다.</div>
       </div>

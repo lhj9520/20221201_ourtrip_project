@@ -7,11 +7,12 @@ import { Route, Routes } from "react-router-dom";
 import Join from "./pages/Join";
 import Login from "./pages/Login";
 import Main from "./pages/Main";
-import Create from "./pages/plan/Create";
-import Howtouse from "./pages/Howtouse";
 import Community from "./pages/community/Community";
-import My from "./pages/my/My";
+import Howtouse from "./pages/Howtouse";
 import Mymate from "./pages/my/Mymate";
+import Mytrip from "./pages/my/Mytrip";
+import Create from "./pages/plan/Create";
+import My from "./pages/my/My";
 
 axios.defaults.withCredentials = true;
 
@@ -26,7 +27,7 @@ function App() {
     await axios({
       url: "http://localhost:5000/user",
     }).then((res) => {
-      // console.log("세션정보가져오기", res.data);
+      console.log("세션정보가져오기", res.data);
       setLoginUser(res.data);
     });
   };
@@ -54,11 +55,12 @@ function App() {
         <Route exact path="/main" element={<Main />} />
         <Route exact path="/join" element={<Join />} />
         <Route exact path="/login" element={<Login />} />
-        <Route exact path="/create" element={<Create />} />
         <Route exact path="/howtouse" element={<Howtouse />} />
         <Route exact path="/community" element={<Community />} />
-        <Route exact path="/my" element={<My />} />
         <Route exact path="/mymate" element={<Mymate />} />
+        <Route exact path="/mytrip" element={<Mytrip />} />
+        <Route exact path="/create" element={<Create />} />
+        <Route exact path="/my" element={<My />} />
       </Routes>
     </StoreContext.Provider>
   );

@@ -16,18 +16,16 @@ function Howtouse() {
   });
 
   React.useEffect(() => {
-    // console.log("loginUser 바뀜");
     if (loginUser.mem_userid !== undefined) {
-      setState({ session: "마이페이지" });
+      // setState({ session: "마이페이지" });
     }
   }, [loginUser]);
 
   return (
     <div className="container">
-      <Menubar session={State.session} />
+      <Menubar />
       <div className="contents-container">
         <div>이용방법페이지입니다.</div>
-        {/* <img src={imgimg} alt="" /> */}
       </div>
     </div>
   );
