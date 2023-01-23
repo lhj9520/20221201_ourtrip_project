@@ -456,7 +456,7 @@ function Join() {
           src={logoimg}
           alt="logo이미지"
           onClick={() => {
-            navigation("/main");
+            navigation("/");
           }}
         />
         <span className="title">회원가입</span>

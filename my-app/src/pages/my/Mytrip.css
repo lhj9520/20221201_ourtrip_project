@@ -17,6 +17,10 @@ button {
   cursor: pointer;
 }
 
+span {
+  cursor: default;
+}
+
 .container {
   width: 100%;
   height: 100%;
@@ -27,6 +31,7 @@ button {
   /* border: solid 1px red; */
   width: 100%;
   height: 100%;
+  /* height: calc(100vh - 300px); */
 }
 
 .contents-container .title {
@@ -80,26 +85,26 @@ button {
   text-decoration-line: underline;
 }
 
-.contents-container .content {
+.contents-container .content-mytrip {
   /* border: solid 1px blue; */
   width: 60%;
-  height: calc(100vh - 300px);
+  height: 100%;
+  /* height: calc(100vh - 300px); */
   margin: auto;
   border-left: solid 1px lightgray;
   border-right: solid 1px lightgray;
 }
 
-.contents-container .content ul {
+.contents-container .content-mytrip ul {
   width: 100%;
   height: auto;
   display: flex;
   flex-wrap: wrap;
-  gap: 64px 32px;
-  padding: 42px 32px;
+  padding: 0 32px;
   /* justify-content: center; */
 }
 
-.contents-container .content ul > span {
+.contents-container .content-mytrip ul > span {
   display: block;
   width: 100%;
   height: 100%;
@@ -107,49 +112,33 @@ button {
   font-size: 1.375rem;
 }
 
-.contents-container .content ul .item {
-  width: 244.5px;
-  height: 130px;
-  border: solid 1px black;
-  border-radius: 10px;
-  box-shadow: 0 2px 2px 2px lightgrey;
-  display: flex;
-  /* margin: auto; */
-}
-
-.contents-container .content ul .item .img {
-  width: 35%;
-  height: 100%;
-  text-align: center;
-  /* border: solid 1px red; */
-}
-
-.contents-container .content ul .item .img .imgicon {
+.contents-container .content-mytrip ul .item {
   width: 100%;
-  height: 30%;
-  margin-top: 20px;
-  /* border: solid 1px red; */
-}
-.contents-container .content ul .item .info {
-  width: 65%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  font-size: 1rem;
+  border-bottom: solid 1px lightgrey;
+  padding: 16px 12px;
+  font-size: 0.875rem;
+}
+
+/* .contents-container .content-mytrip ul .mytrip {
+  cursor: pointer;
+}*/
+
+.contents-container .content-mytrip ul .mytrip:hover {
+  color: rgb(155, 155, 155);
+}
+
+.contents-container .content-mytrip ul .mytrip .tripinfo .triptitle {
+  cursor: pointer;
   font-weight: bold;
-  /* border: solid 1px red; */
-}
-.contents-container .content ul .item div .nickname {
-  /* border: solid 1px red; */
-  width: 100%;
-  height: 50%;
-  padding-top: 15px;
+  font-size: 1.25rem;
+  margin-bottom: 6px;
 }
 
-.contents-container .content ul .item div .id {
-  /* border: solid 1px red; */
-  width: 100%;
-  height: 50%;
-  padding-top: 15px;
+.contents-container .content-mytrip ul .mytrip .tripinfo .triptitle:hover {
+  color: rgb(95, 95, 95);
+}
+
+.contents-container .content-mytrip ul .mytrip .tripinfo section {
+  margin-bottom: 4px;
 }

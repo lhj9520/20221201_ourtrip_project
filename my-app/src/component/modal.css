@@ -1,3 +1,9 @@
+div.tripmate-container {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -ms-user-select: none;
+}
 .modal {
   display: none;
   position: fixed;
@@ -189,6 +195,122 @@
   color: #fff;
 }
 
+/* /mytrip : 여행 추가 컨텐츠*/
+.modal > section > main > .tripadd {
+  width: 100%;
+  height: 300px;
+  /* overflow-y: auto; */
+}
+.modal > section > main > .tripadd > span {
+  display: inline-block;
+  /* border: solid 1px red; */
+  margin-bottom: 11px;
+  /* font-weight: bold; */
+}
+.modal > section > main > .tripadd > .triptitle {
+  margin-bottom: 22px;
+  /* border: solid 1px red; */
+}
+.modal > section > main > .tripadd > .triptitle > input {
+  outline: none;
+  border: none;
+  border-bottom: solid 1px #6c757d;
+  width: 335px;
+  height: 50px;
+  font-size: 1rem;
+}
+
+.modal > section > main > .tripadd > .triptitle > span {
+  /* border: solid 1px black; */
+  display: inline-block;
+  font-size: 0.785rem;
+  width: 60px;
+}
+.modal > section > main > .tripadd > .tripmate-container {
+  /* border: solid 1px red; */
+  display: flex;
+  cursor: default;
+  justify-content: center;
+}
+
+.modal > section > main > .tripadd > .tripmate-container div {
+  /* border: solid 1px black; */
+}
+.modal > section > main > .tripadd > .tripmate-container > .matelistbox {
+  border: solid 1px #6c757d;
+  overflow-y: auto;
+  width: 140px;
+  height: 140px;
+  margin-right: 5px;
+  font-size: 0.895rem;
+}
+.modal > section > main > .tripadd > .tripmate-container > .listarrow {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.modal > section > main > .tripadd > .tripmate-container > .listarrow > button {
+  width: 20px;
+  height: 50%;
+  font-size: 1.25rem;
+  font-weight: bold;
+  border-radius: 3px;
+  background-color: lightgray;
+  /* color: #fff; */
+}
+
+.modal
+  > section
+  > main
+  > .tripadd
+  > .tripmate-container
+  > .listarrow
+  > button:first-child {
+  margin-top: 5px;
+}
+
+.modal
+  > section
+  > main
+  > .tripadd
+  > .tripmate-container
+  > .listarrow
+  > button:last-child {
+  margin-bottom: 5px;
+}
+.modal > section > main > .tripadd > .tripmate-container > .mateaddbox {
+  border: solid 1px #6c757d;
+  overflow-y: auto;
+  width: 140px;
+  height: 140px;
+  margin-left: 5px;
+  font-size: 0.895rem;
+}
+.modal
+  > section
+  > main
+  > .tripadd
+  > .tripmate-container
+  > .matelistbox
+  > ul
+  > .true {
+  background-color: lightgray;
+}
+.modal > section > main > .tripadd > .tripadd_btn {
+  /* border: solid 1px red; */
+  margin-top: 16px;
+  height: 36px;
+}
+
+.modal > section > main > .tripadd > .tripadd_btn > button {
+  width: 25%;
+  height: 100%;
+  font-size: 1rem;
+  background-color: #4a8522;
+  /* color: #ffffff; */
+  border-radius: 6px;
+  /* font-weight: bold; */
+}
 /* footer */
 .modal > section > footer {
   padding: 12px 16px;

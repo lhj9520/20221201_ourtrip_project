@@ -252,6 +252,26 @@ app.post("/matereqlist", async (req, res) => {
   res.send(result);
 });
 
+app.post("/matereqlistcnt", async (req, res) => {
+  // console.log(req.body);
+  const idx = req.body.idx;
+  // const id = req.body.id;
+
+  const result = {
+    code: "success",
+    message: "메이트 요청 개수 업데이트",
+    data: "",
+  };
+
+  const queryresult = await runDB(
+    `SELECT COUNT(mem_idx) AS cnt FROM mate, USER WHERE mem_idx2 = ${idx} AND mem_idx1 = mem_idx AND reqstate = 'R' AND matestate = FALSE`
+  );
+
+  // console.log(queryresult);
+  result.data = queryresult[0];
+  res.send(result);
+});
+
 app.post("/mateaccept", async (req, res) => {
   // console.log(req.body);
   const idx = req.body.idx;
@@ -410,12 +430,12 @@ app.post("/matereq", async (req, res) => {
 });
 
 app.post("/matedelete", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
 
   const idx = req.body.idx;
   const mateidx = req.body.mateidx;
 
-  console.log(idx, mateidx);
+  // console.log(idx, mateidx);
   const result = {
     code: "success",
     message: "메이트 삭제 완료",
@@ -423,6 +443,46 @@ app.post("/matedelete", async (req, res) => {
 
   const queryresult = await runDB(
     `UPDATE mate SET reqstate = 'D', matestate = FALSE WHERE ((mem_idx1 = ${mateidx} AND mem_idx2 = ${idx}) OR (mem_idx2 = ${mateidx} AND mem_idx1 = ${idx}))`
+  );
+
+  res.send(result);
+});
+
+app.post("/triplist", async (req, res) => {
+  // console.log(req.body);
+  const idx = req.body.idx;
+  // const id = req.body.id;
+
+  const result = {
+    code: "success",
+    message: "여행 목록 업데이트",
+    data: "",
+  };
+
+  const queryresult = await runDB(
+    `SELECT * FROM trip WHERE JSON_EXTRACT( mate_idx, '$.${idx}' ) IS NOT NULL;`
+  );
+
+  console.log(queryresult);
+  result.data = queryresult;
+  res.send(result);
+});
+
+app.post("/tripadd", async (req, res) => {
+  console.log(req.body);
+  const title = req.body.title;
+  const idx = req.body.host_idx;
+  const nickname = req.body.host_nickname;
+  const mate = JSON.stringify(req.body.mate_idx);
+
+  const result = {
+    code: "success",
+    message: "여행 추가",
+  };
+
+  const queryresult = await runDB(
+    `INSERT INTO trip(title,reg_time,update_time,host_idx,host_nickname,mate_idx) VALUES ('${title}',NOW(),NULL,${idx},"${nickname}",'${mate}');
+    `
   );
 
   res.send(result);

@@ -52,7 +52,7 @@ function App() {
       }}
     >
       <Routes>
-        <Route exact path="/main" element={<Main />} />
+        <Route exact path="/" element={<Main />} />
         <Route exact path="/join" element={<Join />} />
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/howtouse" element={<Howtouse />} />

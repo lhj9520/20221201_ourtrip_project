@@ -35,7 +35,7 @@ function Menubar() {
       navigation("/my");
     } else if (State.session === "로그아웃") {
       세션삭제하기();
-      navigation("/main");
+      navigation("/");
     }
   };
 
@@ -49,19 +49,19 @@ function Menubar() {
             className="item"
             onClick={() => {
               세션정보가져오기();
-              navigation("/main");
+              navigation("/");
             }}
           />
           <div className="menu">
             <ul>
-              <li
+              {/* <li
                 className="item"
                 onClick={() => {
                   navigation("/community");
                 }}
               >
                 커뮤니티
-              </li>
+              </li> */}
               <li
                 className="item"
                 onClick={() => {

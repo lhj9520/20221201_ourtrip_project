@@ -63,7 +63,7 @@ function Login() {
         }
         // console.log("세션정보가져오기실행");
         세션정보가져오기();
-        navigation("/main", { replace: true }); //{ replace: true }
+        navigation("/", { replace: true }); //{ replace: true }
       })
       .catch((e) => {
         console.log("로그인 오류!", e);
@@ -91,7 +91,7 @@ function Login() {
             src={logoimg}
             alt="logo이미지"
             onClick={() => {
-              navigation("/main");
+              navigation("/");
             }}
           />
           <span className="title">로그인</span>
@@ -113,10 +113,10 @@ function Login() {
             onChange={pwchange}
           />
           <span className={classnames("msg", { close: pwstatus })}>{emsg}</span>
-          <span className="autologincheck">
+          {/* <span className="autologincheck">
             <input type="checkbox" onClick={handleClickRadioButton} />
             자동로그인
-          </span>
+          </span> */}
           <button className="loginbtn" onClick={userlogin}>
             로그인
           </button>
