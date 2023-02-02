@@ -105,12 +105,6 @@ function Join() {
         setEmsg3("비밀번호가 일치하지 않습니다.");
         setSamepwisvalid(false);
       }
-      // if (!passwordRegex.test(vpw)) {
-      //   setEmsg2("숫자+영문자+특수문자 조합으로 8~20자리 입력해주세요.");
-      //   setPwisvalid(false);
-      // } else {
-      //   setEmsg2("");
-      // }
     }
   };
 
@@ -133,6 +127,8 @@ function Join() {
   };
 
   const namevaluechange = (event) => {
+    const nameRegex = /^[가-힣]+$/;
+
     const vname = event.target.value;
     setName(vname);
     //이름 예외처리
@@ -140,8 +136,8 @@ function Join() {
       setEmsg4("필수입니다.");
       setNameisvalid(false);
     } else {
-      if (vname.length < 2 || vname.length > 5) {
-        setEmsg4("2글자 이상 5글자 미만으로 입력해주세요.");
+      if (!nameRegex.test(vname) || vname.length < 2 || vname.length > 5) {
+        setEmsg4("2글자 이상 5글자 이하 한글만 입력해주세요.");
         setNameisvalid(false);
       } else {
         setEmsg4("");
@@ -405,17 +401,6 @@ function Join() {
       // console.log("번호를 확인하세요");
       return;
     }
-
-    // console.log({
-    //   id: id,
-    //   pw: pw,
-    //   name: name,
-    //   birth: birth,
-    //   email: email,
-    //   gender: gender,
-    //   nickname: nickname,
-    //   phone: phone,
-    // });
 
     joincheck();
   };

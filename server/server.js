@@ -110,11 +110,40 @@ app.post("/emailcheck", async (req, res) => {
   res.send(result);
 });
 
+app.post("/emailchange", async (req, res) => {
+  // console.log(req.body);
+  const idx = req.body.idx;
+  const email = req.body.email;
+
+  const result = {
+    code: "success",
+    message: "이메일 변경 성공",
+  };
+
+  const query = await runDB(
+    `UPDATE USER SET mem_email="${email}" WHERE mem_idx = ${idx}`
+  );
+
+  const queryresult = await runDB(`SELECT * FROM user WHERE mem_idx = ${idx}`);
+
+  /**
+   * 로그인 세션 회원정보 다시 저장
+   */
+  const tmp = JSON.stringify(queryresult[0].mem_birth);
+  const birth = tmp.slice(1, 9) + (parseInt(tmp.slice(9, 11)) + 1);
+  queryresult[0].mem_birth = birth;
+
+  req.session.loginUser = queryresult[0];
+  req.session.save();
+  // res.send(req.session.loginUser);
+  res.send(result);
+});
+
 app.post("/nicknamecheck", async (req, res) => {
   /**
    * 닉네임 중복체크
    */
-  console.log(req.body);
+  // console.log(req.body);
   const nickname = req.body.nickname;
 
   const result = {
@@ -133,6 +162,143 @@ app.post("/nicknamecheck", async (req, res) => {
     return;
   }
 
+  res.send(result);
+});
+
+app.post("/nicknamechange", async (req, res) => {
+  // console.log(req.body);
+  const idx = req.body.idx;
+  const nickname = req.body.nickname;
+
+  const result = {
+    code: "success",
+    message: "닉네임 변경 성공",
+  };
+
+  const query = await runDB(
+    `UPDATE USER SET mem_nickname="${nickname}" WHERE mem_idx = ${idx}`
+  );
+
+  const queryresult = await runDB(`SELECT * FROM user WHERE mem_idx = ${idx}`);
+
+  /**
+   * 로그인 세션 회원정보 다시 저장
+   */
+  const tmp = JSON.stringify(queryresult[0].mem_birth);
+  const birth = tmp.slice(1, 9) + (parseInt(tmp.slice(9, 11)) + 1);
+  queryresult[0].mem_birth = birth;
+
+  req.session.loginUser = queryresult[0];
+  req.session.save();
+  // res.send(req.session.loginUser);
+  res.send(result);
+
+  const Lookupquery = await runDB(
+    `SELECT seq,mate_idx FROM trip WHERE JSON_EXTRACT( mate_idx, '$.${idx}' ) IS NOT NULL`
+  );
+
+  console.log(Lookupquery);
+
+  Lookupquery.map((data, index) => {
+    let mate = JSON.parse(data.mate_idx);
+    mate[queryresult[0].mem_idx] = queryresult[0].mem_nickname;
+    console.log(JSON.stringify(mate));
+    const updatequery = runDB(
+      `UPDATE trip SET mate_idx = '${JSON.stringify(mate)}' WHERE seq = ${
+        data.seq
+      }`
+    );
+  });
+});
+
+app.post("/usernamechange", async (req, res) => {
+  // console.log(req.body);
+  const idx = req.body.idx;
+  const username = req.body.username;
+
+  const result = {
+    code: "success",
+    message: "이름 변경 성공",
+  };
+
+  const query = await runDB(
+    `UPDATE USER SET mem_username="${username}" WHERE mem_idx = ${idx}`
+  );
+
+  const queryresult = await runDB(`SELECT * FROM user WHERE mem_idx = ${idx}`);
+
+  /**
+   * 로그인 세션 회원정보 다시 저장
+   */
+  const tmp = JSON.stringify(queryresult[0].mem_birth);
+  const birth = tmp.slice(1, 9) + (parseInt(tmp.slice(9, 11)) + 1);
+  queryresult[0].mem_birth = birth;
+
+  req.session.loginUser = queryresult[0];
+  req.session.save();
+  // res.send(req.session.loginUser);
+  res.send(result);
+});
+
+app.post("/phonechange", async (req, res) => {
+  // console.log(req.body);
+  const idx = req.body.idx;
+  const phone = req.body.phone;
+
+  const result = {
+    code: "success",
+    message: "번호 변경 성공",
+  };
+
+  // const query = await runDB(
+  //   `UPDATE USER SET mem_phone="${phone}" WHERE mem_idx = ${idx}`
+  // );
+
+  const query = await runDB(
+    `UPDATE USER SET mem_phone="${phone}" WHERE mem_idx = ${idx}`
+  );
+
+  const queryresult = await runDB(`SELECT * FROM user WHERE mem_idx = ${idx}`);
+
+  /**
+   * 로그인 세션 회원정보 다시 저장
+   */
+  const tmp = JSON.stringify(queryresult[0].mem_birth);
+  const birth = tmp.slice(1, 9) + (parseInt(tmp.slice(9, 11)) + 1);
+  queryresult[0].mem_birth = birth;
+
+  req.session.loginUser = queryresult[0];
+  req.session.save();
+  // res.send(req.session.loginUser);
+  res.send(result);
+});
+
+app.post("/emailchange", async (req, res) => {
+  // console.log(req.body);
+  const idx = req.body.idx;
+  const email = req.body.email;
+
+  const result = {
+    code: "success",
+    message: "이메일 변경 성공",
+  };
+
+  const query = await runDB(
+    `UPDATE USER SET mem_email="${email}" WHERE mem_idx = ${idx}`
+  );
+
+  const queryresult = await runDB(`SELECT * FROM user WHERE mem_idx = ${idx}`);
+
+  /**
+   * 로그인 세션 회원정보 다시 저장
+   */
+  const tmp = JSON.stringify(queryresult[0].mem_birth);
+  const birth = tmp.slice(1, 9) + (parseInt(tmp.slice(9, 11)) + 1);
+  queryresult[0].mem_birth = birth;
+
+  req.session.loginUser = queryresult[0];
+  req.session.save();
+  // res.send(req.session.loginUser);
   res.send(result);
 });
 
@@ -166,7 +332,7 @@ app.post("/login", async (req, res) => {
   /**
    * 디비에서 아이디&비번 확인
    */
-  console.log(req.body);
+  // console.log(req.body);
   const id = req.body.id;
   const pw = req.body.pw;
   const autologin = req.body.autologin;
@@ -194,6 +360,10 @@ app.post("/login", async (req, res) => {
   /**
    * 로그인 세션 회원정보 저장
    */
+  const tmp = JSON.stringify(queryresult[0].mem_birth);
+  const birth = tmp.slice(1, 9) + (parseInt(tmp.slice(9, 11)) + 1);
+  queryresult[0].mem_birth = birth;
+
   req.session.loginUser = queryresult[0];
   req.session.save();
 
@@ -460,16 +630,16 @@ app.post("/triplist", async (req, res) => {
   };
 
   const queryresult = await runDB(
-    `SELECT * FROM trip WHERE JSON_EXTRACT( mate_idx, '$.${idx}' ) IS NOT NULL;`
+    `SELECT trip.*,mem_nickname AS host_nickname FROM trip,USER WHERE JSON_EXTRACT( mate_idx, '$.${idx}' ) IS NOT NULL AND mem_idx = host_idx`
   );
 
-  console.log(queryresult);
+  // console.log(queryresult);
   result.data = queryresult;
   res.send(result);
 });
 
 app.post("/tripadd", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const title = req.body.title;
   const idx = req.body.host_idx;
   const nickname = req.body.host_nickname;
@@ -483,6 +653,47 @@ app.post("/tripadd", async (req, res) => {
   const queryresult = await runDB(
     `INSERT INTO trip(title,reg_time,update_time,host_idx,host_nickname,mate_idx) VALUES ('${title}',NOW(),NULL,${idx},"${nickname}",'${mate}');
     `
+  );
+
+  res.send(result);
+});
+
+app.post("/tripdelete", async (req, res) => {
+  // console.log(req.body);
+
+  const seq = req.body.seq;
+
+  console.log("삭제할게시글", seq);
+
+  const result = {
+    code: "success",
+    message: "여행 삭제 완료",
+  };
+
+  const queryresult = await runDB(`DELETE FROM trip WHERE seq = ${seq}`);
+
+  res.send(result);
+});
+
+app.post("/tripexcept", async (req, res) => {
+  // console.log(req.body);
+
+  const seq = req.body.seq;
+  const idx = req.body.idx;
+
+  const result = {
+    code: "success",
+    message: "여행 나가기 완료",
+  };
+
+  //SELECT mate_idx FROM trip WHERE seq = 6;
+  const mate_idx = await runDB(`SELECT mate_idx FROM trip WHERE seq = ${seq}`);
+  const tmp = { ...JSON.parse(mate_idx[0].mate_idx) };
+  delete tmp[idx];
+  // console.log(JSON.stringify(tmp));
+
+  const queryresult = await runDB(
+    `UPDATE trip SET mate_idx = '${JSON.stringify(tmp)}' WHERE seq = ${seq}`
   );
 
   res.send(result);

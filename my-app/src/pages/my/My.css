@@ -1,24 +1,101 @@
-* {
+.contents-container > .title > .myinfo {
+  padding: 54px 0 0 0;
+}
+
+.myinfo-container {
+  /* border: solid 1px black; */
+  width: 960px;
+  height: 100%;
+  margin: auto;
+  padding: 60px 180px;
+}
+
+.login-info {
+  /* border: solid 1px red; */
+}
+
+.user-info {
+  /* border: solid 1px red; */
+}
+
+.myinfo-container .title {
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: bold;
+  padding-bottom: 6px;
+  /* margin-top: 16px; */
+  border-bottom: solid 2px black;
+}
+.myinfo-container > .user-info > .title {
+  margin-top: 32px;
+}
+
+.myinfo-container .item > span:first-child {
+  font-size: 0.785rem;
+  font-weight: bold;
+}
+.myinfo-container .item > span {
+  /* border: solid 1px red; */
+  display: inline-block;
+  padding-top: 12px;
+  margin-top: 20px;
+}
+.myinfo-container .item > .info-box {
+  border-bottom: solid 1px lightgray;
+  /* margin-bottom: 20px; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.myinfo-container .item > .info-box > span {
+  /* border: solid 1px red; */
+  display: inline-block;
+  padding: 12px 0;
+  font-size: 1.075rem;
+}
+.myinfo-container .item > .msg {
+  /* border: solid 1px red; */
   padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  font-family: Handot;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: #dc3545;
+  font-weight: bold;
+}
+.myinfo-container .item > .info-box > input {
+  /* border: solid 1px red; */
+  outline: none;
+  width: 300px;
+  border: none;
+  padding: 12px 0;
+  font-size: 1.075rem;
+}
+.myinfo-container .item > .info-box button,
+.myinfo-container .item > .pwdbtn {
+  /* border: solid 1px #4a8522; */
+  background-color: rgba(74, 133, 34, 0.8);
+  color: #ffffff;
+  width: 50px;
+  height: 30px;
+  font-size: 0.875rem;
+  border-radius: 16px;
 }
 
-u,
-li {
-  list-style: none;
-  text-decoration: none;
+.myinfo-container .item > .info-box > div > button:first-child {
+  margin-right: 12px;
 }
-
-button {
-  border: 0;
-  outline: 0;
+.myinfo-container .item > .pwdbtn {
+  width: 110px;
+  height: 30px;
+  margin-left: 12px;
+}
+.Withdrawal > span {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 0.785rem;
   cursor: pointer;
 }
-
-.container {
-  width: 100%;
-  height: 100%;
-  margin-top: 80px;
+.Withdrawal > span:hover {
+  color: #4a8522;
+  border-bottom: solid 1px #4a8522;
 }

@@ -1,0 +1,62 @@
+.container {
+  width: 100%;
+  height: 100%;
+  margin-top: 82px;
+}
+
+.contents-container {
+  /* border: solid 1px red; */
+  width: 100%;
+  height: 100%;
+}
+
+.contents-container > .title {
+  width: 100%;
+  height: 168px;
+  text-align: center;
+  margin: auto;
+  background-color: rgba(74, 133, 34, 0.5);
+  /* border: solid 1px red; */
+  /* position: relative; */
+}
+
+/* .contents-container .title img {
+    width: 100%;
+    height: 218px;
+    object-fit: cover;
+    opacity: 0.75;
+    border: solid 1px red;
+  } */
+.contents-container > .title > span {
+  display: block;
+  font-size: 2.75rem;
+  padding-top: 42px;
+  padding-bottom: 24px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 2px 2px 2px #000;
+  /* position: absolute; */
+  /* top: 30%; */
+  /* left: 50%; */
+  /* transform: translate(-50%, -30%); */
+}
+
+/* .contents-container > .title > div {
+    position: absolute;
+    top: 80%;
+    left: 50%;
+    transform: translate(-50%, -80%);
+  } */
+
+.contents-container > .title > div > span {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  margin: 0 10px;
+  text-shadow: 1px 1px 1px #000;
+}
+
+.contents-container > .title > div > span:hover {
+  text-decoration-line: underline;
+}

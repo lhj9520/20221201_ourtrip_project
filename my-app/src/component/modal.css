@@ -53,13 +53,16 @@ div.tripmate-container {
 }
 
 /* /mymate : 메이트 요청 컨텐츠*/
-.modal > section > main > .matereq {
+
+.modal > section > main > .matereq,
+.modal > section > main > .tripsetlist {
   width: 100%;
   height: 300px;
   overflow-y: auto;
 }
 
-.modal > section > main > .matereq > .item {
+.modal > section > main > .matereq > .item,
+.modal > section > main > .tripsetlist > .item {
   /* border: solid 1px red; */
   width: 100%;
   height: 36px;
@@ -83,30 +86,33 @@ div.tripmate-container {
   margin-right: auto;
 }
 
-.modal > section > main > .matereq > .item > .id {
-  font-size: 0.875rem;
-}
-.modal > section > main > .matereq > .item > div {
+.modal > section > main > .matereq > .item > div,
+.modal > section > main > .tripsetlist > .item > div {
   /* border: solid 1px red; */
   height: 100%;
 }
-.modal > section > main > .matereq > .item > div > button {
+.modal > section > main > .matereq > .item > div > button,
+.modal > section > main > .tripsetlist > .item > div > button {
   width: 45px;
   height: 100%;
   border-radius: 5px;
   font-size: 0.875rem;
   font-weight: bold;
+  margin-right: 6px;
 }
 
-.modal > section > main > .matereq > .item > div > button:hover {
+.modal > section > main > .matereq > .item > div > button:hover,
+.modal > section > main > .tripsetlist > .item > div > button:hover {
   color: #fff;
 }
+
 .modal > section > main > .matereq > .item > div > .acceptbtn {
   background-color: #4a8522;
   margin-right: 3px;
 }
 
-.modal > section > main > .matereq > .item > div > .declinebtn {
+.modal > section > main > .matereq > .item > div > .declinebtn,
+.modal > section > main > .tripsetlist > .item > div > .declinebtn {
   background-color: #d33d38;
 }
 
@@ -195,7 +201,7 @@ div.tripmate-container {
   color: #fff;
 }
 
-/* /mytrip : 여행 추가 컨텐츠*/
+/* /mytrip : 여행 만들기*/
 .modal > section > main > .tripadd {
   width: 100%;
   height: 300px;
@@ -311,6 +317,16 @@ div.tripmate-container {
   border-radius: 6px;
   /* font-weight: bold; */
 }
+
+/* /mytrip : 여행 관리 (삭제) */
+
+.modal > section > main > .tripsetlist > .item > .triptitle {
+  margin-right: auto;
+  padding-left: 16px;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
 /* footer */
 .modal > section > footer {
   padding: 12px 16px;

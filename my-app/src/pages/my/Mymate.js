@@ -330,7 +330,7 @@ function Contents() {
   const { matedata } = React.useContext(StoreContextMate);
 
   return (
-    <div className="content">
+    <div className="content-mymate">
       <ul>
         {matedata.length === 0 ? (
           <span>아직 메이트가 없습니다! 메이트를 추가해보세요!</span>
@@ -347,6 +347,15 @@ function Contents() {
             </li>
           ))
         )}
+        <li className="item">
+          <div className="img">
+            <FontAwesomeIcon icon={faCircleUser} className="imgicon" />
+          </div>
+          <div className="info">
+            <span className="nickname">어쩌고</span>
+            <span className="id">저쩌고</span>
+          </div>
+        </li>
       </ul>
     </div>
   );

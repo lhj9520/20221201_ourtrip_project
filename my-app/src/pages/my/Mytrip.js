@@ -4,7 +4,7 @@ import "./Mytrip.css";
 import Menubar from "../../component/menubar";
 import Modal from "../../component/modal";
 
-import { StoreContext } from "../../App";
+import { StoreContext, 세션정보가져오기 } from "../../App";
 import { useNavigate } from "react-router-dom";
 
 function Contents() {
@@ -137,7 +137,7 @@ function TripAddModal() {
                       SetisSelectedname("");
                     }
                   }}
-                  onDoubleClick={(e) => {
+                  onDoubleClick={() => {
                     // console.log("더블클릭댐", index, e.currentTarget);
                     const tmp = { ...matedata[index] };
                     if (selectlist.length === 0) {
@@ -273,11 +273,51 @@ function TripAddModal() {
 }
 
 function TripDelModal() {
+  const { setDispatchType } = React.useContext(StoreContextDis);
   const { loginUser } = React.useContext(StoreContext);
   const { tripdata } = React.useContext(StoreContextTrip);
 
+  const tripdelete = async (seq) => {
+    await axios({
+      url: "http://localhost:5000/tripdelete",
+      method: "POST",
+      data: {
+        seq: seq,
+      },
+    })
+      .then((res) => {
+        const { code } = res.data;
+        if (code === "success") {
+          setDispatchType({ code: "triplist" });
+        }
+      })
+      .catch((e) => {
+        console.log("여행 삭제 오류!", e);
+      });
+  };
+
+  const tripexcept = async (seq) => {
+    await axios({
+      url: "http://localhost:5000/tripexcept",
+      method: "POST",
+      data: {
+        seq: seq,
+        idx: loginUser.mem_idx,
+      },
+    })
+      .then((res) => {
+        const { code } = res.data;
+        if (code === "success") {
+          setDispatchType({ code: "triplist" });
+        }
+      })
+      .catch((e) => {
+        console.log("여행 삭제 오류!", e);
+      });
+  };
+
   return (
-    <ul className="matereq">
+    <ul className="tripsetlist">
       {tripdata.length === 0 ? (
         <span>작성된 여행이 없습니다.</span>
       ) : (
@@ -286,18 +326,28 @@ function TripDelModal() {
           .map((data) =>
             data.host_idx === loginUser.mem_idx ? (
               <li key={data.seq} className="item">
-                <span className="nickname">{data.title}</span>
+                <span className="triptitle">{data.title}</span>
                 <div>
-                  <button className="declinebtn" onClick={() => {}}>
+                  <button
+                    className="declinebtn"
+                    onClick={() => {
+                      tripdelete(data.seq);
+                    }}
+                  >
                     삭제
                   </button>
                 </div>
               </li>
             ) : (
               <li key={data.seq} className="item">
-                <span className="nickname">{data.title}</span>
+                <span className="triptitle">{data.title}</span>
                 <div>
-                  <button className="declinebtn" onClick={() => {}}>
+                  <button
+                    className="declinebtn"
+                    onClick={() => {
+                      tripexcept(data.seq);
+                    }}
+                  >
                     나가기
                   </button>
                 </div>
@@ -377,6 +427,9 @@ function Mytrip() {
   const [matedata, setMatedata] = React.useState([]);
   const [tripdata, setTripdata] = React.useState([]);
 
+  React.useEffect(() => {
+    세션정보가져오기();
+  }, []);
   //로그인 세션 상태 새로고침 하면 실행
   React.useEffect(() => {
     if (loginUser.mem_userid !== undefined) {
