@@ -6,8 +6,8 @@ import { Route, Routes } from "react-router-dom";
 
 import Join from "./pages/Join";
 import Login from "./pages/Login";
+import UserFind from "./pages/UserFind";
 import Main from "./pages/Main";
-import Community from "./pages/community/Community";
 import Howtouse from "./pages/Howtouse";
 import Mymate from "./pages/my/Mymate";
 import Mytrip from "./pages/my/Mytrip";
@@ -55,8 +55,8 @@ function App() {
         <Route exact path="/" element={<Main />} />
         <Route exact path="/join" element={<Join />} />
         <Route exact path="/login" element={<Login />} />
+        <Route exact path="/userfind" element={<UserFind />} />
         <Route exact path="/howtouse" element={<Howtouse />} />
-        <Route exact path="/community" element={<Community />} />
         <Route exact path="/mymate" element={<Mymate />} />
         <Route exact path="/mytrip" element={<Mytrip />} />
         <Route exact path="/create" element={<Create />} />

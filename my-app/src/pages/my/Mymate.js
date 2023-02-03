@@ -1,8 +1,9 @@
 import React from "react";
 import axios from "axios";
-import "./Mymate.css";
 import Menubar from "../../component/menubar";
 import Modal from "../../component/modal";
+import "./Mymate.css";
+import "./MymateModal.css";
 // import bimg from "../../img/pexels-trace-hudson-2770933.jpg";
 
 import { StoreContext } from "../../App";
@@ -263,7 +264,6 @@ function MateDelModal() {
     </ul>
   );
 }
-
 function Modalcontainer() {
   const { reqcnt } = React.useContext(StoreContextCnt);
 
@@ -325,7 +325,6 @@ function Modalcontainer() {
     </div>
   );
 }
-
 function Contents() {
   const { matedata } = React.useContext(StoreContextMate);
 
@@ -365,7 +364,7 @@ const StoreContextMate = React.createContext({});
 const StoreContextCnt = React.createContext({});
 
 function Mymate() {
-  // const navigation = useNavigate();
+  const navigation = useNavigate();
 
   //App에서 StoreContext 받아온 후 로그인세션 사용
   const { loginUser } = React.useContext(StoreContext);
@@ -389,6 +388,9 @@ function Mymate() {
       setState({ session: "마이페이지" });
       matereqlistcnt();
       matelist();
+    } else {
+      // alert("로그인 세션 정보 없음!!");
+      navigation("/login", { replace: true });
     }
   }, [loginUser]);
 

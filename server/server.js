@@ -202,7 +202,7 @@ app.post("/nicknamechange", async (req, res) => {
   Lookupquery.map((data, index) => {
     let mate = JSON.parse(data.mate_idx);
     mate[queryresult[0].mem_idx] = queryresult[0].mem_nickname;
-    console.log(JSON.stringify(mate));
+    // console.log(JSON.stringify(mate));
     const updatequery = runDB(
       `UPDATE trip SET mate_idx = '${JSON.stringify(mate)}' WHERE seq = ${
         data.seq
@@ -302,6 +302,60 @@ app.post("/emailchange", async (req, res) => {
   res.send(result);
 });
 
+app.post("/pwdcheck", async (req, res) => {
+  // console.log(req.body);
+  const idx = req.body.idx;
+  const curpwd = req.body.curpwd;
+  const hashcurpw = md5(curpwd);
+
+  const result = {
+    code: "success",
+    message: "비밀번호가 일치합니다.",
+  };
+
+  const queryresult = await runDB(
+    `SELECT * FROM user WHERE mem_idx=${idx} AND mem_password = '${hashcurpw}'`
+  );
+
+  if (queryresult.length === 0) {
+    result.code = "error";
+    result.message = "비밀번호가 일치하지 않습니다.";
+    res.send(result);
+    return;
+  }
+  res.send(result);
+});
+
+app.post("/pwdchange", async (req, res) => {
+  // console.log(req.body);
+  const idx = req.body.idx;
+  const modpwd = req.body.modpwd;
+  const hashmodpw = md5(modpwd);
+
+  const result = {
+    code: "success",
+    message: "비밀번호 변경 성공",
+  };
+
+  const query = await runDB(
+    `UPDATE USER SET mem_password="${hashmodpw}" WHERE mem_idx = ${idx}`
+  );
+
+  const queryresult = await runDB(`SELECT * FROM user WHERE mem_idx = ${idx}`);
+
+  /**
+   * 로그인 세션 회원정보 다시 저장
+   */
+  const tmp = JSON.stringify(queryresult[0].mem_birth);
+  const birth = tmp.slice(1, 9) + (parseInt(tmp.slice(9, 11)) + 1);
+  queryresult[0].mem_birth = birth;
+
+  req.session.loginUser = queryresult[0];
+  req.session.save();
+  // res.send(req.session.loginUser);
+  res.send(result);
+});
+
 app.post("/join", async (req, res) => {
   /**
    *
@@ -328,6 +382,21 @@ app.post("/join", async (req, res) => {
   res.send(result);
 });
 
+app.post("/withdrawalreq", async (req, res) => {
+  const idx = req.body.idx;
+
+  const result = {
+    code: "success",
+    message: "탈퇴 성공",
+  };
+
+  const queryresult = await runDB(
+    `UPDATE USER SET mem_status = 'N', mem_droptime = NOW() WHERE mem_idx = ${idx}`
+  );
+
+  res.send(result);
+});
+
 app.post("/login", async (req, res) => {
   /**
    * 디비에서 아이디&비번 확인
@@ -347,7 +416,7 @@ app.post("/login", async (req, res) => {
   // console.log(hashpw);
 
   const queryresult = await runDB(
-    `SELECT * FROM user WHERE mem_userid = '${id}' and mem_password = '${hashpw}'`
+    `SELECT * FROM user WHERE mem_userid = '${id}' and mem_password = '${hashpw}' AND mem_status = 'Y'`
   );
 
   if (queryresult.length === 0) {
@@ -366,6 +435,63 @@ app.post("/login", async (req, res) => {
 
   req.session.loginUser = queryresult[0];
   req.session.save();
+
+  res.send(result);
+});
+
+app.post("/findid", async (req, res) => {
+  // console.log(req.body);
+  const { type, name, ind } = req.body;
+
+  const result = {
+    code: "success",
+    message: "회원 조회 성공",
+    id: "",
+  };
+
+  let queryresult = "";
+
+  if (type === "email") {
+    queryresult = await runDB(
+      `SELECT mem_userid FROM USER WHERE mem_username = '${name}' AND mem_email = '${ind}' AND mem_status = 'Y'`
+    );
+  } else if (type === "phone") {
+    queryresult = await runDB(
+      `SELECT mem_userid FROM USER WHERE mem_username = '${name}' AND mem_phone = '${ind}' AND mem_status = 'Y'`
+    );
+  }
+
+  if (queryresult.length === 0) {
+    result.code = "error";
+    result.message = "해당 회원이 존재하지 않습니다.";
+    res.send(result);
+    return;
+  }
+
+  result.id = queryresult[0].mem_userid;
+
+  res.send(result);
+});
+
+app.post("/findpw", async (req, res) => {
+  // console.log(req.body);
+  const { id } = req.body;
+
+  const result = {
+    code: "success",
+    message: "아이디 조회 성공",
+  };
+
+  const queryresult = await runDB(
+    `SELECT mem_userid FROM USER WHERE mem_userid = '${id}' AND mem_status = 'Y'`
+  );
+
+  if (queryresult.length === 0) {
+    result.code = "error";
+    result.message = "해당 회원이 존재하지 않습니다.";
+    res.send(result);
+    return;
+  }
 
   res.send(result);
 });
@@ -642,7 +768,6 @@ app.post("/tripadd", async (req, res) => {
   // console.log(req.body);
   const title = req.body.title;
   const idx = req.body.host_idx;
-  const nickname = req.body.host_nickname;
   const mate = JSON.stringify(req.body.mate_idx);
 
   const result = {
@@ -651,7 +776,7 @@ app.post("/tripadd", async (req, res) => {
   };
 
   const queryresult = await runDB(
-    `INSERT INTO trip(title,reg_time,update_time,host_idx,host_nickname,mate_idx) VALUES ('${title}',NOW(),NULL,${idx},"${nickname}",'${mate}');
+    `INSERT INTO trip(title,reg_time,update_time,host_idx,mate_idx) VALUES ('${title}',NOW(),NULL,${idx},'${mate}');
     `
   );
 

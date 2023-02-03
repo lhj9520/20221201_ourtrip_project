@@ -1,11 +1,15 @@
 import React, { useRef } from "react";
 import axios from "axios";
 import "./My.css";
+import "./MyModal.css";
 import Menubar from "../../component/menubar";
 import Modal from "../../component/modal";
 
-import { StoreContext, 세션정보가져오기 } from "../../App";
+import { StoreContext, 세션정보가져오기, 세션삭제하기 } from "../../App";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
+import { faEye } from "@fortawesome/free-regular-svg-icons";
 
 function NicknameValue() {
   const { loginUser } = React.useContext(StoreContext);
@@ -122,7 +126,6 @@ function NicknameValue() {
     </div>
   );
 }
-
 function EmailValue() {
   const { loginUser } = React.useContext(StoreContext);
 
@@ -241,7 +244,6 @@ function EmailValue() {
     </div>
   );
 }
-
 function NameValue() {
   const { loginUser } = React.useContext(StoreContext);
 
@@ -343,7 +345,6 @@ function NameValue() {
     </div>
   );
 }
-
 function PhoneValue() {
   const { loginUser } = React.useContext(StoreContext);
 
@@ -440,22 +441,241 @@ function PhoneValue() {
     </div>
   );
 }
+function Pwdvalue() {
+  const { loginUser } = React.useContext(StoreContext);
 
-function PwdValue() {
-  const inputFocus = useRef(null);
+  const inputFocus = useRef([]);
 
-  const [modalOpen1, setModalOpen1] = React.useState(false);
-  const [inputstate, setInputstate] = React.useState(true);
-  const [pwd, setPhone] = React.useState("");
+  const [passwordType1, setPasswordType1] = React.useState("password");
+  const [passwordType2, setPasswordType2] = React.useState("password");
+  const [passwordType3, setPasswordType3] = React.useState("password");
+  const [icontype1, setIcontype1] = React.useState(true);
+  const [icontype2, setIcontype2] = React.useState(true);
+  const [icontype3, setIcontype3] = React.useState(true);
+
+  const [curpwd, setCurpwd] = React.useState("");
+  const [modpwd, setModpwd] = React.useState("");
+  const [repwd, setRepwd] = React.useState("");
+  const [pwisvalid, setPwisvalid] = React.useState(false);
+  const [samepwisvalid, setSamepwisvalid] = React.useState(false);
+
   const [emsg1, setEmsg1] = React.useState("");
   const [emsg2, setEmsg2] = React.useState("");
+  const [emsg3, setEmsg3] = React.useState("");
 
-  React.useEffect(() => {
-    if (!inputstate) {
-      inputFocus.current.focus();
+  const [inputset, setInputset] = React.useState(true);
+
+  const pwdcheck = async () => {
+    await axios({
+      url: "http://localhost:5000/pwdcheck",
+      method: "POST",
+      data: { idx: loginUser.mem_idx, curpwd: curpwd },
+    })
+      .then((res) => {
+        const { code, message } = res.data;
+        if (code === "error") {
+          setEmsg1(message);
+          inputFocus.current[0].focus();
+        } else {
+          if (!pwisvalid) {
+            // console.log("비밀번호를 확인하세요.");
+            inputFocus.current[1].focus();
+            return;
+          }
+          if (!samepwisvalid) {
+            // console.log("비밀번호확인을 확인하세요.");
+            inputFocus.current[2].focus();
+            return;
+          }
+          // console.log("여기서 비밀번호 바꾸면 됩니다.");
+          pwdvalchange();
+        }
+      })
+      .catch((e) => {
+        console.log("비밀번호 확인 오류!", e);
+      });
+  };
+
+  const pwdvalchange = async () => {
+    await axios({
+      url: "http://localhost:5000/pwdchange",
+      method: "POST",
+      data: { idx: loginUser.mem_idx, modpwd: modpwd },
+    })
+      .then((res) => {
+        const { code, message } = res.data;
+        if (code === "success") {
+          console.log(message);
+          세션정보가져오기();
+          setInputset(false);
+        }
+      })
+      .catch((e) => {
+        console.log("비밀번호 변경 오류!", e);
+      });
+  };
+
+  const pwdchange = () => {
+    // setInputset(false);
+    // console.log(curpwd);
+    if (curpwd.length === 0) {
+      // console.log("비밀번호를 입력해주세요.");
+      setEmsg1("비밀번호를 입력해주세요.");
+      inputFocus.current[0].focus();
       return;
+    } else {
+      pwdcheck();
     }
-  }, [inputstate]);
+  };
+
+  const valuechange1 = (event) => {
+    const data = event.target.value;
+    setCurpwd(data);
+    if (data.length < 8 && data.length >= 1) {
+      setEmsg1("8자리 이상 입력해주세요.");
+    } else {
+      setEmsg1("");
+    }
+  };
+
+  const valuechange2 = (event) => {
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
+    const data = event.target.value;
+    setModpwd(data);
+    //비밀번호 예외처리
+    if (data === "") {
+      setEmsg2("필수입니다.");
+      setPwisvalid(false);
+    } else {
+      if (!passwordRegex.test(data)) {
+        setEmsg2("숫자+영문자+특수문자 조합으로 8~20자리 입력해주세요.");
+        setPwisvalid(false);
+      } else {
+        setEmsg2("");
+        setPwisvalid(true);
+      }
+
+      if (data === repwd) {
+        setEmsg3("비밀번호가 일치합니다.");
+        setSamepwisvalid(true);
+      } else {
+        if (repwd.length !== 0) {
+          setEmsg3("비밀번호가 일치하지 않습니다.");
+        }
+        setSamepwisvalid(false);
+        // setEmsg3("비밀번호가 일치하지 않습니다.");
+      }
+    }
+  };
+
+  const valuechange3 = (event) => {
+    const data = event.target.value;
+    setRepwd(data);
+    //비밀번호확인 예외처리
+    if (data === "") {
+      setEmsg3("필수입니다.");
+      setSamepwisvalid(false);
+    } else {
+      if (data === modpwd) {
+        setEmsg3("비밀번호가 일치합니다.");
+        setSamepwisvalid(true);
+      } else {
+        if (modpwd.length !== 0) {
+          setEmsg3("비밀번호가 일치하지 않습니다.");
+        }
+        setSamepwisvalid(false);
+        // setEmsg3("비밀번호가 일치하지 않습니다.");
+      }
+    }
+  };
+
+  return (
+    <div className="pwdmod">
+      {inputset && (
+        <div>
+          <div>
+            <input
+              ref={(el) => (inputFocus.current[0] = el)}
+              type={passwordType1}
+              maxLength={20}
+              placeholder="현재 비밀번호"
+              onChange={valuechange1}
+            />
+            <FontAwesomeIcon
+              icon={icontype1 ? faEyeSlash : faEye}
+              className="imgicon"
+              onMouseDown={() => {
+                setIcontype1(false);
+                setPasswordType1("text");
+              }}
+              onMouseUp={() => {
+                setIcontype1(true);
+                setPasswordType1("password");
+              }}
+            />
+            <span className="msg">{emsg1}</span>
+          </div>
+          <div>
+            <input
+              // ref={inputFocus[1]}
+              ref={(el) => (inputFocus.current[1] = el)}
+              type={passwordType2}
+              maxLength={20}
+              placeholder="새 비밀번호"
+              onChange={valuechange2}
+            />
+            <FontAwesomeIcon
+              icon={icontype2 ? faEyeSlash : faEye}
+              className="imgicon"
+              onMouseDown={() => {
+                setIcontype2(false);
+                setPasswordType2("text");
+              }}
+              onMouseUp={() => {
+                setIcontype2(true);
+                setPasswordType2("password");
+              }}
+            />
+            <span className="msg">{emsg2}</span>
+          </div>
+          <div>
+            <input
+              ref={(el) => (inputFocus.current[2] = el)}
+              type={passwordType3}
+              maxLength={20}
+              placeholder="새 비밀번호 확인"
+              onChange={valuechange3}
+            />
+            <FontAwesomeIcon
+              icon={icontype3 ? faEyeSlash : faEye}
+              className="imgicon"
+              onMouseDown={() => {
+                setIcontype3(false);
+                setPasswordType3("text");
+              }}
+              onMouseUp={() => {
+                setIcontype3(true);
+                setPasswordType3("password");
+              }}
+            />
+            <span className="msg">{emsg3}</span>
+          </div>
+          <div className="btncontainer">
+            <button onClick={pwdchange}>변경</button>
+          </div>
+        </div>
+      )}
+      {!inputset && (
+        <div className="pwdchanged">
+          <span>비밀번호가 변경되었습니다.</span>
+        </div>
+      )}
+    </div>
+  );
+}
+function PwdModModal() {
+  const [modalOpen, setModalOpen] = React.useState(false);
 
   return (
     <div className="item">
@@ -463,20 +683,19 @@ function PwdValue() {
       <button
         className="pwdbtn"
         onClick={() => {
-          setModalOpen1(true);
+          setModalOpen(true);
         }}
       >
         비밀번호 변경
       </button>
-
       <Modal
-        open={modalOpen1}
+        open={modalOpen}
         close={() => {
-          setModalOpen1(false);
+          setModalOpen(false);
         }}
         header="비밀번호 변경"
       >
-        비밀번호변경모달
+        <Pwdvalue></Pwdvalue>
       </Modal>
     </div>
   );
@@ -488,6 +707,8 @@ function My() {
   //App에서 StoreContext 받아온 후 로그인세션 사용
   const { loginUser } = React.useContext(StoreContext);
 
+  const [modalOpen, setModalOpen] = React.useState(false);
+
   const [State, setState] = React.useState({
     session: "로그인",
   });
@@ -496,9 +717,29 @@ function My() {
     if (loginUser.mem_userid !== undefined) {
       // setState({ session: "마이" });
       // console.log(loginUser);
+    } else {
+      // alert("로그인 세션 정보 없음!!");
+      navigation("/login", { replace: true });
     }
   }, [loginUser]);
 
+  const withdrawalreq = async () => {
+    await axios({
+      url: "http://localhost:5000/withdrawalreq",
+      method: "POST",
+      data: { idx: loginUser.mem_idx },
+    })
+      .then((res) => {
+        const { code } = res.data;
+        if (code === "success") {
+          세션삭제하기();
+          navigation("/", { replace: true });
+        }
+      })
+      .catch((e) => {
+        console.log("닉네임 변경 오류!", e);
+      });
+  };
   return (
     <div className="container">
       <Menubar />
@@ -515,7 +756,7 @@ function My() {
                 <span>{loginUser.mem_userid}</span>
               </div>
             </div>
-            <PwdValue></PwdValue>
+            <PwdModModal></PwdModModal>
             <NicknameValue></NicknameValue>
             <EmailValue></EmailValue>
           </section>
@@ -533,12 +774,37 @@ function My() {
           <section className="Withdrawal">
             <span
               onClick={() => {
-                // 모달 띄울까요?
-                alert("정말탈퇴하시겠습니까?");
+                setModalOpen(true);
               }}
             >
               회원탈퇴하기
             </span>
+            <Modal
+              open={modalOpen}
+              close={() => {
+                setModalOpen(false);
+              }}
+              header="회원 탈퇴"
+            >
+              <div className="Withdrawal-box">
+                <span>정말로 탈퇴하시겠습니까?</span>
+                <span className="small">
+                  작성한 글은 자동으로 삭제되지 않습니다.
+                </span>
+                <div>
+                  <button className="withdrawalbtn" onClick={withdrawalreq}>
+                    확인
+                  </button>
+                  <button
+                    onClick={() => {
+                      setModalOpen(false);
+                    }}
+                  >
+                    취소
+                  </button>
+                </div>
+              </div>
+            </Modal>
           </section>
         </div>
       </div>

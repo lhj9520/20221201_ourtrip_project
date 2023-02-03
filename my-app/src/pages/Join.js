@@ -28,6 +28,7 @@ function Join() {
 
   const [pw, setPw] = React.useState("");
   const [rpw, setRpw] = React.useState("");
+  const [pwisvalid, setPwisvalid] = React.useState(false);
   const [samepwisvalid, setSamepwisvalid] = React.useState(false);
 
   const [name, setName] = React.useState("");
@@ -95,9 +96,17 @@ function Join() {
     //비밀번호 예외처리
     if (vpw === "") {
       setEmsg2("필수입니다.");
-      setSamepwisvalid(false);
+      setPwisvalid(false);
     } else {
-      setEmsg2("");
+      // setEmsg2("");
+      if (!passwordRegex.test(vpw)) {
+        setEmsg2("숫자+영문자+특수문자 조합으로 8~20자리 입력해주세요.");
+        setPwisvalid(false);
+      } else {
+        setEmsg2("");
+        setPwisvalid(true);
+      }
+
       if (vpw === rpw) {
         setEmsg3("비밀번호가 일치합니다.");
         setSamepwisvalid(true);
@@ -359,14 +368,19 @@ function Join() {
       // console.log("아이디 중복을 확인하세요");
       return;
     }
-    if (!samepwisvalid) {
+    if (!pwisvalid) {
       // console.log("비밀번호를 확인하세요");
       inputRef.current[1].focus();
       return;
     }
+    if (!samepwisvalid) {
+      // console.log("비밀번호 재입력을 확인하세요");
+      inputRef.current[2].focus();
+      return;
+    }
     if (!nameisvalid) {
       // console.log("이름을 확인하세요");
-      inputRef.current[2].focus();
+      inputRef.current[3].focus();
       return;
     }
     //생일
@@ -376,7 +390,7 @@ function Join() {
     }
     if (!emailisvalid) {
       // console.log("이메일을 확인하세요");
-      inputRef.current[3].focus();
+      inputRef.current[4].focus();
       return;
     }
     if (!dupemailisvalid) {
@@ -390,7 +404,7 @@ function Join() {
     if (!nicknameisvalid) {
       // console.log("닉네임을 확인하세요");
 
-      inputRef.current[4].focus();
+      inputRef.current[5].focus();
       return;
     }
     if (!dupnicknameisvalid) {
@@ -495,6 +509,7 @@ function Join() {
               <span className="essential">*</span>
             </section>
             <input
+              ref={(el) => (inputRef.current[2] = el)}
               type="password"
               name="repw"
               placeholder="비밀번호 재입력"
@@ -511,7 +526,7 @@ function Join() {
               <span className="essential">*</span>
             </section>
             <input
-              ref={(el) => (inputRef.current[2] = el)}
+              ref={(el) => (inputRef.current[3] = el)}
               type="text"
               name="name"
               placeholder="이름"
@@ -584,7 +599,7 @@ function Join() {
               <span className="essential">*</span>
             </section>
             <input
-              ref={(el) => (inputRef.current[3] = el)}
+              ref={(el) => (inputRef.current[4] = el)}
               type="text"
               name="email"
               placeholder="geenee@gmail.com"
@@ -626,7 +641,7 @@ function Join() {
               <span className="essential">*</span>
             </section>
             <input
-              ref={(el) => (inputRef.current[4] = el)}
+              ref={(el) => (inputRef.current[5] = el)}
               type="text"
               name="nickname"
               placeholder="닉네임"

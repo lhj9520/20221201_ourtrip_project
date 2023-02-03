@@ -1,0 +1,99 @@
+.modal > section > main > .pwdmod {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal > section > main > .pwdmod > div > div {
+  /* border: solid 1px red; */
+  height: 55px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.modal > section > main > .pwdmod > div > .btncontainer {
+  /* border: solid 1px red; */
+  height: 30px;
+}
+.modal > section > main > .pwdmod > div > div > input {
+  height: 60%;
+  outline: none;
+  font-size: 0.875rem;
+}
+.modal > section > main > .pwdmod > div > div > .imgicon {
+  position: absolute;
+  width: 30px;
+  top: 8px;
+  right: 8px;
+  /* border: solid 1px red; */
+}
+
+.modal > section > main > .pwdmod > div > div > .msg {
+  font-size: 0.685rem;
+  color: #dc3545;
+  margin-top: 3px;
+}
+
+.modal > section > main > .pwdmod > div > .btncontainer > button {
+  height: 100%;
+  width: 100px;
+  margin: auto;
+  background-color: #4a8522;
+  color: #ffffff;
+  border-radius: 7px;
+}
+
+.modal > section > main > .pwdmod > .pwdchanged {
+  /* border: solid 1px red; */
+  width: 100%;
+  margin: auto;
+}
+
+.modal > section > main > .pwdmod > .pwdchanged > span {
+  /* border: solid 1px blue; */
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+}
+.modal > section > main > .Withdrawal-box {
+  /* border: solid 1px red; */
+  width: 100%;
+  height: 100px;
+}
+.modal > section > main > .Withdrawal-box > span {
+  /* border: solid 1px red; */
+  display: inline-block;
+  width: 100%;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: center;
+}
+.modal > section > main > .Withdrawal-box > span:first-child {
+  margin-top: 12px;
+}
+.modal > section > main > .Withdrawal-box > .small {
+  font-size: 0.7rem;
+  margin-bottom: 16px;
+}
+.modal > section > main > .Withdrawal-box > div {
+  /* border: solid 1px black; */
+  width: 100%;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+}
+.modal > section > main > .Withdrawal-box button {
+  /* border: solid 1px blue; */
+  width: 50px;
+  border-radius: 4px;
+  background-color: lightgray;
+  color: #ffffff;
+}
+.modal > section > main > .Withdrawal-box .withdrawalbtn {
+  /* border: solid 1px black; */
+  margin-right: 12px;
+  background-color: gray;
+}

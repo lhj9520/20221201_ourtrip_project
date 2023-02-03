@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import "./Mytrip.css";
+import "./MytripModal.css";
 import Menubar from "../../component/menubar";
 import Modal from "../../component/modal";
 
@@ -60,7 +61,6 @@ function Contents() {
     </div>
   );
 }
-
 function TripAddModal() {
   const { setDispatchType } = React.useContext(StoreContextDis);
   const { loginUser } = React.useContext(StoreContext);
@@ -259,7 +259,7 @@ function TripAddModal() {
               trip_data.title = title;
             }
             trip_data.host_idx = idx;
-            trip_data.host_nickname = nickname;
+            // trip_data.host_nickname = nickname;
             trip_data.mate_idx = mate;
 
             tripadd({ data: trip_data });
@@ -271,7 +271,6 @@ function TripAddModal() {
     </div>
   );
 }
-
 function TripDelModal() {
   const { setDispatchType } = React.useContext(StoreContextDis);
   const { loginUser } = React.useContext(StoreContext);
@@ -358,7 +357,6 @@ function TripDelModal() {
     </ul>
   );
 }
-
 function Modalcontainer() {
   const [modalOpen1, setModalOpen1] = React.useState(false);
   const [modalOpen2, setModalOpen2] = React.useState(false);
@@ -400,7 +398,6 @@ function Modalcontainer() {
     </div>
   );
 }
-
 const StoreContextDis = React.createContext({});
 const StoreContextTrip = React.createContext({});
 const StoreContextMate = React.createContext({});
@@ -436,6 +433,9 @@ function Mytrip() {
       setState({ session: "마이페이지" });
       matelist();
       triplist();
+    } else {
+      // alert("로그인 세션 정보 없음!!");
+      navigation("/login", { replace: true });
     }
   }, [loginUser]);
 

@@ -129,8 +129,20 @@ function Login() {
           >
             회원가입
           </span>
-          <span onClick={() => {}}>아이디 찾기</span>
-          <span onClick={() => {}}>비밀번호 찾기</span>
+          <span
+            onClick={() => {
+              navigation("/userfind", { state: "id" });
+            }}
+          >
+            아이디 찾기
+          </span>
+          <span
+            onClick={() => {
+              navigation("/userfind", { state: "pw" });
+            }}
+          >
+            비밀번호 찾기
+          </span>
         </div>
         <div className="hr-sect">SNS 간편 로그인</div>
         <div className="easylogin">여기에 아이콘들</div>
