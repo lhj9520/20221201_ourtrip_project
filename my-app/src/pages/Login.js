@@ -61,7 +61,6 @@ function Login() {
           alert(message);
           return;
         }
-        // console.log("세션정보가져오기실행");
         세션정보가져오기();
         navigation("/", { replace: true }); //{ replace: true }
       })

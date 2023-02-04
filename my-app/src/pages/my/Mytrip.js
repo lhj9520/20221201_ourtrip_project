@@ -424,18 +424,16 @@ function Mytrip() {
   const [matedata, setMatedata] = React.useState([]);
   const [tripdata, setTripdata] = React.useState([]);
 
-  React.useEffect(() => {
-    세션정보가져오기();
-  }, []);
   //로그인 세션 상태 새로고침 하면 실행
   React.useEffect(() => {
-    if (loginUser.mem_userid !== undefined) {
+    if (loginUser === null) {
+      console.log("세션 없어요2");
+      navigation("/login");
+    } else {
+      //loginUser 값이 있을 때
       setState({ session: "마이페이지" });
       matelist();
       triplist();
-    } else {
-      // alert("로그인 세션 정보 없음!!");
-      navigation("/login", { replace: true });
     }
   }, [loginUser]);
 

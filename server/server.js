@@ -446,7 +446,6 @@ app.post("/findid", async (req, res) => {
   const result = {
     code: "success",
     message: "회원 조회 성공",
-    id: "",
   };
 
   let queryresult = "";
@@ -480,6 +479,7 @@ app.post("/findpw", async (req, res) => {
   const result = {
     code: "success",
     message: "아이디 조회 성공",
+    id: "",
   };
 
   const queryresult = await runDB(
@@ -502,7 +502,7 @@ app.get("/user", (req, res) => {
 });
 
 app.get("/userdelete", (req, res) => {
-  req.session.loginUser = {};
+  req.session.loginUser = null;
   req.session.save();
   res.send(req.session.loginUser);
 });

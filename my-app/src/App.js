@@ -21,14 +21,18 @@ export let 세션정보가져오기 = () => {};
 export let 세션삭제하기 = () => {};
 
 function App() {
-  const [loginUser, setLoginUser] = React.useState({});
+  const initialloginUser = JSON.parse(localStorage.getItem("user"));
+  const [loginUser, setLoginUser] = React.useState(initialloginUser);
 
   세션정보가져오기 = async () => {
     await axios({
       url: "http://localhost:5000/user",
     }).then((res) => {
-      console.log("세션정보가져오기", res.data);
-      setLoginUser(res.data);
+      if (res.data) {
+        localStorage.setItem("user", JSON.stringify(res.data));
+        setLoginUser(res.data);
+        console.log("세션정보가져오기");
+      }
     });
   };
 
@@ -36,13 +40,14 @@ function App() {
     await axios({
       url: "http://localhost:5000/userdelete",
     }).then((res) => {
-      setLoginUser(res.data);
+      localStorage.removeItem("user");
+      setLoginUser(null);
       console.log("세션이 삭제됩니다");
     });
   };
 
   React.useEffect(() => {
-    세션정보가져오기();
+    console.log("로그인 세션", loginUser);
   }, []);
 
   return (

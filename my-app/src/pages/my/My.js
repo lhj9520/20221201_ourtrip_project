@@ -11,6 +11,43 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { faEye } from "@fortawesome/free-regular-svg-icons";
 
+function LogininfoCon() {
+  const { loginUser } = React.useContext(StoreContext);
+
+  return (
+    <section className="login-info">
+      <span className="title">로그인 정보</span>
+      <div className="item">
+        <span>아이디</span>
+        <div className="info-box">
+          <span>{loginUser && loginUser.mem_userid}</span>
+        </div>
+      </div>
+      <PwdModModal></PwdModModal>
+      <NicknameValue></NicknameValue>
+      <EmailValue></EmailValue>
+    </section>
+  );
+}
+
+function UserinfoCon() {
+  const { loginUser } = React.useContext(StoreContext);
+
+  return (
+    <section className="user-info">
+      <span className="title">본인 확인 정보</span>
+      <NameValue></NameValue>
+      <div className="item">
+        <span>생년월일</span>
+        <div className="info-box">
+          <span>{loginUser && loginUser.mem_birth}</span>
+        </div>
+      </div>
+      <PhoneValue></PhoneValue>
+    </section>
+  );
+}
+
 function NicknameValue() {
   const { loginUser } = React.useContext(StoreContext);
 
@@ -88,7 +125,7 @@ function NicknameValue() {
     <div className="item">
       <span>닉네임</span>
       <div className="info-box">
-        {inputstate && <span>{loginUser.mem_nickname}</span>}
+        {inputstate && <span>{loginUser && loginUser.mem_nickname}</span>}
         {!inputstate && (
           <input
             ref={inputFocus}
@@ -207,7 +244,7 @@ function EmailValue() {
     <div className="item">
       <span>이메일</span>
       <div className="info-box">
-        {inputstate && <span>{loginUser.mem_email}</span>}
+        {inputstate && <span>{loginUser && loginUser.mem_email}</span>}
         {!inputstate && (
           <input
             ref={inputFocus}
@@ -307,7 +344,7 @@ function NameValue() {
     <div className="item">
       <span>이름</span>
       <div className="info-box">
-        {inputstate && <span>{loginUser.mem_username}</span>}
+        {inputstate && <span>{loginUser && loginUser.mem_username}</span>}
         {!inputstate && (
           <input
             ref={inputFocus}
@@ -403,7 +440,7 @@ function PhoneValue() {
     <div className="item">
       <span>휴대폰 전화번호</span>
       <div className="info-box">
-        {inputstate && <span>{loginUser.mem_phone}</span>}
+        {inputstate && <span>{loginUser && loginUser.mem_phone}</span>}
         {!inputstate && (
           <input
             ref={inputFocus}
@@ -714,14 +751,13 @@ function My() {
   });
 
   React.useEffect(() => {
-    if (loginUser.mem_userid !== undefined) {
-      // setState({ session: "마이" });
-      // console.log(loginUser);
+    if (loginUser === null) {
+      console.log("세션 없어요");
+      navigation("/login");
     } else {
-      // alert("로그인 세션 정보 없음!!");
-      navigation("/login", { replace: true });
+      //loginUser 값이 있을 때
     }
-  }, [loginUser]);
+  }, []);
 
   const withdrawalreq = async () => {
     await axios({
@@ -748,29 +784,8 @@ function My() {
           <span className="myinfo">내정보 관리</span>
         </div>
         <div className="myinfo-container">
-          <section className="login-info">
-            <span className="title">로그인 정보</span>
-            <div className="item">
-              <span>아이디</span>
-              <div className="info-box">
-                <span>{loginUser.mem_userid}</span>
-              </div>
-            </div>
-            <PwdModModal></PwdModModal>
-            <NicknameValue></NicknameValue>
-            <EmailValue></EmailValue>
-          </section>
-          <section className="user-info">
-            <span className="title">본인 확인 정보</span>
-            <NameValue></NameValue>
-            <div className="item">
-              <span>생년월일</span>
-              <div className="info-box">
-                <span>{loginUser.mem_birth}</span>
-              </div>
-            </div>
-            <PhoneValue></PhoneValue>
-          </section>
+          <LogininfoCon></LogininfoCon>
+          <UserinfoCon></UserinfoCon>
           <section className="Withdrawal">
             <span
               onClick={() => {
