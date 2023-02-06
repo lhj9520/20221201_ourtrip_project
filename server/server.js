@@ -8,6 +8,12 @@ const db = mysql.createPoolCluster();
 const app = express();
 const port = 5000;
 
+// const port = process.env.PORT || 5000;
+// dotenv 불러오기
+require("dotenv").config();
+// 모듈 불러오기
+const mailer = require("./mailer.js");
+
 app.use(express.json());
 
 app.use(
@@ -329,6 +335,7 @@ app.post("/pwdcheck", async (req, res) => {
 app.post("/pwdchange", async (req, res) => {
   // console.log(req.body);
   const idx = req.body.idx;
+  const id = req.body.id;
   const modpwd = req.body.modpwd;
   const hashmodpw = md5(modpwd);
 
@@ -336,6 +343,17 @@ app.post("/pwdchange", async (req, res) => {
     code: "success",
     message: "비밀번호 변경 성공",
   };
+
+  // console.log(idx, id, modpwd);
+  if (id) {
+    // console.log("id 왔을때");
+    const query = await runDB(
+      `UPDATE USER SET mem_password="${hashmodpw}" WHERE mem_userid = '${id}'`
+    );
+
+    res.send(result);
+    return;
+  }
 
   const query = await runDB(
     `UPDATE USER SET mem_password="${hashmodpw}" WHERE mem_idx = ${idx}`
@@ -446,6 +464,7 @@ app.post("/findid", async (req, res) => {
   const result = {
     code: "success",
     message: "회원 조회 성공",
+    id: "",
   };
 
   let queryresult = "";
@@ -479,11 +498,10 @@ app.post("/findpw", async (req, res) => {
   const result = {
     code: "success",
     message: "아이디 조회 성공",
-    id: "",
   };
 
   const queryresult = await runDB(
-    `SELECT mem_userid FROM USER WHERE mem_userid = '${id}' AND mem_status = 'Y'`
+    `SELECT mem_userid, mem_email FROM USER WHERE mem_userid = '${id}' AND mem_status = 'Y'`
   );
 
   if (queryresult.length === 0) {
@@ -492,6 +510,9 @@ app.post("/findpw", async (req, res) => {
     res.send(result);
     return;
   }
+
+  result.id = queryresult[0].mem_userid;
+  result.email = queryresult[0].mem_email;
 
   res.send(result);
 });
@@ -502,7 +523,7 @@ app.get("/user", (req, res) => {
 });
 
 app.get("/userdelete", (req, res) => {
-  req.session.loginUser = null;
+  req.session.loginUser = {};
   req.session.save();
   res.send(req.session.loginUser);
 });
@@ -822,6 +843,38 @@ app.post("/tripexcept", async (req, res) => {
   );
 
   res.send(result);
+});
+
+// 메일 전송 라우트
+app.post("/mail", async (req, res) => {
+  // console.log(req.body);
+  const { yourname, youremail } = req.body;
+
+  //인증 코드 생성(6자리)
+  let vericode = Math.floor(Math.random() * 1000000) + 100000;
+  if (vericode > 1000000) {
+    vericode = vericode - 100000;
+  }
+
+  console.log(vericode);
+
+  mailer(youremail, vericode).then((response) => {
+    if (response === "success") {
+      res.status(200).json({
+        status: "Success",
+        code: 200,
+        message: "Message Sent Successfully!",
+        username: yourname,
+        useremail: youremail,
+        vericode: vericode,
+      });
+    } else {
+      res.json({
+        status: "Fail",
+        code: response.code,
+      });
+    }
+  });
 });
 
 app.listen(port, () => {

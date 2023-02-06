@@ -6,7 +6,7 @@ import "./Mymate.css";
 import "./MymateModal.css";
 // import bimg from "../../img/pexels-trace-hudson-2770933.jpg";
 
-import { StoreContext, 세션정보가져오기 } from "../../App";
+import { StoreContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-regular-svg-icons";
@@ -383,13 +383,14 @@ function Mymate() {
 
   //로그인 세션 상태 새로고침 하면 친구 목록 불러오기
   React.useEffect(() => {
-    if (loginUser === null) {
-      navigation("/login");
-    } else {
-      //loginUser 값이 있을 때
+    // console.log("Mymate loginUser 이펙트 실행");
+    if (loginUser.mem_userid !== undefined) {
       setState({ session: "마이페이지" });
       matereqlistcnt();
       matelist();
+    } else {
+      // alert("로그인 세션 정보 없음!!");
+      navigation("/login", { replace: true });
     }
   }, [loginUser]);
 

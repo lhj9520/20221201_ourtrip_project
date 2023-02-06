@@ -3,6 +3,7 @@
   height: 100%;
 }
 .userfind-container > .type-header {
+  /* border: solid 1px red; */
   /* background-color: #ffff; */
   width: 100%;
   height: 80px;
@@ -11,6 +12,7 @@
   justify-content: center;
 }
 .userfind-container > .type-header > div {
+  /* border: solid 1px red; */
   width: 300px;
   height: 100%;
   text-align: center;
@@ -24,29 +26,35 @@
   color: #4a8522;
 }
 .userfind-container > .type-header > div > .imgicon {
+  /* border: solid 1px red; */
   font-size: 1.275rem;
   margin-right: 4px;
 }
 .userfind-container > .type-header > div > span {
+  /* border: solid 1px red; */
   font-size: 1.275rem;
   font-weight: bold;
   cursor: pointer;
 }
 .userfind-container > .type-header > img {
+  /* border: solid 1px red; */
   width: 120px;
   object-fit: contain;
   margin-right: 22px;
   cursor: pointer;
 }
 .userfind-container > .content-container {
+  /* border: solid 1px blue; */
   width: 100%;
   /* height: calc(100vh - 80px); */
 }
 
 .userfind-container > .content-container > .content-box {
+  /* border: solid 1px red; */
   width: 800px;
   margin: auto;
 }
+<<<<<<< HEAD:my-app/src/pages/my/UserFind.css
 
 .id-content,
 .pw-content {
@@ -75,44 +83,64 @@
   padding: 42px 62px;
 }
 
+.pwcertcon {
+  border: solid 1px lightgray;
+  margin-top: 12px;
+  padding: 24px 0;
+  text-align: center;
+}
+.pwcertcon span {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.pwcertcon .pwcertpadding {
+  padding-left: 120px;
+}
+
 .idchoicecon > div > label {
   display: inline-block;
-  margin-top: 18px;
   font-weight: bold;
   margin-left: 6px;
 }
 .idchoicecon > .lastbox {
   border-top: solid 1px lightgray;
   margin-top: 24px;
-}
-.idchoicecon > div > .findtextbox {
-  /* border: solid 1px blue; */
-  margin: 0 18px;
+  padding-top: 18px;
 }
 
-.idchoicecon > div > .findtextbox > span {
+.findtextbox {
+  /* border: solid 1px blue; */
+  margin: 0 18px;
+  text-align: start;
+}
+
+.findtextbox > span {
   display: inline-block;
   font-size: 0.775em;
   margin-bottom: 24px;
 }
-
-.idchoicecon > div > .findtextbox > div:last-child {
-  margin-top: 4px;
+.findtextbox > .large {
+  font-size: 1rem;
+  margin-bottom: 8px;
 }
-.idchoicecon > div > .findtextbox > div > span {
+
+.findtextbox > div > span {
   display: inline-block;
   width: 150px;
   font-size: 0.875rem;
   font-weight: bold;
   padding: 6px 12px;
 }
-.idchoicecon > div > .findtextbox > div > input,
+.pwdmodcon input,
+.findtextbox > div > input,
 .down > div > div > input {
   width: 200px;
   padding: 2px 0;
+  margin: 4px 0;
 }
-.idchoicecon button,
-.rescon button {
+
+.content-box button {
   border: solid 1px gray;
   margin-left: 18px;
   font-size: 0.775em;
@@ -122,7 +150,6 @@
 
 .rescon {
   border: solid 1px lightgray;
-  /* height: 70px; */
   margin-top: 32px;
   text-align: center;
   padding: 22px 0;
@@ -133,31 +160,34 @@
   height: auto;
 }
 .down {
-  height: 160px;
+  height: auto;
   margin-top: 32px;
 }
 .down > div {
   /* border: solid 1px red; */
   text-align: center;
 }
-
 .down > div > span {
   /* border: solid 1px red; */
-  font-size: 1rem;
+  display: inline-block;
+  font-size: 0.675rem;
   font-weight: bold;
 }
 
-.down > div > div {
-  /* border: solid 1px red; */
-  margin-top: 18px;
+.down > div > span:first-child {
+  font-size: 1rem;
+  margin-bottom: 22px;
 }
 
 .down > div > div > span {
+  /* border: solid 1px red; */
   display: inline-block;
+  /* width: 80px; */
   font-size: 0.875rem;
   font-weight: bold;
   padding: 6px 12px;
 }
+
 .pw > div > div > span {
   display: inline-block;
   font-size: 0.675rem;
@@ -188,3 +218,16 @@
   padding: 4px 0;
   width: 100%;
 }
+.pwdmodcon span {
+  display: block;
+  margin-bottom: 12px;
+}
+.pwdmodcon span:nth-child(2) {
+  font-size: 0.675rem;
+  color: #dc3545;
+}
+.pwdmodcon button {
+  margin: 6px 0 0 0;
+}
+=======
+>>>>>>> parent of bc979c9 (230204 아이디 찾기 구현,비밀번호 찾기 구현중):my-app/src/pages/UserFind.css
