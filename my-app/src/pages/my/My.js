@@ -88,7 +88,7 @@ function NicknameValue() {
     <div className="item">
       <span>닉네임</span>
       <div className="info-box">
-        {inputstate && <span>{loginUser.mem_nickname}</span>}
+        {inputstate && <span>{loginUser && loginUser.mem_nickname}</span>}
         {!inputstate && (
           <input
             ref={inputFocus}
@@ -207,7 +207,7 @@ function EmailValue() {
     <div className="item">
       <span>이메일</span>
       <div className="info-box">
-        {inputstate && <span>{loginUser.mem_email}</span>}
+        {inputstate && <span>{loginUser && loginUser.mem_email}</span>}
         {!inputstate && (
           <input
             ref={inputFocus}
@@ -307,7 +307,7 @@ function NameValue() {
     <div className="item">
       <span>이름</span>
       <div className="info-box">
-        {inputstate && <span>{loginUser.mem_username}</span>}
+        {inputstate && <span>{loginUser && loginUser.mem_username}</span>}
         {!inputstate && (
           <input
             ref={inputFocus}
@@ -403,7 +403,7 @@ function PhoneValue() {
     <div className="item">
       <span>휴대폰 전화번호</span>
       <div className="info-box">
-        {inputstate && <span>{loginUser.mem_phone}</span>}
+        {inputstate && <span>{loginUser && loginUser.mem_phone}</span>}
         {!inputstate && (
           <input
             ref={inputFocus}
@@ -714,11 +714,7 @@ function My() {
   });
 
   React.useEffect(() => {
-    if (loginUser.mem_userid !== undefined) {
-      // setState({ session: "마이" });
-      // console.log(loginUser);
-    } else {
-      // alert("로그인 세션 정보 없음!!");
+    if (loginUser === null) {
       navigation("/login", { replace: true });
     }
   }, [loginUser]);
@@ -740,6 +736,7 @@ function My() {
         console.log("닉네임 변경 오류!", e);
       });
   };
+
   return (
     <div className="container">
       <Menubar />
@@ -753,12 +750,18 @@ function My() {
             <div className="item">
               <span>아이디</span>
               <div className="info-box">
-                <span>{loginUser.mem_userid}</span>
+                <span>{loginUser && loginUser.mem_userid}</span>
               </div>
             </div>
             <PwdModModal></PwdModModal>
             <NicknameValue></NicknameValue>
-            <EmailValue></EmailValue>
+            {/* <EmailValue></EmailValue> */}
+            <div className="item">
+              <span>이메일</span>
+              <div className="info-box">
+                <span>{loginUser && loginUser.mem_email}</span>
+              </div>
+            </div>
           </section>
           <section className="user-info">
             <span className="title">본인 확인 정보</span>
@@ -766,7 +769,7 @@ function My() {
             <div className="item">
               <span>생년월일</span>
               <div className="info-box">
-                <span>{loginUser.mem_birth}</span>
+                <span>{loginUser && loginUser.mem_birth}</span>
               </div>
             </div>
             <PhoneValue></PhoneValue>

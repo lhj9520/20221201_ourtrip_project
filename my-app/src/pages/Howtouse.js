@@ -15,11 +15,11 @@ function Howtouse() {
     session: "로그인",
   });
 
-  React.useEffect(() => {
-    if (loginUser.mem_userid !== undefined) {
-      // setState({ session: "마이페이지" });
-    }
-  }, [loginUser]);
+  // React.useEffect(() => {
+  //   if (loginUser.mem_userid !== undefined) {
+  //     // setState({ session: "마이페이지" });
+  //   }
+  // }, [loginUser]);
 
   return (
     <div className="container">

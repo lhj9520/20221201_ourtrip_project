@@ -665,8 +665,19 @@ function Join() {
               className={classnames("overlapbtn", { over: email.dupisvalid })}
               onClick={duplicateEmailCheck}
             >
-              중복확인
+              인증번호 전송
             </button>
+            <div>
+              <span>인증 번호</span>
+              <input
+                type="text"
+                // value={code.inputcode}
+                // onChange={valuechange3}
+                placeholder="인증번호 6자리 숫자 입력"
+                // disabled={disable}
+              />
+              <button>확인</button>
+            </div>
             <section className="msgtitle">
               <span className="msg">{email.msg}</span>
             </section>

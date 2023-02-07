@@ -383,19 +383,16 @@ function Mymate() {
 
   //로그인 세션 상태 새로고침 하면 친구 목록 불러오기
   React.useEffect(() => {
-    // console.log("Mymate loginUser 이펙트 실행");
-    if (loginUser.mem_userid !== undefined) {
+    if (loginUser === null) {
+      navigation("/login", { replace: true });
+    } else {
       setState({ session: "마이페이지" });
       matereqlistcnt();
       matelist();
-    } else {
-      // alert("로그인 세션 정보 없음!!");
-      navigation("/login", { replace: true });
     }
   }, [loginUser]);
 
   React.useEffect(() => {
-    // console.log("Mymate dispatch 이펙트 실행");
     if (dispatch.code === "matelist") {
       matelist();
     }
@@ -410,7 +407,6 @@ function Mymate() {
       .then((res) => {
         const { code, data } = res.data;
         if (code === "success") {
-          // console.log(data.cnt);
           setReqcnt(data.cnt);
         }
       })

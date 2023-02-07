@@ -16,7 +16,8 @@ function Main() {
   });
 
   React.useEffect(() => {
-    if (loginUser.mem_userid !== undefined) {
+    // console.log("로그인 세션", loginUser);
+    if (loginUser !== null) {
       setState({ session: "마이페이지" });
     }
   }, [loginUser]);

@@ -17,14 +17,15 @@ function Menubar() {
   });
 
   React.useEffect(() => {
-    console.log("메뉴바 이팩트");
-    if (loginUser.mem_userid !== undefined) {
+    console.log("메뉴바 이팩트", loginUser);
+
+    if (loginUser === null) {
+      setState({ session: "로그인" });
+    } else {
       setState({ session: "마이페이지" });
       if (location.pathname === "/my") {
         setState({ session: "로그아웃" });
       }
-    } else {
-      setState({ session: "로그인" });
     }
   }, [loginUser]);
 
@@ -35,7 +36,6 @@ function Menubar() {
       navigation("/my");
     } else if (State.session === "로그아웃") {
       세션삭제하기();
-      navigation("/");
     }
   };
 
@@ -65,7 +65,7 @@ function Menubar() {
               <li
                 className="item"
                 onClick={() => {
-                  if (loginUser.mem_userid === undefined) {
+                  if (loginUser === null) {
                     alert("로그인 후 이용가능합니다.");
                   } else {
                     navigation("/mymate");
@@ -77,7 +77,7 @@ function Menubar() {
               <li
                 className="item"
                 onClick={() => {
-                  if (loginUser.mem_userid === undefined) {
+                  if (loginUser === null) {
                     alert("로그인 후 이용가능합니다.");
                   } else {
                     navigation("/mytrip");

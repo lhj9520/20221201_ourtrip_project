@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import "./App.css";
 
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
 import Join from "./pages/Join";
 import Login from "./pages/Login";
@@ -21,14 +21,21 @@ export let 세션정보가져오기 = () => {};
 export let 세션삭제하기 = () => {};
 
 function App() {
-  const [loginUser, setLoginUser] = React.useState({});
+  const navigation = useNavigate();
+
+  const initialloginuser = JSON.parse(localStorage.getItem("login"));
+  const [loginUser, setLoginUser] = React.useState(initialloginuser);
 
   세션정보가져오기 = async () => {
     await axios({
       url: "http://localhost:5000/user",
     }).then((res) => {
-      console.log("세션정보가져오기", res.data);
-      setLoginUser(res.data);
+      // console.log("세션정보가져오기", res.data);
+      if (res.data) {
+        console.log("세션정보저장하기", res.data);
+        localStorage.setItem("login", JSON.stringify(res.data));
+        setLoginUser(res.data);
+      }
     });
   };
 
@@ -36,14 +43,16 @@ function App() {
     await axios({
       url: "http://localhost:5000/userdelete",
     }).then((res) => {
-      setLoginUser(res.data);
       console.log("세션이 삭제됩니다");
+      localStorage.removeItem("login");
+      setLoginUser(null);
+      navigation("/");
     });
   };
 
-  React.useEffect(() => {
-    세션정보가져오기();
-  }, []);
+  // React.useEffect(() => {
+  //   console.log("loginuser정보", loginUser);
+  // }, []);
 
   return (
     <StoreContext.Provider

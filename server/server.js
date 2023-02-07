@@ -203,7 +203,7 @@ app.post("/nicknamechange", async (req, res) => {
     `SELECT seq,mate_idx FROM trip WHERE JSON_EXTRACT( mate_idx, '$.${idx}' ) IS NOT NULL`
   );
 
-  console.log(Lookupquery);
+  // console.log(Lookupquery);
 
   Lookupquery.map((data, index) => {
     let mate = JSON.parse(data.mate_idx);
@@ -524,7 +524,7 @@ app.get("/user", (req, res) => {
 });
 
 app.get("/userdelete", (req, res) => {
-  req.session.loginUser = {};
+  req.session.loginUser = null;
   req.session.save();
   res.send(req.session.loginUser);
 });

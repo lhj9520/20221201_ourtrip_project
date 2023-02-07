@@ -5,7 +5,7 @@ import "./MytripModal.css";
 import Menubar from "../../component/menubar";
 import Modal from "../../component/modal";
 
-import { StoreContext, 세션정보가져오기 } from "../../App";
+import { StoreContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 
 function Contents() {
@@ -424,23 +424,18 @@ function Mytrip() {
   const [matedata, setMatedata] = React.useState([]);
   const [tripdata, setTripdata] = React.useState([]);
 
-  React.useEffect(() => {
-    세션정보가져오기();
-  }, []);
   //로그인 세션 상태 새로고침 하면 실행
   React.useEffect(() => {
-    if (loginUser.mem_userid !== undefined) {
+    if (loginUser === null) {
+      navigation("/login", { replace: true });
+    } else {
       setState({ session: "마이페이지" });
       matelist();
       triplist();
-    } else {
-      // alert("로그인 세션 정보 없음!!");
-      navigation("/login", { replace: true });
     }
   }, [loginUser]);
 
   React.useEffect(() => {
-    // console.log("Mymate dispatch 이펙트 실행");
     if (dispatch.code === "triplist") {
       triplist();
     }

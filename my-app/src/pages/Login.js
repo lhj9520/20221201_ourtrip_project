@@ -49,6 +49,7 @@ function Login() {
       });
       return;
     }
+
     //자동로그인 확인
     await axios({
       url: "http://localhost:5000/login",
@@ -65,7 +66,6 @@ function Login() {
           alert(message);
           return;
         }
-        // console.log("세션정보가져오기실행");
         세션정보가져오기();
         navigation("/", { replace: true }); //{ replace: true }
       })
