@@ -713,11 +713,11 @@ function My() {
     session: "로그인",
   });
 
-  React.useEffect(() => {
-    if (loginUser === null) {
-      navigation("/login", { replace: true });
-    }
-  }, [loginUser]);
+  // React.useEffect(() => {
+  //   if (loginUser === null) {
+  //     // navigation("/login", { replace: true });
+  //   }
+  // }, [loginUser]);
 
   const withdrawalreq = async () => {
     await axios({

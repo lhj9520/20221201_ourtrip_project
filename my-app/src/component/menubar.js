@@ -21,6 +21,14 @@ function Menubar() {
 
     if (loginUser === null) {
       setState({ session: "로그인" });
+      if (
+        location.pathname === "/mymate" ||
+        location.pathname === "/mytrip" ||
+        location.pathname === "/my"
+      ) {
+        console.log("유저권한이없습니다. 메인으로 이동");
+        navigation("/login", { replace: true });
+      }
     } else {
       setState({ session: "마이페이지" });
       if (location.pathname === "/my") {

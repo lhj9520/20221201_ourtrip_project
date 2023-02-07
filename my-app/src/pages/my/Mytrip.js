@@ -426,9 +426,7 @@ function Mytrip() {
 
   //로그인 세션 상태 새로고침 하면 실행
   React.useEffect(() => {
-    if (loginUser === null) {
-      navigation("/login", { replace: true });
-    } else {
+    if (loginUser) {
       setState({ session: "마이페이지" });
       matelist();
       triplist();
