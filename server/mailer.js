@@ -13,7 +13,7 @@ module.exports = async (email, vericode) => {
   });
 
   const mailOption = {
-    from: "테스트입니다.",
+    from: "우리의여행",
     to: email,
     subject: "요청하신 인증번호를 알려드립니다.",
     html: `

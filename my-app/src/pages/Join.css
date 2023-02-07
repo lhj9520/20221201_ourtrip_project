@@ -194,6 +194,19 @@ select::-ms-expand {
   background-color: rgba(74, 133, 34, 0.8);
 }
 
-.small {
-  border: solid 1px red;
+.emailcontainer .emailcode {
+  /* border: solid 1px red; */
+  padding-top: 10px;
+}
+
+.emailcontainer .emailcode > span {
+  display: inline-block;
+  font-weight: bold;
+}
+
+.emailcontainer .emailcode > input {
+  width: 286px;
+  margin: 0 12px;
+  padding: 4px 0;
+  font-size: 1rem;
 }

@@ -50,6 +50,9 @@ function Join() {
     value: "",
     dupisvalid: false,
     msg: "",
+    inputcode: "",
+    servercode: "",
+    isvalid: false,
   });
 
   const [gender, setGender] = React.useState({
@@ -68,6 +71,8 @@ function Join() {
     isvalid: true,
     msg: "",
   });
+
+  const [disable, setDisable] = React.useState(true);
 
   const inputRef = useRef([]);
 
@@ -228,7 +233,26 @@ function Join() {
     const data = event.target.value;
     if (data.length <= 320) {
       setEmail((prevState) => {
-        return { ...prevState, value: data, dupisvalid: false, msg: "" };
+        return {
+          ...prevState,
+          value: data,
+          dupisvalid: false,
+          msg: "",
+          inputcode: "",
+          servercode: "",
+          isvalid: false,
+        };
+      });
+    }
+  };
+
+  const valuechange = (event) => {
+    const codeRegex = /^[0-9]{0,6}$/;
+
+    const data = event.target.value;
+    if (data.length <= 6 && codeRegex.test(data)) {
+      setEmail((prevState) => {
+        return { ...prevState, inputcode: data };
       });
     }
   };
@@ -363,10 +387,6 @@ function Join() {
       return;
     }
 
-    if (email.dupisvalid) {
-      console.log("이메일 중복 검사 완료");
-      return;
-    }
     await axios({
       url: "http://localhost:5000/emailcheck",
       method: "POST",
@@ -376,8 +396,16 @@ function Join() {
         const { code, message } = res.data;
         if (code === "success") {
           setEmail((prevState) => {
-            return { ...prevState, dupisvalid: true, msg: message };
+            return {
+              ...prevState,
+              dupisvalid: true,
+              isvalid: false,
+              inputcode: "",
+              servercode: "",
+              msg: "",
+            };
           });
+          emailcodeHandler();
         } else {
           setEmail((prevState) => {
             return { ...prevState, dupisvalid: false, msg: message };
@@ -387,6 +415,74 @@ function Join() {
       .catch((e) => {
         console.log("이메일 중복체크 오류!", e);
       });
+  };
+
+  /**
+   * 이메일 인증코드 전송
+   */
+  const emailcodeHandler = async () => {
+    alert(
+      "인증번호를 발송했습니다.\n인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요."
+    );
+    setDisable(false);
+
+    await axios({
+      url: "http://localhost:5000/mail",
+      method: "POST",
+      data: {
+        yourname: "join",
+        youremail: email.value,
+      },
+    })
+      .then((res) => {
+        const { code, vericode } = res.data;
+        if (code === 200) {
+          setEmail((prevState) => {
+            return { ...prevState, servercode: vericode };
+          });
+        }
+      })
+      .catch((e) => {
+        console.log("이메일 인증 코드 발송 오류!", e);
+      });
+  };
+  /**
+   * 이메일 인증코드 검사
+   */
+  const VerifycodeHandler = async () => {
+    if (disable) {
+      // console.log("비활성화");
+      if (email.inputcode === "") {
+        setEmail((prevState) => {
+          return { ...prevState, msg: "인증번호전송을 눌러주세요." };
+        });
+        return;
+      }
+    } else {
+      if (!disable && email.inputcode === "") {
+        setEmail((prevState) => {
+          return { ...prevState, msg: "인증번호를 입력하세요." };
+        });
+        return;
+      }
+
+      if (email.inputcode != email.servercode) {
+        setEmail((prevState) => {
+          return { ...prevState, msg: "인증번호가 틀렸습니다." };
+        });
+        return;
+      } else {
+        setEmail((prevState) => {
+          return { ...prevState, isvalid: true, msg: "인증되었습니다." };
+        });
+        setDisable(true);
+      }
+
+      // setEmail((prevState) => {
+      //   return { ...prevState, isvalid: true, msg: "인증되었습니다." };
+      // });
+      // setDisable(true);
+    }
   };
 
   /**
@@ -430,6 +526,7 @@ function Join() {
    * 회원가입 값 유효성 검사
    */
   const joinHandler = async () => {
+    // console.log(id, pw, name, birth, email, gender, nickname, phone);
     //아이디
     if (!id.dupisvalid) {
       inputRef.current[0].focus();
@@ -455,8 +552,8 @@ function Join() {
       inputRef.current[4].focus();
       return;
     }
-    //이메일 확인
-    if (!email.dupisvalid) {
+    //이메일 인증확인
+    if (!email.dupisvalid || !email.isvalid) {
       inputRef.current[5].focus();
       return;
     }
@@ -504,7 +601,6 @@ function Join() {
 
   return (
     <div className="join-container">
-      {/* <div className="toast">어쩌고노ㅓ라어ㅣ나어리</div>; */}
       <div className="centerfix">
         <img
           src={logoimg}
@@ -662,21 +758,24 @@ function Join() {
               onChange={emailvaluechange}
             />
             <button
-              className={classnames("overlapbtn", { over: email.dupisvalid })}
+              className="overlapbtn"
+              // className={classnames("overlapbtn", { over: email.dupisvalid })}
               onClick={duplicateEmailCheck}
             >
-              인증번호 전송
+              인증번호전송
             </button>
-            <div>
+            <div className="emailcode">
               <span>인증 번호</span>
               <input
                 type="text"
-                // value={code.inputcode}
-                // onChange={valuechange3}
+                value={email.inputcode}
+                onChange={valuechange}
                 placeholder="인증번호 6자리 숫자 입력"
-                // disabled={disable}
+                disabled={disable}
               />
-              <button>확인</button>
+              <button className="overlapbtn" onClick={VerifycodeHandler}>
+                확인
+              </button>
             </div>
             <section className="msgtitle">
               <span className="msg">{email.msg}</span>
