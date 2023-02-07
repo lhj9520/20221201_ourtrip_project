@@ -4,156 +4,215 @@ import $ from "jquery";
 import classnames from "classnames";
 import "./Join.css";
 import logoimg from "../img/logo_oco.png";
+import useDidMountEffect from "./useDidMountEffect.js";
 
 import { useNavigate } from "react-router-dom";
 
 function Join() {
   const navigation = useNavigate();
 
-  const [emsg1, setEmsg1] = React.useState("");
-  const [emsg2, setEmsg2] = React.useState("");
-  const [emsg3, setEmsg3] = React.useState("");
-  const [emsg4, setEmsg4] = React.useState("");
-  const [emsg5_1, setEmsg5_1] = React.useState("");
-  const [emsg5_2, setEmsg5_2] = React.useState("");
-  const [emsg5_3, setEmsg5_3] = React.useState("");
-  const [emsg6, setEmsg6] = React.useState("");
-  const [emsg7, setEmsg7] = React.useState("");
-  const [emsg8, setEmsg8] = React.useState("");
-  const [emsg9, setEmsg9] = React.useState("");
-
-  const [id, setId] = React.useState("");
-  const [idisvalid, setIdisvalid] = React.useState(false);
-  const [dupidisvalid, setDupidisvalid] = React.useState(false);
-
-  const [pw, setPw] = React.useState("");
-  const [rpw, setRpw] = React.useState("");
-  const [pwisvalid, setPwisvalid] = React.useState(false);
-  const [samepwisvalid, setSamepwisvalid] = React.useState(false);
-
-  const [name, setName] = React.useState("");
-  const [nameisvalid, setNameisvalid] = React.useState(false);
-
-  const [birth, setBirth] = React.useState({
-    year: "",
-    month: "",
-    day: "",
-  });
-
-  const [email, setEmail] = React.useState("");
-  const [emailisvalid, setEmailisvalid] = React.useState(false);
-  const [dupemailisvalid, setDupemailisvalid] = React.useState(false);
-
-  const [gender, setGender] = React.useState("");
-  const [genderidvalid, setGenderisvalid] = React.useState(false);
-
-  const [nickname, setNickname] = React.useState("");
-  const [nicknameisvalid, setNicknameisvalid] = React.useState(false);
-  const [dupnicknameisvalid, setDupnicknameisvalid] = React.useState(false);
-
-  const [phone, setPhone] = React.useState("");
-  const [phoneisvalid, setPhoneisvalid] = React.useState(true);
-
-  const date = new Date();
-  const currentyear = date.getFullYear();
-  let yearArr = [];
-  for (let i = currentyear; i > currentyear - 100; i--) {
-    yearArr.push(i);
-  }
   const monthArr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   const dayArr = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
     22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
   ];
 
+  const [id, setId] = React.useState({
+    value: "",
+    dupisvalid: false,
+    msg: "",
+  });
+
+  const [pw, setPw] = React.useState({
+    value: "",
+    revalue: "",
+    isvalid: false,
+    sameisvalid: false,
+    msg1: "",
+    msg2: "",
+  });
+
+  const [name, setName] = React.useState({
+    value: "",
+    isvalid: false,
+    msg: "",
+  });
+
+  const [birth, setBirth] = React.useState({
+    year: "",
+    month: 0,
+    day: 0,
+    isvalid: false,
+    msg: "",
+  });
+
+  const [email, setEmail] = React.useState({
+    value: "",
+    dupisvalid: false,
+    msg: "",
+  });
+
+  const [gender, setGender] = React.useState({
+    value: "",
+    msg: "",
+  });
+
+  const [nickname, setNickname] = React.useState({
+    value: "",
+    dupisvalid: false,
+    msg: "",
+  });
+
+  const [phone, setPhone] = React.useState({
+    value: "",
+    isvalid: true,
+    msg: "",
+  });
+
   const inputRef = useRef([]);
 
   const idvaluechange = (event) => {
-    const idRegex = /^[A-Za-z0-9]{4,12}$/;
-    const vid = event.target.value;
-    setId(vid);
-    setDupidisvalid(false);
-    //아이디 예외처리
-    if (vid === "") {
-      setEmsg1("필수입니다.");
-      setIdisvalid(false);
-    } else {
-      if (!idRegex.test(vid)) {
-        setEmsg1("영어+숫자 4~12 글자로 입력해주세요.");
-        setIdisvalid(false);
-      } else {
-        setEmsg1("");
-        setIdisvalid(true);
-      }
+    const data = event.target.value;
+    if (data.length <= 12) {
+      setId((prevState) => {
+        return { ...prevState, value: data, dupisvalid: false, msg: "" };
+      });
     }
   };
 
-  const pwvaluechange = (event) => {
+  useDidMountEffect(() => {
     const passwordRegex =
       /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
-    const vpw = event.target.value;
-    setPw(vpw);
-    //비밀번호 예외처리
-    if (vpw === "") {
-      setEmsg2("필수입니다.");
-      setPwisvalid(false);
-    } else {
-      // setEmsg2("");
-      if (!passwordRegex.test(vpw)) {
-        setEmsg2("숫자+영문자+특수문자 조합으로 8~20자리 입력해주세요.");
-        setPwisvalid(false);
-      } else {
-        setEmsg2("");
-        setPwisvalid(true);
-      }
 
-      if (vpw === rpw) {
-        setEmsg3("비밀번호가 일치합니다.");
-        setSamepwisvalid(true);
+    if ((!pw.value && !pw.revalue) || (!pw.value && pw.revalue)) {
+      // console.log("둘 다 비었음");
+      setPw((prevState) => {
+        return {
+          ...prevState,
+          isvalid: false,
+          msg1: "",
+          sameisvalid: false,
+          msg2: "",
+        };
+      });
+    } else if (pw.value && !pw.revalue) {
+      // console.log("확인 비었음");
+      if (!passwordRegex.test(pw.value)) {
+        // setEmsg2("숫자+영문자+특수문자 조합으로 8~20자리 입력해주세요.");
+        setPw((prevState) => {
+          return {
+            ...prevState,
+            isvalid: false,
+            msg1: "숫자+영문자+특수문자 조합으로 8~20자리 입력해주세요.",
+          };
+        });
       } else {
-        setEmsg3("비밀번호가 일치하지 않습니다.");
-        setSamepwisvalid(false);
+        setPw((prevState) => {
+          return {
+            ...prevState,
+            isvalid: true,
+            msg1: "",
+          };
+        });
       }
+    } else {
+      // console.log("둘다 입력된 상태");
+      if (pw.value === pw.revalue) {
+        setPw((prevState) => {
+          return {
+            ...prevState,
+            sameisvalid: true,
+            msg2: "비밀번호가 일치합니다.",
+          };
+        });
+      } else {
+        setPw((prevState) => {
+          return {
+            ...prevState,
+            sameisvalid: false,
+            msg2: "비밀번호가 일치하지않습니다.",
+          };
+        });
+      }
+    }
+  }, [pw.value, pw.revalue]);
+
+  const pwvaluechange = (event) => {
+    const data = event.target.value;
+    if (data.length <= 20) {
+      setPw((prevState) => {
+        return { ...prevState, value: data };
+      });
     }
   };
 
   const repwvaluechange = (event) => {
-    const vrpw = event.target.value;
-    setRpw(vrpw);
-    //비밀번호확인 예외처리
-    if (vrpw === "") {
-      setEmsg3("필수입니다.");
-      setSamepwisvalid(false);
-    } else {
-      if (vrpw === pw) {
-        setEmsg3("비밀번호가 일치합니다.");
-        setSamepwisvalid(true);
-      } else {
-        setEmsg3("비밀번호가 일치하지 않습니다.");
-        setSamepwisvalid(false);
-      }
+    const data = event.target.value;
+    if (data.length <= 20) {
+      setPw((prevState) => {
+        return { ...prevState, revalue: data };
+      });
     }
   };
+
+  useDidMountEffect(() => {
+    const nameRegex = /^[가-힣]+$/;
+    if (!name.value) {
+      // console.log("이름 비었음");
+      setName((prevState) => {
+        return { ...prevState, isvalid: false, msg: "" };
+      });
+    } else {
+      // console.log("이름 입력중");
+      if (!nameRegex.test(name.value) || name.value.length < 2) {
+        setName((prevState) => {
+          return {
+            ...prevState,
+            isvalid: false,
+            msg: "2글자 이상 5글자 이하 한글만 입력해주세요.",
+          };
+        });
+      } else {
+        setName((prevState) => {
+          return { ...prevState, isvalid: true, msg: "" };
+        });
+      }
+    }
+  }, [name.value]);
 
   const namevaluechange = (event) => {
-    const nameRegex = /^[가-힣]+$/;
-
-    const vname = event.target.value;
-    setName(vname);
-    //이름 예외처리
-    if (vname === "") {
-      setEmsg4("필수입니다.");
-      setNameisvalid(false);
-    } else {
-      if (!nameRegex.test(vname) || vname.length < 2 || vname.length > 5) {
-        setEmsg4("2글자 이상 5글자 이하 한글만 입력해주세요.");
-        setNameisvalid(false);
-      } else {
-        setEmsg4("");
-        setNameisvalid(true);
-      }
+    const data = event.target.value;
+    if (data.length <= 5) {
+      setName((prevState) => {
+        return { ...prevState, value: data };
+      });
     }
   };
+
+  const yearvaluechange = (event) => {
+    const codeRegex = /^[0-9]{0,4}$/;
+
+    const data = event.target.value;
+    if (data.length <= 4 && codeRegex.test(data)) {
+      setBirth((prevState) => {
+        return { ...prevState, year: data };
+      });
+    }
+  };
+
+  useDidMountEffect(() => {
+    // console.log(cloneData);
+
+    if (birth.year && birth.month && birth.day) {
+      setBirth((prevState) => {
+        return { ...prevState, isvalid: true, msg: "" };
+      });
+    } else {
+      setBirth((prevState) => {
+        return { ...prevState, isvalid: false, msg: "필수입니다." };
+      });
+    }
+  }, [birth.year, birth.month, birth.day]);
 
   const birthvaluechange = (event) => {
     const target = $(event.target);
@@ -163,94 +222,69 @@ function Join() {
     const cloneData = { ...birth };
     cloneData[name] = vbrith;
     setBirth(cloneData);
-
-    // console.log(cloneData);
-
-    if (name === "year" && vbrith === "") {
-      setEmsg5_1("필수입니다.");
-    } else if (name === "month" && vbrith === "") {
-      setEmsg5_2("필수입니다.");
-    } else if (name === "day" && vbrith === "") {
-      setEmsg5_3("필수입니다.");
-    } else if (name === "year" && vbrith) {
-      setEmsg5_1("");
-    } else if (name === "month" && vbrith) {
-      setEmsg5_2("");
-    } else if (name === "day" && vbrith) {
-      setEmsg5_3("");
-    }
   };
 
   const emailvaluechange = (event) => {
-    const emailRegex =
-      /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-    const vemail = event.target.value;
-    setEmail(vemail);
-    setDupemailisvalid(false);
-    //email 예외처리
-    if (vemail === "") {
-      setEmsg6("필수입니다.");
-      setEmailisvalid(false);
-    } else {
-      if (!emailRegex.test(vemail)) {
-        setEmsg6("이메일 형식이 아닙니다.");
-        setEmailisvalid(false);
-      } else {
-        setEmsg6("");
-        setEmailisvalid(true);
-      }
+    const data = event.target.value;
+    if (data.length <= 320) {
+      setEmail((prevState) => {
+        return { ...prevState, value: data, dupisvalid: false, msg: "" };
+      });
     }
   };
 
   const gendervaluechange = (event) => {
-    const vgender = event.target.value;
-    // console.log(vgender);
-    setGender(vgender);
-    if (vgender === "") {
-      setEmsg7("필수입니다.");
-      setGenderisvalid(false);
+    const data = event.target.value;
+    if (data === "") {
+      setGender((prevState) => {
+        return { ...prevState, isvalid: false, msg: "필수입니다." };
+      });
     } else {
-      setEmsg7("");
-      setGenderisvalid(true);
+      setGender((prevState) => {
+        return { ...prevState, value: data, msg: "" };
+      });
     }
   };
 
   const nicknamevaluechange = (event) => {
-    const vnname = event.target.value;
-    setNickname(vnname);
-    setDupnicknameisvalid(false);
-    //이름 예외처리
-    if (vnname === "") {
-      setEmsg8("필수입니다.");
-      setNicknameisvalid(false);
-    } else {
-      if (vnname.length > 12) {
-        setEmsg8("12글자 미만으로 입력해주세요.");
-        setNicknameisvalid(false);
-      } else {
-        setEmsg8("");
-        setNicknameisvalid(true);
-      }
+    const data = event.target.value;
+    if (data.length <= 12) {
+      setNickname((prevState) => {
+        return { ...prevState, value: data, dupisvalid: false, msg: "" };
+      });
     }
   };
 
-  const phonevaluechange = (event) => {
+  useDidMountEffect(() => {
     const phoneRegex = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
-    const vphone = event.target.value;
 
-    setPhone(vphone);
-
-    if (vphone === "") {
-      setEmsg9("");
-      setPhoneisvalid(true);
-      return;
-    }
-    if (!phoneRegex.test(vphone)) {
-      setEmsg9("잘못된 번호입니다. 다시 확인해주세요.");
-      setPhoneisvalid(false);
+    if (!phone.value) {
+      setPhone((prevState) => {
+        return { ...prevState, isvalid: true, msg: "" };
+      });
     } else {
-      setEmsg9("");
-      setPhoneisvalid(true);
+      if (!phoneRegex.test(phone.value)) {
+        setPhone((prevState) => {
+          return {
+            ...prevState,
+            isvalid: false,
+            msg: "잘못된 번호입니다. 다시 확인해주세요.",
+          };
+        });
+      } else {
+        setPhone((prevState) => {
+          return { ...prevState, isvalid: true, msg: "" };
+        });
+      }
+    }
+  }, [phone.value]);
+
+  const phonevaluechange = (event) => {
+    const data = event.target.value;
+    if (data.length <= 13) {
+      setPhone((prevState) => {
+        return { ...prevState, value: data, msg: "" };
+      });
     }
   };
 
@@ -258,29 +292,46 @@ function Join() {
    * 아이디 중복검사
    */
   const duplicateIdCheck = async () => {
-    if (!idisvalid) {
-      // console.log("아이디가 유효하지 않습니다");
+    const idRegex = /^[A-Za-z0-9]{4,12}$/;
+
+    //아이디 예외처리
+    if (id.value === "") {
+      setId((prevState) => {
+        return { ...prevState, msg: "아이디를 입력해주세요." };
+      });
       return;
     }
-    if (dupidisvalid) {
-      // console.log("아이디 중복 확인 완료");
+
+    if (!idRegex.test(id.value)) {
+      setId((prevState) => {
+        return {
+          ...prevState,
+          msg: "영어+숫자 조합 4~12 글자로 입력해주세요.",
+        };
+      });
       return;
     }
+
+    if (id.dupisvalid) {
+      console.log("아이디 중복확인 완료");
+      return;
+    }
+
     await axios({
       url: "http://localhost:5000/idcheck",
       method: "POST",
-      data: { id: id },
+      data: { id: id.value },
     })
       .then((res) => {
         const { code, message } = res.data;
-        if (code === "error") {
-          setEmsg1(message);
-          setIdisvalid(false);
-          setDupidisvalid(false);
+        if (code === "success") {
+          setId((prevState) => {
+            return { ...prevState, dupisvalid: true, msg: message };
+          });
         } else {
-          setEmsg1(message);
-          setIdisvalid(true);
-          setDupidisvalid(true);
+          setId((prevState) => {
+            return { ...prevState, dupisvalid: false, msg: message };
+          });
         }
       })
       .catch((e) => {
@@ -292,29 +343,45 @@ function Join() {
    * 이메일 중복검사
    */
   const duplicateEmailCheck = async () => {
-    if (!emailisvalid) {
-      // console.log("이메일이 유효하지 않습니다");
+    const emailRegex =
+      /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+
+    if (email.value === "") {
+      setEmail((prevState) => {
+        return { ...prevState, msg: "이메일을 입력해주세요." };
+      });
       return;
     }
-    if (dupemailisvalid) {
-      // console.log("이메일 중복 확인 완료");
+
+    if (!emailRegex.test(email.value)) {
+      setEmail((prevState) => {
+        return {
+          ...prevState,
+          msg: "이메일 형식이 아닙니다.",
+        };
+      });
+      return;
+    }
+
+    if (email.dupisvalid) {
+      console.log("이메일 중복 검사 완료");
       return;
     }
     await axios({
       url: "http://localhost:5000/emailcheck",
       method: "POST",
-      data: { email: email },
+      data: { email: email.value },
     })
       .then((res) => {
         const { code, message } = res.data;
-        if (code === "error") {
-          setEmsg6(message);
-          setEmailisvalid(false);
-          setDupemailisvalid(false);
+        if (code === "success") {
+          setEmail((prevState) => {
+            return { ...prevState, dupisvalid: true, msg: message };
+          });
         } else {
-          setEmsg6(message);
-          setEmailisvalid(true);
-          setDupemailisvalid(true);
+          setEmail((prevState) => {
+            return { ...prevState, dupisvalid: false, msg: message };
+          });
         }
       })
       .catch((e) => {
@@ -326,29 +393,33 @@ function Join() {
    * 닉네임 중복검사
    */
   const duplicatenickCheck = async () => {
-    if (!nicknameisvalid) {
-      // console.log("닉네임이 유효하지 않습니다");
+    if (nickname.value === "") {
+      setNickname((prevState) => {
+        return { ...prevState, msg: "닉네임을 입력해주세요." };
+      });
       return;
     }
-    if (dupnicknameisvalid) {
-      // console.log("닉네임 중복 확인 완료");
+
+    if (nickname.dupisvalid) {
+      console.log("닉네임 중복 확인 완료");
       return;
     }
+
     await axios({
       url: "http://localhost:5000/nicknamecheck",
       method: "POST",
-      data: { nickname: nickname },
+      data: { nickname: nickname.value },
     })
       .then((res) => {
         const { code, message } = res.data;
-        if (code === "error") {
-          setEmsg8(message);
-          setNicknameisvalid(false);
-          setDupnicknameisvalid(false);
+        if (code === "success") {
+          setNickname((prevState) => {
+            return { ...prevState, dupisvalid: true, msg: message };
+          });
         } else {
-          setEmsg8(message);
-          setNicknameisvalid(true);
-          setDupnicknameisvalid(true);
+          setNickname((prevState) => {
+            return { ...prevState, dupisvalid: false, msg: message };
+          });
         }
       })
       .catch((e) => {
@@ -358,80 +429,64 @@ function Join() {
   /**
    * 회원가입 값 유효성 검사
    */
-  const joinisvalid = () => {
-    if (!idisvalid) {
-      // console.log("아이디를 확인하세요");
+  const joinHandler = async () => {
+    //아이디
+    if (!id.dupisvalid) {
       inputRef.current[0].focus();
       return;
     }
-    if (!dupidisvalid) {
-      // console.log("아이디 중복을 확인하세요");
-      return;
-    }
-    if (!pwisvalid) {
-      // console.log("비밀번호를 확인하세요");
+    //비밀번호
+    if (!pw.isvalid) {
       inputRef.current[1].focus();
       return;
     }
-    if (!samepwisvalid) {
-      // console.log("비밀번호 재입력을 확인하세요");
+    //비밀번호 확인
+    if (!pw.sameisvalid) {
       inputRef.current[2].focus();
       return;
     }
-    if (!nameisvalid) {
-      // console.log("이름을 확인하세요");
+    //이름 확인
+    if (!name.isvalid) {
       inputRef.current[3].focus();
       return;
     }
-    //생일
-    if (!birth.year || !birth.month || !birth.day) {
-      // console.log("날짜를 확인하세요");
-      return;
-    }
-    if (!emailisvalid) {
-      // console.log("이메일을 확인하세요");
+    //생년월일 확인
+    if (!birth.isvalid) {
       inputRef.current[4].focus();
       return;
     }
-    if (!dupemailisvalid) {
-      // console.log("이메일 중복을 확인하세요");
-      return;
-    }
-    if (!genderidvalid) {
-      // console.log("성별을 확인하세요");
-      return;
-    }
-    if (!nicknameisvalid) {
-      // console.log("닉네임을 확인하세요");
-
+    //이메일 확인
+    if (!email.dupisvalid) {
       inputRef.current[5].focus();
       return;
     }
-    if (!dupnicknameisvalid) {
-      // console.log("닉네임 중복을 확인하세요");
+    //성별 확인
+    if (!gender.value) {
       return;
     }
-    if (!phoneisvalid) {
-      // console.log("번호를 확인하세요");
+    //닉네임 확인
+    if (!nickname.dupisvalid) {
+      inputRef.current[6].focus();
+      return;
+    }
+    //번호 확인
+    if (!phone.isvalid) {
+      inputRef.current[7].focus();
       return;
     }
 
-    joincheck();
-  };
-
-  const joincheck = async () => {
     await axios({
       url: "http://localhost:5000/join",
       method: "POST",
       data: {
-        id: id,
-        pw: pw,
-        name: name,
+        id: id.value,
+        pw: pw.value,
+        name: name.value,
         birth: birth,
-        email: email,
-        gender: gender,
-        nickname: nickname,
-        phone: phone,
+        email: email.value,
+        gender: gender.value,
+        nickname: nickname.value,
+        phone: phone.value,
       },
     })
       .then((res) => {
@@ -469,18 +524,20 @@ function Join() {
               ref={(el) => (inputRef.current[0] = el)}
               type="text"
               name="id"
+              maxLength={12}
+              value={id.value}
               placeholder="아이디"
               className="item overlap"
               onChange={idvaluechange}
             />
             <button
-              className={classnames("overlapbtn", { over: dupidisvalid })}
+              className={classnames("overlapbtn", { over: id.dupisvalid })}
               onClick={duplicateIdCheck}
             >
               중복확인
             </button>
             <section className="msgtitle">
-              <span className="msg">{emsg1}</span>
+              <span className="msg">{id.msg}</span>
             </section>
           </div>
           <div className="pwcontainer">
@@ -492,6 +549,8 @@ function Join() {
               ref={(el) => (inputRef.current[1] = el)}
               type="password"
               name="pw"
+              maxLength={20}
+              value={pw.value}
               placeholder="비밀번호"
               className="item"
               onChange={pwvaluechange}
@@ -500,7 +559,7 @@ function Join() {
               8~20자까지 영문,숫자,특수문자(_!@#$%^&*)모두 조합하여 입력
             </span>
             <section className="msgtitle">
-              <span className="msg">{emsg2}</span>
+              <span className="msg">{pw.msg1}</span>
             </section>
           </div>
           <div className="repwcontainer">
@@ -512,12 +571,14 @@ function Join() {
               ref={(el) => (inputRef.current[2] = el)}
               type="password"
               name="repw"
+              maxLength={20}
+              value={pw.revalue}
               placeholder="비밀번호 재입력"
               className="item"
               onChange={repwvaluechange}
             />
             <section className="msgtitle">
-              <span className="msg">{emsg3}</span>
+              <span className="msg">{pw.msg2}</span>
             </section>
           </div>
           <div className="namecontainer">
@@ -529,12 +590,14 @@ function Join() {
               ref={(el) => (inputRef.current[3] = el)}
               type="text"
               name="name"
+              maxLength={5}
+              value={name.value}
               placeholder="이름"
               className="item"
               onChange={namevaluechange}
             />
             <section className="msgtitle">
-              <span className="msg">{emsg4}</span>
+              <span className="msg">{name.msg}</span>
             </section>
           </div>
           <div className="birthcontainer">
@@ -542,19 +605,15 @@ function Join() {
               <span>생년월일</span>
               <span className="essential">*</span>
             </section>
-            <select
-              className="b-box"
-              id="year"
-              required
-              onChange={birthvaluechange}
-            >
-              <option value="">연도</option>
-              {yearArr.map((year, index) => (
-                <option key={index} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
+            <input
+              ref={(el) => (inputRef.current[4] = el)}
+              type="text"
+              maxLength={4}
+              value={birth.year}
+              placeholder="년(4자)"
+              className="item small"
+              onChange={yearvaluechange}
+            />
             <select
               className="b-box second"
               id="month"
@@ -583,13 +642,7 @@ function Join() {
             </select>
             <div className="line">
               <section className="msgtitle">
-                <span className="msg">{emsg5_1}</span>
-              </section>
-              <section className="msgtitle">
-                <span className="msg">{emsg5_2}</span>
-              </section>
-              <section className="msgtitle">
-                <span className="msg">{emsg5_3}</span>
+                <span className="msg">{birth.msg}</span>
               </section>
             </div>
           </div>
@@ -599,21 +652,23 @@ function Join() {
               <span className="essential">*</span>
             </section>
             <input
-              ref={(el) => (inputRef.current[4] = el)}
+              ref={(el) => (inputRef.current[5] = el)}
               type="text"
               name="email"
+              maxLength={320}
+              value={email.value}
               placeholder="geenee@gmail.com"
               className="item overlap"
               onChange={emailvaluechange}
             />
             <button
-              className={classnames("overlapbtn", { over: dupemailisvalid })}
+              className={classnames("overlapbtn", { over: email.dupisvalid })}
               onClick={duplicateEmailCheck}
             >
               중복확인
             </button>
             <section className="msgtitle">
-              <span className="msg">{emsg6}</span>
+              <span className="msg">{email.msg}</span>
             </section>
           </div>
           <div className="gendercontainer">
@@ -632,7 +687,7 @@ function Join() {
               <option value="F">여성</option>
             </select>
             <section className="msgtitle">
-              <span className="msg">{emsg7}</span>
+              <span className="msg">{gender.msg}</span>
             </section>
           </div>
           <div className="nicknamecontainer">
@@ -641,21 +696,25 @@ function Join() {
               <span className="essential">*</span>
             </section>
             <input
-              ref={(el) => (inputRef.current[5] = el)}
+              ref={(el) => (inputRef.current[6] = el)}
               type="text"
               name="nickname"
+              maxLength={12}
+              value={nickname.value}
               placeholder="닉네임"
               className="item overlap"
               onChange={nicknamevaluechange}
             />
             <button
-              className={classnames("overlapbtn", { over: dupnicknameisvalid })}
+              className={classnames("overlapbtn", {
+                over: nickname.dupisvalid,
+              })}
               onClick={duplicatenickCheck}
             >
               중복확인
             </button>
             <section className="msgtitle">
-              <span className="msg">{emsg8}</span>
+              <span className="msg">{nickname.msg}</span>
             </section>
           </div>
           <div className="phonecontainer">
@@ -663,17 +722,20 @@ function Join() {
               <span>휴대폰 번호</span>
             </section>
             <input
+              ref={(el) => (inputRef.current[7] = el)}
               type="text"
               name="phone"
+              maxLength={13}
+              value={phone.value}
               placeholder="010-1234-1234"
               className="item"
               onChange={phonevaluechange}
             />
             <section className="msgtitle">
-              <span className="msg">{emsg9}</span>
+              <span className="msg">{phone.msg}</span>
             </section>
           </div>
-          <button className="joinbtn" onClick={joinisvalid}>
+          <button className="joinbtn" onClick={joinHandler}>
             회원가입
           </button>
         </div>

@@ -54,7 +54,6 @@
   width: 800px;
   margin: auto;
 }
-<<<<<<< HEAD:my-app/src/pages/my/UserFind.css
 
 .id-content,
 .pw-content {
@@ -229,5 +228,3 @@
 .pwdmodcon button {
   margin: 6px 0 0 0;
 }
-=======
->>>>>>> parent of bc979c9 (230204 아이디 찾기 구현,비밀번호 찾기 구현중):my-app/src/pages/UserFind.css

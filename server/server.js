@@ -379,6 +379,7 @@ app.post("/join", async (req, res) => {
    *
    * DB에 id,nickname,pw insert
    */
+  console.log(req.body);
   const { id, pw, name, birth, email, gender, nickname, phone } = req.body;
 
   const hashpw = md5(pw);
@@ -393,7 +394,7 @@ app.post("/join", async (req, res) => {
 
   let queryresult = "";
   phone === ""
-    ? (queryresult = `INSERT INTO USER(mem_userid,mem_password,mem_username,mem_birth,mem_email,mem_gender,mem_nickname,mem_phone,mem_regtime) VALUES ('${id}','${hashpw}','${name}','${bdate}','${email}','${gender}','${nickname}',NULL,NOW())`)
+    ? (queryresult = `INSERT INTO USER(mem_userid,mem_password,mem_username,mem_birth,mem_email,mem_gender,mem_nickname,mem_phone,mem_regtime) VALUES ('${id}','${hashpw}','${name}','${bdate}','${email}','${gender}','${nickname}','',NOW())`)
     : (queryresult = `INSERT INTO USER(mem_userid,mem_password,mem_username,mem_birth,mem_email,mem_gender,mem_nickname,mem_phone,mem_regtime) VALUES ('${id}','${hashpw}','${name}','${bdate}','${email}','${gender}','${nickname}','${phone}',NOW())`);
   await runDB(queryresult);
 
