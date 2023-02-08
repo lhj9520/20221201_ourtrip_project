@@ -786,6 +786,24 @@ app.post("/triplist", async (req, res) => {
   res.send(result);
 });
 
+app.post("/tripview", async (req, res) => {
+  // console.log(req.body);
+  const seq = req.body.seq;
+
+  const result = {
+    code: "success",
+    message: seq + "번째 여행",
+    data: "",
+  };
+
+  const queryresult = await runDB(
+    `SELECT trip.*,mem_nickname AS host_nickname FROM trip,USER WHERE seq = ${seq} AND mem_idx = host_idx;`
+  );
+
+  result.data = queryresult[0];
+  res.send(result);
+});
+
 app.post("/tripadd", async (req, res) => {
   // console.log(req.body);
   const title = req.body.title;
@@ -846,6 +864,29 @@ app.post("/tripexcept", async (req, res) => {
   res.send(result);
 });
 
+app.post("/triptitlechange", async (req, res) => {
+  console.log(req.body);
+  const seq = req.body.seq;
+  const title = req.body.title;
+
+  const result = {
+    code: "success",
+    message: "타이틀 변경 성공",
+  };
+
+  if (title === "") {
+    const query = await runDB(
+      `UPDATE trip SET title=DATE_FORMAT(NOW(), "%y-%m-%d %H:%i 작성") WHERE seq = ${seq}`
+    );
+    res.send(result);
+    return;
+  }
+  const query = await runDB(
+    `UPDATE trip SET title="${title}" WHERE seq = ${seq}`
+  );
+  res.send(result);
+});
+
 // 메일 전송 라우트
 app.post("/mail", async (req, res) => {
   // console.log(req.body);
@@ -857,7 +898,7 @@ app.post("/mail", async (req, res) => {
     vericode = vericode - 100000;
   }
 
-  console.log(vericode);
+  // console.log(vericode);
 
   mailer(youremail, vericode).then((response) => {
     if (response === "success") {

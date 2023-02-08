@@ -25,7 +25,7 @@ function Contents() {
                 <section
                   className="triptitle"
                   onClick={() => {
-                    // navigation("/");
+                    navigation(`/mytrip/plan/${data.seq}`);
                   }}
                 >
                   {data.title}
@@ -428,8 +428,8 @@ function Mytrip() {
   React.useEffect(() => {
     if (loginUser) {
       setState({ session: "마이페이지" });
-      matelist();
       triplist();
+      matelist();
     }
   }, [loginUser]);
 

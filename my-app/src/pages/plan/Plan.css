@@ -1,0 +1,85 @@
+.flex {
+  display: flex;
+}
+.flexcolmun {
+  flex-direction: column;
+}
+.gray {
+  color: gray;
+}
+.point {
+  cursor: pointer;
+}
+.plancontainer {
+  width: 100%;
+  height: 100%;
+  /* border: solid 1px red; */
+}
+
+.plancontainer .headercon {
+  border: solid 1px black;
+  height: 70px;
+  padding: 12px 0;
+}
+.plancontainer .headercon .imgicon {
+  /* border: solid 1px blue; */
+  height: 25px;
+  margin: auto;
+}
+.plancontainer .headercon .small {
+  /* border: solid 1px blue; */
+  height: 14px;
+  margin: 0;
+}
+.plancontainer .headercon .center {
+  /* border: solid 1px red; */
+  align-items: center;
+  padding-right: 8px;
+}
+.plancontainer .headercon .widthfix {
+  /* border: solid 1px red; */
+  width: 75px;
+}
+.plancontainer .headercon .flexcolmun > span {
+  font-size: 0.685rem;
+  font-weight: bold;
+  text-align: center;
+}
+.plancontainer .headercon > .title > div > .imgicon:hover {
+  /* border: solid 1px red; */
+  color: lightgray;
+}
+.plancontainer .headercon > .title > span {
+  font-size: 1rem;
+  font-weight: bold;
+  margin: auto;
+  padding: 0 12px;
+}
+
+.plancontainer .listcon {
+  /* border: solid 1px red; */
+  width: 150px;
+  height: 100%;
+}
+.plancontainer .listcon > span {
+  /* border: solid 1px red; */
+  display: block;
+  height: 30px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  padding-top: 5px;
+}
+.plancontainer .listcon > ul {
+  /* border: solid 1px blue; */
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.plancontainer .listcon .item {
+  /* border-bottom: solid 1px gray; */
+  height: 30px;
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  padding-top: 5px;
+}

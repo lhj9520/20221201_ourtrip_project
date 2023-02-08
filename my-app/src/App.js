@@ -12,7 +12,7 @@ import Howtouse from "./pages/Howtouse";
 import Mymate from "./pages/my/Mymate";
 import Mytrip from "./pages/my/Mytrip";
 import My from "./pages/my/My";
-import Create from "./pages/plan/Create";
+import Plan from "./pages/plan/Plan";
 
 axios.defaults.withCredentials = true;
 
@@ -25,6 +25,7 @@ function App() {
 
   const initialloginuser = JSON.parse(localStorage.getItem("login"));
   const [loginUser, setLoginUser] = React.useState(initialloginuser);
+  const seq = "";
 
   세션정보가져오기 = async () => {
     await axios({
@@ -68,7 +69,7 @@ function App() {
         <Route exact path="/howtouse" element={<Howtouse />} />
         <Route exact path="/mymate" element={<Mymate />} />
         <Route exact path="/mytrip" element={<Mytrip />} />
-        <Route exact path="/create" element={<Create />} />
+        <Route exact path="/mytrip/plan/:seq" element={<Plan seq={seq} />} />
         <Route exact path="/my" element={<My />} />
       </Routes>
     </StoreContext.Provider>
