@@ -83,3 +83,24 @@
   text-align: center;
   padding-top: 5px;
 }
+
+.contentarea {
+  border: solid 1px blue;
+  flex: auto;
+}
+.contentarea .maptime {
+}
+.contentarea .calenderarea {
+  border: solid 1px red;
+}
+.contentarea .kakomaparea {
+  border: solid 1px red;
+  flex-grow: 1;
+}
+.contentarea .timelinearea {
+  border: solid 1px red;
+  flex-grow: 1;
+}
+.contentarea .kakomaparea .mapcontainer {
+  height: 500px;
+}

@@ -152,8 +152,8 @@ function Login() {
             비밀번호 찾기
           </span>
         </div>
-        <div className="hr-sect">SNS 간편 로그인</div>
-        <div className="easylogin">여기에 아이콘들</div>
+        {/* <div className="hr-sect">SNS 간편 로그인</div>
+        <div className="easylogin">여기에 아이콘들</div> */}
       </div>
     </div>
   );

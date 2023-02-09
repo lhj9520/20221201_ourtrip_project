@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import axios from "axios";
 import moment from "moment-timezone";
 import "./Plan.css";
@@ -15,7 +15,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-import { faX } from "@fortawesome/free-solid-svg-icons";
+const { kakao } = window;
 
 function Htitle() {
   const navigation = useNavigate();
@@ -195,16 +195,48 @@ function Timelinebar() {
   );
 }
 
-function Content() {
-  const { tripdata, setTripdata } = React.useContext(StoreContextTrip);
-  const { loginUser } = React.useContext(StoreContext);
+function Calendar() {
+  return <div className="mapcontainer">달력</div>;
+}
+function KakaoMap() {
+  React.useEffect(() => {
+    var container = document.getElementById("map"); //지도를 담을 영역의 DOM 레퍼런스
+    var options = {
+      //지도를 생성할 때 필요한 기본 옵션
+      center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
+      level: 3, //지도의 레벨(확대, 축소 정도)
+    };
+
+    var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+  }, []);
+
   return (
-    <div className="timelinecon">
-      타임라인지도표시될예정
-      <div>
-        {tripdata.host_idx === loginUser.mem_idx && (
+    <div id="map" className="mapcontainer">
+      카카오지도
+    </div>
+  );
+}
+function Timeline() {
+  return <div className="timelinecontainer">타임라인</div>;
+}
+
+function Content() {
+  return (
+    <div className="contentarea">
+      {/* 타임라인지도표시될예정 */}
+      {/* {tripdata.host_idx === loginUser.mem_idx && (
           <span>로그인한사람이 방장</span>
-        )}
+        )} */}
+      <div className="calenderarea">
+        <Calendar></Calendar>
+      </div>
+      <div className="maptime flex">
+        <div className="kakomaparea">
+          <KakaoMap></KakaoMap>
+        </div>
+        <div className="timelinearea">
+          <Timeline></Timeline>
+        </div>
       </div>
     </div>
   );
