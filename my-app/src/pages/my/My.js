@@ -5,7 +5,7 @@ import "./MyModal.css";
 import Menubar from "../../component/menubar";
 import Modal from "../../component/modal";
 
-import { StoreContext, 세션정보가져오기, 세션삭제하기 } from "../../App";
+import { StoreContext, importsession, deletesession } from "../../App";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
@@ -43,7 +43,7 @@ function NicknameValue() {
       .then((res) => {
         const { code } = res.data;
         if (code === "success") {
-          세션정보가져오기();
+          importsession();
           setEmsg("");
           setInputstate(!inputstate);
         }
@@ -156,7 +156,7 @@ function EmailValue() {
       .then((res) => {
         const { code } = res.data;
         if (code === "success") {
-          세션정보가져오기();
+          importsession();
           setEmsg("");
           setInputstate(!inputstate);
         }
@@ -293,7 +293,7 @@ function NameValue() {
       .then((res) => {
         const { code } = res.data;
         if (code === "success") {
-          세션정보가져오기();
+          importsession();
           setEmsg("");
           setInputstate(!inputstate);
         }
@@ -389,7 +389,7 @@ function PhoneValue() {
       .then((res) => {
         const { code } = res.data;
         if (code === "success") {
-          세션정보가져오기();
+          importsession();
           setEmsg("");
           setInputstate(!inputstate);
         }
@@ -506,7 +506,7 @@ function Pwdvalue() {
         const { code, message } = res.data;
         if (code === "success") {
           console.log(message);
-          세션정보가져오기();
+          importsession();
           setInputset(false);
         }
       })
@@ -728,7 +728,7 @@ function My() {
       .then((res) => {
         const { code } = res.data;
         if (code === "success") {
-          세션삭제하기();
+          deletesession();
           navigation("/", { replace: true });
         }
       })

@@ -4,7 +4,7 @@ import moment from "moment-timezone";
 import "./Plan.css";
 import logoimg from "../../img/logo_oco.png";
 
-import { StoreContext } from "../../App";
+import { StoreContext, StoreContextM } from "../../App";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
@@ -15,6 +15,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { faX } from "@fortawesome/free-solid-svg-icons";
 
 function Htitle() {
   const navigation = useNavigate();
@@ -152,6 +153,7 @@ function Htitle() {
 }
 function Matebar() {
   const { tripdata, setTripdata } = React.useContext(StoreContextTrip);
+  const { Mate } = React.useContext(StoreContextM);
   const [participants, setParticipants] = React.useState([]);
 
   React.useEffect(() => {
@@ -161,13 +163,27 @@ function Matebar() {
     }
   }, [tripdata]);
 
+  const MateAddOpenHandler = () => {};
+  const MateAddCloseHandler = () => {};
+
   return (
     <div className="listcon">
       {/* 친구목록입니다. */}
       <span>
         메이트
-        <FontAwesomeIcon icon={faPlus} className="imgicon small gray point" />
+        <FontAwesomeIcon
+          icon={faPlus}
+          className="imgicon small gray point"
+          onClick={MateAddOpenHandler}
+        />
+        <FontAwesomeIcon
+          icon={faX}
+          className="imgicon small gray point"
+          onClick={MateAddCloseHandler}
+        />
+        <div>여기에 친구 목록 만들거임</div>
       </span>
+
       <ul>
         {participants.map((data, index) => (
           <li key={index} className="item">

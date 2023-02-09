@@ -4,7 +4,7 @@ import classnames from "classnames";
 import "./Login.css";
 import logoimg from "../img/logo_oco.png";
 
-import { 세션정보가져오기 } from "../App";
+import { importsession } from "../App";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
@@ -66,7 +66,7 @@ function Login() {
           alert(message);
           return;
         }
-        세션정보가져오기();
+        importsession();
         navigation("/", { replace: true }); //{ replace: true }
       })
       .catch((e) => {

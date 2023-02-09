@@ -4,7 +4,7 @@ import classnames from "classnames";
 import "./UserFind.css";
 import logoimg from "../img/logo_oco.png";
 
-import { 세션정보가져오기 } from "../App";
+import { importsession } from "../App";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -191,7 +191,7 @@ function UserFind() {
           alt="logo이미지"
           className="item"
           onClick={() => {
-            세션정보가져오기();
+            importsession();
             navigation("/");
           }}
         />

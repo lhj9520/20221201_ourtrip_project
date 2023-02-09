@@ -2,7 +2,7 @@ import React from "react";
 import "./menubar.css";
 import logoimg from "../img/logo_oco.png";
 
-import { StoreContext, 세션정보가져오기, 세션삭제하기 } from "../App";
+import { StoreContext, importsession, deletesession } from "../App";
 import { useNavigate, useLocation } from "react-router-dom";
 
 function Menubar() {
@@ -43,7 +43,7 @@ function Menubar() {
     } else if (State.session === "마이페이지") {
       navigation("/my");
     } else if (State.session === "로그아웃") {
-      세션삭제하기();
+      deletesession();
     }
   };
 
@@ -56,7 +56,7 @@ function Menubar() {
             alt="logo이미지"
             className="item"
             onClick={() => {
-              세션정보가져오기();
+              importsession();
               navigation("/");
             }}
           />

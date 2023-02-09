@@ -17,17 +17,21 @@ import Plan from "./pages/plan/Plan";
 axios.defaults.withCredentials = true;
 
 export const StoreContext = React.createContext({});
-export let 세션정보가져오기 = () => {};
-export let 세션삭제하기 = () => {};
+export const StoreContextM = React.createContext({});
+export let importsession = () => {};
+export let deletesession = () => {};
+export let importmate = () => {};
 
 function App() {
   const navigation = useNavigate();
 
   const initialloginuser = JSON.parse(localStorage.getItem("login"));
   const [loginUser, setLoginUser] = React.useState(initialloginuser);
+  const [loginUsermate, setLoginUsermate] = React.useState(null);
+
   const seq = "";
 
-  세션정보가져오기 = async () => {
+  importsession = async () => {
     await axios({
       url: "http://localhost:5000/user",
     }).then((res) => {
@@ -40,7 +44,7 @@ function App() {
     });
   };
 
-  세션삭제하기 = async () => {
+  deletesession = async () => {
     await axios({
       url: "http://localhost:5000/userdelete",
     }).then((res) => {
@@ -51,9 +55,30 @@ function App() {
     });
   };
 
-  // React.useEffect(() => {
-  //   console.log("loginuser정보", loginUser);
-  // }, []);
+  importmate = async () => {
+    await axios({
+      url: "http://localhost:5000/matelist",
+      method: "POST",
+      data: { idx: loginUser.mem_idx },
+    })
+      .then((res) => {
+        const { code, data } = res.data;
+        if (code === "success") {
+          console.log("친구목록불러오기", data);
+          setLoginUsermate(data);
+        }
+      })
+      .catch((e) => {
+        console.log("메이트 목록 업데이트 오류!", e);
+      });
+  };
+
+  React.useEffect(() => {
+    if (loginUser) {
+      //친구 목록 저장
+      importmate();
+    }
+  }, [loginUser]);
 
   return (
     <StoreContext.Provider
@@ -61,17 +86,23 @@ function App() {
         loginUser: loginUser,
       }}
     >
-      <Routes>
-        <Route exact path="/" element={<Main />} />
-        <Route exact path="/join" element={<Join />} />
-        <Route exact path="/login" element={<Login />} />
-        <Route exact path="/userfind" element={<UserFind />} />
-        <Route exact path="/howtouse" element={<Howtouse />} />
-        <Route exact path="/mymate" element={<Mymate />} />
-        <Route exact path="/mytrip" element={<Mytrip />} />
-        <Route exact path="/mytrip/plan/:seq" element={<Plan seq={seq} />} />
-        <Route exact path="/my" element={<My />} />
-      </Routes>
+      <StoreContextM.Provider
+        value={{
+          Mate: loginUsermate,
+        }}
+      >
+        <Routes>
+          <Route exact path="/" element={<Main />} />
+          <Route exact path="/join" element={<Join />} />
+          <Route exact path="/login" element={<Login />} />
+          <Route exact path="/userfind" element={<UserFind />} />
+          <Route exact path="/howtouse" element={<Howtouse />} />
+          <Route exact path="/mymate" element={<Mymate />} />
+          <Route exact path="/mytrip" element={<Mytrip />} />
+          <Route exact path="/mytrip/plan/:seq" element={<Plan seq={seq} />} />
+          <Route exact path="/my" element={<My />} />
+        </Routes>
+      </StoreContextM.Provider>
     </StoreContext.Provider>
   );
 }

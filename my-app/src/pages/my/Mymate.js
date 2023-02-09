@@ -6,7 +6,7 @@ import "./Mymate.css";
 import "./MymateModal.css";
 // import bimg from "../../img/pexels-trace-hudson-2770933.jpg";
 
-import { StoreContext } from "../../App";
+import { StoreContext, StoreContextM, importmate } from "../../App";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-regular-svg-icons";
@@ -217,7 +217,7 @@ function MateAddModal() {
 function MateDelModal() {
   const { loginUser } = React.useContext(StoreContext);
   const { setDispatchType } = React.useContext(StoreContextDis);
-  const { matedata } = React.useContext(StoreContextMate);
+  const { Mate } = React.useContext(StoreContextM);
 
   const matedelete = async (idx) => {
     await axios({
@@ -241,10 +241,10 @@ function MateDelModal() {
 
   return (
     <ul className="matereq">
-      {matedata.length === 0 ? (
+      {Mate.length === 0 ? (
         <span>메이트가 없습니다.</span>
       ) : (
-        matedata.map((data, index) => (
+        Mate.map((data, index) => (
           <li key={index} className="item">
             <span className="nickname">{data.mem_nickname}</span>
             <span className="id">(@{data.mem_userid})</span>
@@ -326,41 +326,42 @@ function Modalcontainer() {
   );
 }
 function Contents() {
-  const { matedata } = React.useContext(StoreContextMate);
+  const { Mate } = React.useContext(StoreContextM);
 
   return (
     <div className="content-mymate">
-      <ul>
-        {matedata.length === 0 ? (
-          <span>아직 메이트가 없습니다! 메이트를 추가해보세요!</span>
-        ) : (
-          matedata.map((data, index) => (
-            <li key={index} className="item">
-              <div className="img">
-                <FontAwesomeIcon icon={faCircleUser} className="imgicon" />
-              </div>
-              <div className="info">
-                <span className="nickname">{data.mem_nickname}</span>
-                <span className="id">{data.mem_userid}</span>
-              </div>
-            </li>
-          ))
-        )}
-        <li className="item">
-          <div className="img">
-            <FontAwesomeIcon icon={faCircleUser} className="imgicon" />
-          </div>
-          <div className="info">
-            <span className="nickname">어쩌고</span>
-            <span className="id">저쩌고</span>
-          </div>
-        </li>
-      </ul>
+      {Mate && (
+        <ul>
+          {Mate.length === 0 ? (
+            <span>아직 메이트가 없습니다! 메이트를 추가해보세요!</span>
+          ) : (
+            Mate.map((data, index) => (
+              <li key={index} className="item">
+                <div className="img">
+                  <FontAwesomeIcon icon={faCircleUser} className="imgicon" />
+                </div>
+                <div className="info">
+                  <span className="nickname">{data.mem_nickname}</span>
+                  <span className="id">{data.mem_userid}</span>
+                </div>
+              </li>
+            ))
+          )}
+          {/* <li className="item">
+            <div className="img">
+              <FontAwesomeIcon icon={faCircleUser} className="imgicon" />
+            </div>
+            <div className="info">
+              <span className="nickname">어쩌고</span>
+              <span className="id">저쩌고</span>
+            </div>
+          </li> */}
+        </ul>
+      )}
     </div>
   );
 }
 const StoreContextDis = React.createContext({});
-const StoreContextMate = React.createContext({});
 const StoreContextCnt = React.createContext({});
 
 function Mymate() {
@@ -368,6 +369,7 @@ function Mymate() {
 
   //App에서 StoreContext 받아온 후 로그인세션 사용
   const { loginUser } = React.useContext(StoreContext);
+  // const { Mate } = React.useContext(StoreContextM);
 
   const [State, setState] = React.useState({
     session: "로그인",
@@ -378,7 +380,7 @@ function Mymate() {
     params: null,
   });
 
-  const [matedata, setMatedata] = React.useState([]);
+  // const [matedata, setMatedata] = React.useState([]);
   const [reqcnt, setReqcnt] = React.useState(0);
 
   //로그인 세션 상태 새로고침 하면 친구 목록 불러오기
@@ -386,13 +388,12 @@ function Mymate() {
     if (loginUser) {
       setState({ session: "마이페이지" });
       matereqlistcnt();
-      matelist();
     }
   }, [loginUser]);
 
   React.useEffect(() => {
     if (dispatch.code === "matelist") {
-      matelist();
+      importmate();
     }
   }, [dispatch]);
 
@@ -413,42 +414,21 @@ function Mymate() {
       });
   };
 
-  const matelist = async () => {
-    // console.log({ idx: loginUser.mem_idx, id: loginUser.mem_userid });
-    await axios({
-      url: "http://localhost:5000/matelist",
-      method: "POST",
-      data: { idx: loginUser.mem_idx },
-    })
-      .then((res) => {
-        const { code, data } = res.data;
-        if (code === "success") {
-          const tmp = [...data];
-          setMatedata(tmp);
-        }
-      })
-      .catch((e) => {
-        console.log("메이트 목록 업데이트 오류!", e);
-      });
-  };
-
   return (
     <StoreContextDis.Provider value={{ setDispatchType }}>
-      <StoreContextMate.Provider value={{ matedata }}>
-        <div className="container">
-          <Menubar />
-          <div className="contents-container">
-            <div className="title">
-              {/* <img src={bimg} alt="" /> */}
-              <span>나의 여행 메이트</span>
-              <StoreContextCnt.Provider value={{ reqcnt, setReqcnt }}>
-                <Modalcontainer></Modalcontainer>
-              </StoreContextCnt.Provider>
-            </div>
-            <Contents></Contents>
+      <div className="container">
+        <Menubar />
+        <div className="contents-container">
+          <div className="title">
+            {/* <img src={bimg} alt="" /> */}
+            <span>나의 여행 메이트</span>
+            <StoreContextCnt.Provider value={{ reqcnt, setReqcnt }}>
+              <Modalcontainer></Modalcontainer>
+            </StoreContextCnt.Provider>
           </div>
+          <Contents></Contents>
         </div>
-      </StoreContextMate.Provider>
+      </div>
     </StoreContextDis.Provider>
   );
 }
