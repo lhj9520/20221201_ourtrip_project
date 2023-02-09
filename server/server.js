@@ -805,7 +805,6 @@ app.post("/tripview", async (req, res) => {
 });
 
 app.post("/tripadd", async (req, res) => {
-  // console.log(req.body);
   const title = req.body.title;
   const idx = req.body.host_idx;
   const mate = JSON.stringify(req.body.mate_idx);
@@ -823,12 +822,27 @@ app.post("/tripadd", async (req, res) => {
   res.send(result);
 });
 
-app.post("/tripdelete", async (req, res) => {
+app.post("/tripupdate", async (req, res) => {
   // console.log(req.body);
-
   const seq = req.body.seq;
+  const title = req.body.title;
+  const mate = JSON.stringify(req.body.mate_idx);
 
-  console.log("삭제할게시글", seq);
+  const result = {
+    code: "success",
+    message: "타이틀 변경 성공",
+  };
+
+  const query = await runDB(
+    `UPDATE trip SET title="${title}", mate_idx='${mate}',update_time=NOW() WHERE seq = ${seq}`
+  );
+
+  res.send(result);
+});
+
+app.post("/tripdelete", async (req, res) => {
+  const seq = req.body.seq;
+  // console.log("삭제할게시글", seq);
 
   const result = {
     code: "success",
