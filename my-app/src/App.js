@@ -64,7 +64,7 @@ function App() {
       .then((res) => {
         const { code, data } = res.data;
         if (code === "success") {
-          console.log("친구목록불러오기", data);
+          // console.log("친구목록불러오기", data);
           setLoginUsermate(data);
         }
       })
