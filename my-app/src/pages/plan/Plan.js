@@ -5,15 +5,15 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./Calendar.css";
 import "./Plan.css";
-import logoimg from "../../img/logo_oco.png";
-import useDidMountEffect from "../useDidMountEffect.js";
+import useDidMountEffect from "../useDidMountEffect";
+import SearchModal from "./SearchModal";
+import markimg from "../../img/map_mark.png";
 
 import { StoreContext, StoreContextM } from "../../App";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
@@ -21,9 +21,11 @@ import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarDay } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 const { kakao } = window;
 
+// 타이틀 바
 function Htitle() {
   const navigation = useNavigate();
 
@@ -103,63 +105,62 @@ function Htitle() {
   };
 
   return (
-    <div className="headercon flex">
-      <div className="widthfix flex flexcolmun">
+    <div className="headerbox">
+      <div className="pagemovebox">
         <FontAwesomeIcon
           icon={faHouse}
-          className="imgicon point"
+          className="imgicon"
           onClick={() => navigation("/", { replace: true })}
         />
-        <span>홈</span>
+        <span className="icontext">홈</span>
       </div>
-      <div className="widthfix flex flexcolmun">
+      <div className="pagemovebox">
         <FontAwesomeIcon
           icon={faArrowLeft}
-          className="imgicon point"
+          className="imgicon"
           onClick={() => navigation("/mytrip", { replace: true })}
         />
-        <span>뒤로가기</span>
+        <span className="icontext">뒤로가기</span>
       </div>
-      <div className="title flex">
+      <div className="titlebox">
         {title.state ? (
-          <input
-            type="text"
-            name="id"
-            maxLength={20}
-            value={title.value}
-            onChange={valuechange}
-          ></input>
+          <div className="editmode">
+            <input
+              type="text"
+              name="title"
+              maxLength={20}
+              value={title.value}
+              onChange={valuechange}
+            />
+            <FontAwesomeIcon
+              icon={faCircleCheck}
+              className="imgicon"
+              onClick={titlemodHandler}
+            />
+            <FontAwesomeIcon
+              icon={faCircleXmark}
+              className="imgicon"
+              onClick={titlemodcloseHandler}
+            />
+          </div>
         ) : (
-          <span>{tripdata.title}</span>
-        )}
-        <div className="flex center">
-          {title.state ? (
-            <div>
-              <FontAwesomeIcon
-                icon={faCircleCheck}
-                className="imgicon small gray point"
-                onClick={titlemodHandler}
-              />
-              <FontAwesomeIcon
-                icon={faCircleXmark}
-                className="imgicon small gray point"
-                onClick={titlemodcloseHandler}
-              />
-            </div>
-          ) : (
+          <div className="viewmode">
+            <span>{tripdata.title}</span>
             <FontAwesomeIcon
               icon={faPen}
-              className="imgicon small gray point"
+              className="imgicon"
               onClick={titlemodopenHandler}
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
+
+// 여행에 참여한 메이트 리스트
 function Matebar() {
-  const { tripdata, setTripdata } = React.useContext(StoreContextTrip);
+  const { tripdata } = React.useContext(StoreContextTrip);
   const [participants, setParticipants] = React.useState([]);
 
   React.useEffect(() => {
@@ -170,14 +171,14 @@ function Matebar() {
   }, [tripdata]);
 
   return (
-    <div className="listcon">
+    <div className="listbox">
       {/* 친구목록입니다. */}
-      <span>메이트</span>
+      <span className="listtitle">메이트</span>
       <ul>
         {participants.map((data, index) => (
           <li key={index} className="item">
             {data[0] == tripdata.host_idx && (
-              <FontAwesomeIcon icon={faStar} className="imgicon small gray" />
+              <FontAwesomeIcon icon={faStar} className="imgicon" />
             )}
             {data[1]}
           </li>
@@ -186,15 +187,21 @@ function Matebar() {
     </div>
   );
 }
+
+// 여행에 등록된 타임라인 리스트
 function Timelinebar() {
   return (
-    <div className="listcon">
-      <span>
+    <div className="listbox timelinelist">
+      <span className="listtitle">
         타임 라인
-        <FontAwesomeIcon icon={faPlus} className="imgicon small gray point" />
+        <FontAwesomeIcon
+          icon={faPlus}
+          className="imgicon"
+          onClick={formopenHandler}
+        />
       </span>
       <ul>
-        <li className="item">타임라인1</li>
+        <li className="item select">타임라인1</li>
         <li className="item">타임라인2</li>
         <li className="item">타임라인3</li>
       </ul>
@@ -202,14 +209,14 @@ function Timelinebar() {
   );
 }
 
+// 리액트 캘린더
 function ReactCalender() {
-  const { setTimeline } = React.useContext(StoreContextT);
-  const { datareset, setDataReset } = React.useContext(StoreContextR);
+  const { setTmptimeline } = React.useContext(StoreContextT);
+  // const { setIdx } = React.useContext(StoreContextC);
 
   const [selectday, setSelectday] = React.useState({
     start: "",
     end: "",
-    day: "",
   });
 
   const [value, onChange] = React.useState([
@@ -231,12 +238,12 @@ function ReactCalender() {
     //시작 종료 날짜 포맷 변경
     const startDate = moment.tz(value[0], "Asia/Seoul").format("YY-MM-DD");
     const endDate = moment.tz(value[1], "Asia/Seoul").format("YY-MM-DD");
+
     setSelectday((prevState) => {
       return {
         ...prevState,
         start: startDate,
         end: endDate,
-        day: day + 1,
       };
     });
 
@@ -247,8 +254,22 @@ function ReactCalender() {
       tmp.list = [];
       arr.push(tmp);
     }
-    setTimeline(arr);
-    setDataReset(!datareset);
+
+    //변수 초기화!!!
+    setTmptimeline((prevState) => {
+      return {
+        ...prevState,
+        start: startDate,
+        end: endDate,
+        day: day + 1,
+        daylist: arr,
+        curday: "",
+        curdata: "",
+        curidx: 0,
+        code: "reset",
+      };
+    });
+    // setIdx(0);
   };
 
   useDidMountEffect(() => {
@@ -264,178 +285,339 @@ function ReactCalender() {
   };
 
   return (
-    <div>
-      <p className="text-center">
-        <span className="bold"></span> {selectday.start}
-        &nbsp;|&nbsp;
-        <span className="bold"></span> {selectday.end}
+    <div className="calenderbox">
+      <p className="daytext">
+        <span className="text">일정 선택</span>
+        <span>
+          {selectday.start} ~ {selectday.end}
+        </span>
         <FontAwesomeIcon
           icon={faCalendarDay}
-          className="imgicon small gray"
+          className="imgicon"
           onClick={CalendarHandler}
         />
       </p>
       {cstatus && (
-        <div>
-          <Calendar
-            onChange={datechange}
-            formatDay={(locale, date) =>
-              date.toLocaleString("en", { day: "numeric" })
-            } //요일 숫자로
-            next2Label={null} //다음 연도
-            prev2Label={null} //이전 연도
-            minDetail="decade" //선택할수있는 최소 항목
-            showNeighboringMonth={false} //  이전, 이후 달의 날짜는 보이지 않도록 설정
-            selectRange={true} //범위지정
-            value={value}
-          />
-        </div>
+        <Calendar
+          onChange={datechange}
+          formatDay={(locale, date) =>
+            date.toLocaleString("en", { day: "numeric" })
+          } //요일 숫자로
+          next2Label={null} //다음 연도
+          prev2Label={null} //이전 연도
+          minDetail="decade" //선택할수있는 최소 항목
+          showNeighboringMonth={false} //  이전, 이후 달의 날짜는 보이지 않도록 설정
+          selectRange={true} //범위지정
+          value={value}
+          className="react-calendar"
+        />
       )}
     </div>
   );
 }
+
+//카카오 지도
 function KakaoMap() {
+  const { tmptimeline, setTmptimeline } = React.useContext(StoreContextT);
+  const [map, setMap] = React.useState(null);
+
+  // let bounds = new kakao.maps.LatLngBounds();
+  const [boundslist, setBoundslist] = React.useState({});
+  const [markers, SetMarkers] = React.useState([]);
+
   React.useEffect(() => {
-    var container = document.getElementById("map"); //지도를 담을 영역의 DOM 레퍼런스
-    var options = {
+    if (tmptimeline.code === "add") {
+      MarkerAddHandler(tmptimeline.curday, tmptimeline.curdata);
+    } else if (tmptimeline.code === "del") {
+      MarkerDelHandler(tmptimeline.curday, tmptimeline.delidx);
+    } else if (tmptimeline.code === "reset") {
+      //지도 마커 전부 삭제
+      markers.map((data, index) => {
+        data.marker.setMap(null);
+      });
+      SetMarkers([]);
+      setBoundslist({});
+      //지도 중심 이동
+      panTo(37.566828708166284, 126.97865508730158);
+    }
+  }, [tmptimeline]);
+
+  useDidMountEffect(() => {
+    // console.log("범위 좌표", boundslist);
+    if (Object.keys(boundslist).length !== 0) {
+      //등록된 마커를 기준으로 지도 레벨 변경
+      setBounds(boundslist);
+    }
+  }, [boundslist]);
+
+  React.useEffect(() => {
+    const container = document.getElementById("map"); //지도를 담을 영역의 DOM 레퍼런스
+
+    const options = {
       //지도를 생성할 때 필요한 기본 옵션
-      center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
+      center: new kakao.maps.LatLng(37.566828708166284, 126.97865508730158), //지도의 중심좌표.
       level: 3, //지도의 레벨(확대, 축소 정도)
     };
 
-    var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+    //지도 생성 및 객체 리턴
+    const map = new kakao.maps.Map(container, options);
+    setMap(map);
   }, []);
 
+  const MarkerDelHandler = (day, idx) => {
+    //마커 삭제
+    const tmp = [...markers];
+    const removemark = tmp.filter((it) => it.day === day && it.idx === idx);
+    removemark[0].marker.setMap(null);
+
+    const ress = tmp.filter((it) => it.idx !== idx);
+    SetMarkers(ress);
+
+    // 범위 좌표 리스트만큼 저장
+    let bounds = new kakao.maps.LatLngBounds();
+    const tmp1 = [...tmptimeline.daylist];
+    tmp1.map((data, index) => {
+      if (data.day === day) {
+        // console.log(data);
+        data.list.map((d, i) => {
+          bounds.extend(new kakao.maps.LatLng(Number(d.y), Number(d.x)));
+        });
+      }
+    });
+    setBoundslist(bounds);
+  };
+
+  const MarkerAddHandler = (day, curdata) => {
+    //마커 저장
+    curdata.marker.setMap(map);
+    SetMarkers([...markers, curdata]);
+
+    // 범위 좌표 리스트만큼 저장
+    let bounds = new kakao.maps.LatLngBounds();
+    const tmp = [...tmptimeline.daylist];
+    tmp.map((data, index) => {
+      if (data.day === day) {
+        // console.log(data);
+        data.list.map((d, i) => {
+          bounds.extend(new kakao.maps.LatLng(Number(d.y), Number(d.x)));
+        });
+      }
+    });
+    setBoundslist(bounds);
+  };
+
+  const setBounds = (bounds) => {
+    // LatLngBounds 객체에 추가된 좌표들을 기준으로 지도의 범위를 재설정합니다
+    // 이때 지도의 중심좌표와 레벨이 변경될 수 있습니다
+    map.setBounds(bounds);
+  };
+
+  const setCenter = (y, x) => {
+    // 이동할 위도 경도 위치를 생성합니다
+    var moveLatLon = new kakao.maps.LatLng(y, x);
+
+    // 지도 중심을 이동 시킵니다
+    map.setCenter(moveLatLon);
+  };
+
+  const panTo = (y, x) => {
+    // 이동할 위도 경도 위치를 생성합니다
+    var moveLatLon = new kakao.maps.LatLng(y, x);
+
+    // 지도 중심을 부드럽게 이동시킵니다
+    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+    map.panTo(moveLatLon);
+  };
+
   return (
-    <div id="map" className="mapcontainer">
-      카카오지도
-    </div>
+    <div
+      id="map"
+      className="kakomap"
+      // style={{ width: "100%", height: "80%" }}
+    ></div>
   );
 }
 
-function DayList(props) {
-  const { timeline, setTimeline } = React.useContext(StoreContextT);
-  const { datareset } = React.useContext(StoreContextR);
+// Day안에 장소 리스트
+function DayListInput(props) {
+  const { tmptimeline, setTmptimeline } = React.useContext(StoreContextT);
+  const { setModalOpen } = React.useContext(StoreContextModal);
+
   const value = props.data;
-  const [idx, setIdx] = React.useState(0);
 
-  React.useEffect(() => {
-    setIdx(0);
-  }, [datareset]);
-
-  const addHanlder = () => {
-    //모달을 열고
-    setIdx((idx) => idx + 1);
-    const tmp = [...timeline];
-
-    tmp.map((data, index) => {
-      if (data.day === value.day) {
-        // data.list.push({ idx: idx, place: `place${idx}` });
-        data.list.push({ idx: data.list.length, place: "place" });
-      }
-    });
-
-    // console.log(tmp);
-    setTimeline(tmp);
+  const opensearchModalHandler = () => {
+    // setModalOpen(true);
+    setModalOpen({ code: true, day: value.day });
   };
 
   const delHanlder = (props) => {
-    let tmp = [...timeline];
-    let PlaceList = [];
+    let tmp = [...tmptimeline.daylist];
+    let newPlaceList = [];
 
     tmp.map((data, index) => {
       if (data.day === value.day) {
-        const newPlaceList = data.list.filter((it) => it.idx !== props);
-
-        newPlaceList.map((d, i) => {
-          let place = { ...d };
-          place.idx = i;
-          PlaceList.push(place);
-        });
-
-        data.list = [...PlaceList];
+        newPlaceList = data.list.filter((it) => it.idx !== props);
+        data.list = [...newPlaceList];
       }
     });
 
-    // console.log(tmp);
-    setTimeline(tmp);
+    setTmptimeline((prevState) => {
+      return {
+        ...prevState,
+        curday: value.day,
+        code: "del",
+        delidx: props,
+        daylist: tmp,
+      };
+    });
   };
 
   return (
     <ul>
       {value.list.map((data, index) => (
         <li key={index} className="item">
-          {index}번째 {data.place}
-          {data.idx}
+          <div className="itemindex">
+            {index < 9 ? <>&nbsp;{index + 1}&nbsp;</> : <>{index + 1}</>}
+          </div>
+          <div className="itemtext">
+            <span>{data.place_name}</span>
+          </div>
           <FontAwesomeIcon
             icon={faTrashCan}
-            className="imgicon small gray"
+            className="imgicon"
             onClick={() => delHanlder(data.idx)}
           />
         </li>
       ))}
-      <button onClick={addHanlder}>장소 추가</button>
+      <button className="placeaddbtn" onClick={opensearchModalHandler}>
+        장소 추가
+      </button>
     </ul>
   );
 }
 
-function TimelineWriting() {
-  const { timeline, setTimeline } = React.useContext(StoreContextT);
+const StoreContextModal = React.createContext([]);
+
+// 타임라인 작성 폼
+function TimelineInputForm() {
+  const { loginUser } = React.useContext(StoreContext);
   const { setDispatchType } = React.useContext(StoreContextDis);
+  const { tripdata } = React.useContext(StoreContextTrip);
+  const { tmptimeline, setTmptimeline } = React.useContext(StoreContextT);
+  const [modalOpen, setModalOpen] = React.useState({ code: false, day: "" });
+  const [title, setTitle] = React.useState("");
 
   // React.useEffect(() => {
   //   console.log(timeline);
   // }, [timeline]);
 
+  const TimelineAddHandler = async () => {
+    let tmp = title;
+    if (!tmp) {
+      tmp = moment.tz(new Date(), "Asia/Seoul").format("YY-MM-DD HH:mm 작성");
+    }
+
+    await axios({
+      url: "http://localhost:5000/timelineadd",
+      method: "POST",
+      data: {
+        tripseq: tripdata.seq,
+        title: tmp,
+        start: tmptimeline.start,
+        end: tmptimeline.end,
+        day: tmptimeline.day,
+        writer: loginUser.mem_idx,
+        daylist: tmptimeline.daylist,
+      },
+    })
+      .then((res) => {
+        const { code, data } = res.data;
+        if (code === "success") {
+        }
+      })
+      .catch((e) => {
+        console.log("타임라인 작성 오류!", e);
+      });
+  };
+
+  const valuechange = (e) => {
+    const data = e.target.value;
+    if (data.length <= 20) {
+      setTitle(data);
+    }
+  };
   return (
-    <div className="timelinecontainer">
-      {/* <span>타임라인{timeline.length}개 생성</span> */}
-      <ul>
-        {timeline.map((data, index) => (
-          <li key={index} className="item">
-            Day{data.day}
-            <DayList data={data} />
-          </li>
-        ))}
-      </ul>
-    </div>
+    <StoreContextModal.Provider value={{ modalOpen, setModalOpen }}>
+      <div className="form">
+        {modalOpen.code && (
+          <SearchModal setModalOpen={setModalOpen} day={modalOpen.day} />
+        )}
+        <p className="titletext">
+          <input
+            maxLength={20}
+            value={title}
+            placeholder="제목 입력"
+            onChange={valuechange}
+          />
+          <button onClick={TimelineAddHandler}>작성</button>
+          <button>취소</button>
+        </p>
+        <ReactCalender />
+        <div className="mapdaybox">
+          <div className="kakaomapbox">
+            <KakaoMap />
+          </div>
+          <div className="daybox">
+            <button className="lbtn">
+              <FontAwesomeIcon icon={faArrowLeft} className="imgicon" />
+            </button>
+            <ul>
+              {tmptimeline.daylist.map((data, index) => (
+                <li key={index} className="item">
+                  <div className="lidaytext">Day{data.day}</div>
+                  <DayListInput data={data} />
+                </li>
+              ))}
+            </ul>
+            <button className="rbtn">
+              <FontAwesomeIcon icon={faArrowRight} className="imgicon" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </StoreContextModal.Provider>
   );
 }
 
+// 타임라인 목록 + 타임라인 작성/뷰 폼
 function Content() {
-  const [timeline, setTimeline] = React.useState([]);
-  const [datareset, setDataReset] = React.useState(false);
+  const [tmptimeline, setTmptimeline] = React.useState({
+    start: "",
+    end: "",
+    day: "",
+    curday: "",
+    curdata: "",
+    curidx: 0,
+    code: "",
+    daylist: [],
+  });
+
+  /**
+   * 전역 변수
+   * 1. 작성중인 타임라인 데이터 timeline
+   */
 
   return (
-    <StoreContextT.Provider value={{ timeline, setTimeline }}>
-      <StoreContextR.Provider value={{ datareset, setDataReset }}>
-        <div className="contentarea">
-          {/* {tripdata.host_idx === loginUser.mem_idx && (
-          <span>로그인한사람이 방장</span>
-        )} */}
-          <div className="calenderarea">
-            <ReactCalender></ReactCalender>
-          </div>
-          <div className="maptime flex">
-            <div className="kakomaparea">
-              <KakaoMap></KakaoMap>
-            </div>
-            <div className="timelinearea">
-              {/* 작성폼 */}
-              <TimelineWriting></TimelineWriting>
-              <button>작성</button>
-              <button>취소</button>
-              {/* 뷰폼 */}
-            </div>
-          </div>
-        </div>
-      </StoreContextR.Provider>
+    <StoreContextT.Provider value={{ tmptimeline, setTmptimeline }}>
+      <Timelinebar />
+      <TimelineInputForm />
+      {/* <TimelineViewtForm /> */}
     </StoreContextT.Provider>
   );
 }
 
-const StoreContextT = React.createContext([]);
-const StoreContextR = React.createContext({});
+export const StoreContextT = React.createContext({});
+// export const StoreContextC = React.createContext({});
 const StoreContextTrip = React.createContext({});
 const StoreContextDis = React.createContext({});
 
@@ -454,10 +636,12 @@ function Plan() {
   /**
    * 전역 변수
    * 1. 여행 게시글 데이터 tripdata
-   * 2. 여행 게시글에 속한 타임라인 데이터 timeline
+   * 2. 여행 게시글에 속한 타임라인 목록 timelinelist
+   * 3. 검색 모달 on/off modalOpen
    */
   const [tripdata, setTripdata] = React.useState({});
   const [timelinelist, setTimeline] = React.useState([]);
+  // const [idx, setIdx] = React.useState(0);
 
   //로그인 세션 상태 새로고침 하면 실행
   React.useEffect(() => {
@@ -472,7 +656,13 @@ function Plan() {
     }
   }, [dispatch]);
 
-  //여행 목록 데이터 받아오기
+  React.useEffect(() => {
+    if (Object.keys(tripdata).length !== 0) {
+      console.log(tripdata);
+    }
+  }, [tripdata]);
+
+  //seq에 해당하는 여행 데이터 가져오기
   const triplist = async () => {
     await axios({
       url: "http://localhost:5000/tripview",
@@ -482,13 +672,11 @@ function Plan() {
       .then((res) => {
         const { code, data } = res.data;
         if (code === "success") {
-          console.log(seq, "번 데이터", data);
-          // const tmp = [...data];
-          setTripdata({ ...data });
+          setTripdata(data);
         }
       })
       .catch((e) => {
-        console.log("여행 목록 업데이트 오류!", e);
+        console.log("여행계획 업데이트 오류!", e);
       });
   };
 
@@ -496,12 +684,10 @@ function Plan() {
     <StoreContextDis.Provider value={{ setDispatchType }}>
       <StoreContextTrip.Provider value={{ tripdata }}>
         <div className="plancontainer">
-          {/* {seq}번째 모임생성페이지입니다. */}
-          <Htitle></Htitle>
-          <div className="flex">
-            <Matebar></Matebar>
-            <Timelinebar></Timelinebar>
-            <Content></Content>
+          <Htitle />
+          <div className="contentbox">
+            <Matebar />
+            <Content />
           </div>
         </div>
       </StoreContextTrip.Provider>

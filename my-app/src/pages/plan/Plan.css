@@ -1,106 +1,316 @@
-.flex {
-  display: flex;
-}
-.flexcolmun {
-  flex-direction: column;
-}
-.gray {
-  color: gray;
-}
-.point {
-  cursor: pointer;
-}
 .plancontainer {
   width: 100%;
   height: 100%;
-  /* border: solid 1px red; */
+  min-width: 1366px;
 }
 
-.plancontainer .headercon {
-  border: solid 1px black;
-  height: 70px;
-  padding: 12px 0;
+.plancontainer .imgicon {
+  cursor: pointer;
 }
-.plancontainer .headercon .imgicon {
-  /* border: solid 1px blue; */
-  height: 25px;
-  margin: auto;
+.plancontainer .imgicon:hover {
+  color: gray;
 }
-.plancontainer .headercon .small {
-  /* border: solid 1px blue; */
-  height: 14px;
-  margin: 0;
-}
-.plancontainer .headercon .center {
-  /* border: solid 1px red; */
+
+/* 타이틀바 */
+.plancontainer .headerbox {
+  box-shadow: 0 2px 2px 0 lightgrey;
+  height: 80px;
+  display: flex;
   align-items: center;
-  padding-right: 8px;
 }
-.plancontainer .headercon .widthfix {
-  /* border: solid 1px red; */
-  width: 75px;
+
+.plancontainer .headerbox .pagemovebox {
+  width: 70px;
+  text-align: center;
 }
-.plancontainer .headercon .flexcolmun > span {
+
+.plancontainer .headerbox .pagemovebox:hover {
+  color: gray;
+}
+.plancontainer .headerbox .pagemovebox .imgicon {
+  width: 100%;
+  height: 30px;
+}
+.plancontainer .headerbox .pagemovebox .icontext {
   font-size: 0.685rem;
   font-weight: bold;
-  text-align: center;
 }
-.plancontainer .headercon > .title > div > .imgicon:hover {
-  /* border: solid 1px red; */
-  color: lightgray;
-}
-.plancontainer .headercon > .title > span {
-  font-size: 1rem;
-  font-weight: bold;
-  margin: auto;
-  padding: 0 12px;
-}
-
-.plancontainer .listcon {
-  /* border: solid 1px red; */
-  width: 150px;
+.plancontainer .headerbox .titlebox {
   height: 100%;
 }
-.plancontainer .listcon > span {
-  /* border: solid 1px red; */
-  display: block;
-  height: 30px;
-  text-align: center;
-  font-size: 1rem;
-  font-weight: bold;
-  padding-top: 5px;
+.plancontainer .headerbox .titlebox > div {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-left: 30px;
 }
-.plancontainer .listcon > ul {
-  /* border: solid 1px blue; */
-  height: calc(100vh - 100px);
-  overflow-y: auto;
-}
-.plancontainer .listcon .item {
-  /* border-bottom: solid 1px gray; */
-  height: 30px;
-  font-size: 1rem;
+.plancontainer .headerbox .titlebox span {
+  font-size: 1.3rem;
   font-weight: bold;
-  text-align: center;
-  padding-top: 5px;
+  padding: 0 20px;
 }
 
-.contentarea {
-  border: solid 1px blue;
+.plancontainer .headerbox .titlebox input {
+  font-size: 1.3rem;
+  width: 500px;
+  outline: none;
+  border: none;
+  padding-bottom: 4px;
+  border-bottom: solid 2px lightgray;
+}
+
+.plancontainer .headerbox .titlebox .imgicon {
+  width: 20px;
+  height: 20px;
+  padding-top: 5px;
+  margin: 0 5px;
+}
+
+/* 컨텐츠영역 */
+.plancontainer .contentbox {
+  /* border: solid 1px red; */
+  width: 100%;
+  height: calc(100vh - 80px);
+  display: flex;
+  background-color: rgba(238, 238, 238, 0.3);
+}
+
+/* 메이트,타임라인 리스트 */
+.plancontainer .contentbox .listbox {
+  width: 150px;
+  min-width: 150px;
+  height: 100%;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  box-shadow: 3px 2px 2px lightgrey;
+}
+.plancontainer .contentbox .listbox .listtitle {
+  display: block;
+  padding: 8px 0;
+}
+.plancontainer .contentbox .listbox .listtitle .imgicon {
+  margin-left: 5px;
+}
+
+.plancontainer .contentbox .listbox ul {
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.plancontainer .contentbox .listbox ul .item {
+  padding: 5px 0;
+}
+
+/* 타임라인 리스트 */
+.plancontainer .contentbox .timelinelist ul li {
+  cursor: pointer;
+}
+
+.plancontainer .contentbox .timelinelist ul li:hover {
+  text-decoration-line: underline;
+}
+
+.plancontainer .contentbox .timelinelist ul > .select {
+  background-color: rgba(238, 238, 238, 0.7);
+}
+
+/* form */
+.plancontainer .contentbox .form {
   flex: auto;
 }
-.contentarea .maptime {
+/* 타임라인 제목 입력 */
+.plancontainer .contentbox .form .titletext {
+  margin: 15px 0;
+  width: 50%;
+  display: flex;
 }
-.contentarea .calenderarea {
-  border: solid 1px red;
+.plancontainer .contentbox .form .titletext > input {
+  width: calc(100% - 50px);
+  outline: none;
+  border: none;
+  padding: 10px;
+  border-bottom: solid 1px gray;
+  font-size: 1rem;
+  font-weight: bold;
+  margin-left: 50px;
+  background-color: rgba(238, 238, 238, 0);
 }
-.contentarea .kakomaparea {
-  border: solid 1px red;
-  flex-grow: 1;
+
+/* 리액트 캘린더 */
+.plancontainer .contentbox .form .calenderbox {
+  border-bottom: dotted 1px gray;
+  height: 60px;
+  position: relative;
 }
-.contentarea .timelinearea {
-  border: solid 1px red;
-  flex-grow: 1;
+
+.plancontainer .contentbox .form .calenderbox .daytext {
+  height: 100%;
+  font-size: 1rem;
+  font-weight: bold;
 }
-.contentarea .kakomaparea .mapcontainer {
-  height: 500px;
+
+.plancontainer .contentbox .form .calenderbox .daytext > span {
+  margin-left: 50px;
+}
+.plancontainer .contentbox .form .calenderbox .daytext > .text {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.plancontainer .contentbox .form .calenderbox .daytext > .imgicon {
+  margin-left: 10px;
+}
+
+.plancontainer .contentbox .form .calenderbox .react-calendar {
+  position: absolute;
+  top: 60px;
+  left: 80px;
+  z-index: 2;
+}
+/* 카카오맵+타임라인 */
+.plancontainer .contentbox .form .mapdaybox {
+  /* border: solid 1px red; */
+  width: 100%;
+  height: calc(100vh - 213px);
+  position: relative;
+}
+
+.plancontainer .contentbox .form .kakaomapbox {
+  /* border: solid 1px blue; */
+  position: absolute;
+  width: 50%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  padding: 32px;
+}
+.plancontainer .contentbox .form .daybox {
+  /* border: solid 1px blue; */
+  position: absolute;
+  width: 50%;
+  top: 0;
+  left: 50%;
+  right: 0;
+  bottom: 0;
+  padding: 32px;
+}
+
+/* 카카오맵 */
+.plancontainer .contentbox .form .kakaomapbox .kakomap {
+  /* border: solid 1px red; */
+  width: 100%;
+  height: 100%;
+}
+/* 타임라인 day */
+.plancontainer .contentbox .form .daybox > .lbtn {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  bottom: 50%;
+}
+.plancontainer .contentbox .form .daybox > .rbtn {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  bottom: 50%;
+}
+.plancontainer .contentbox .form .daybox > ul {
+  height: 100%;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.plancontainer .contentbox .form .daybox > ul > li > .lidaytext {
+  padding: 15px 0;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border-radius: 30px 30px 0 0;
+  background-color: rgb(32, 32, 32);
+  color: #fff;
+}
+
+.plancontainer .contentbox .form .daybox > ul > li {
+  display: inline-block;
+  width: 45%;
+  height: 98%;
+  border-radius: 30px;
+  margin: 0 10px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  position: relative;
+  overflow-y: auto;
+}
+
+.plancontainer .contentbox .form .daybox > ul > li > ul {
+  position: absolute;
+  padding: 10px 0;
+  width: 100%;
+  text-align: center;
+}
+
+.plancontainer .contentbox .form .daybox > ul > li > ul > .placeaddbtn {
+  border-radius: 10px;
+  border: dashed 2px lightgray;
+  width: 80%;
+  padding: 10px;
+  margin-top: 10px;
+}
+.plancontainer .contentbox .form .daybox > ul > li > ul > li {
+  border-bottom: solid 1px lightgray;
+  padding: 10px 0;
+  text-align: start;
+  white-space: normal;
+  display: flex;
+  align-items: center;
+}
+
+.plancontainer .contentbox .form .daybox > ul > li > ul > li > .itemindex {
+  margin: 0 15px;
+  padding: 5px;
+  border-radius: 50%;
+  background-color: #4a8522;
+  color: #fff;
+  /* font-weight: bold; */
+}
+.plancontainer .contentbox .form .daybox > ul > li > ul > li > .itemtext {
+  display: inline-block;
+  font-size: 0.875rem;
+}
+.plancontainer .contentbox .form .daybox > ul > li > ul > li > .imgicon {
+  padding: 5px 5px;
+  margin: 0 5px;
+}
+/* 커스텀 마커 */
+.label {
+  margin-bottom: 96px;
+}
+.label * {
+  display: inline-block;
+  vertical-align: top;
+}
+.label .left {
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/2011/map/storeview/tip_l.png")
+    no-repeat;
+  display: inline-block;
+  height: 24px;
+  overflow: hidden;
+  vertical-align: top;
+  width: 7px;
+}
+.label .center {
+  background: url(https://t1.daumcdn.net/localimg/localimages/07/2011/map/storeview/tip_bg.png)
+    repeat-x;
+  display: inline-block;
+  height: 24px;
+  font-size: 12px;
+  line-height: 24px;
+}
+.label .right {
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/2011/map/storeview/tip_r.png") -1px
+    0 no-repeat;
+  display: inline-block;
+  height: 24px;
+  overflow: hidden;
+  width: 6px;
 }

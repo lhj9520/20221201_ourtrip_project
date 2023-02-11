@@ -1,0 +1,101 @@
+.modalbackground {
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.8);
+  animation: modal-bg-show 0.3s;
+}
+
+.modalbackground .modalcontainer {
+  position: absolute;
+  min-width: 400px;
+  width: 400px;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background-color: #ffffff;
+  animation: modal-show 0.3s;
+}
+
+.modalbackground .modalcontainer .close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  animation: modal-close 0.3s;
+  background-color: #ffffff;
+  z-index: 999;
+}
+
+.modalbackground .modalcontainer .contentbox {
+  position: absolute;
+  display: block;
+  width: 400px;
+  height: 100%;
+  top: 0;
+  left: 0;
+  padding: 35px;
+}
+
+.modalbackground .modalcontainer .contentbox .inputbox {
+  position: relative;
+}
+.modalbackground .modalcontainer .contentbox .inputbox > input {
+  outline: none;
+  border: none;
+  border-bottom: solid 1px black;
+  font-size: 1rem;
+  font-weight: bold;
+  width: 100%;
+  height: 35px;
+  margin-bottom: 10px;
+}
+.modalbackground .modalcontainer .contentbox .inputbox .iconbox {
+  position: absolute;
+  width: 17%;
+  top: 5px;
+  right: 0;
+}
+.modalbackground .modalcontainer .contentbox .inputbox .iconbox .imgicon {
+  padding: 5px;
+}
+.modalbackground .modalcontainer .contentbox .reslistbox {
+  height: 90%;
+  margin-top: 30px;
+  overflow-y: auto;
+}
+.modalbackground .modalcontainer .contentbox .reslistbox .item {
+  border-top: solid 1px gray;
+  padding: 5px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modalbackground .modalcontainer .contentbox .reslistbox .item .first {
+  width: 85%;
+}
+.modalbackground .modalcontainer .contentbox .reslistbox .item .second {
+  /* border: solid 1px red; */
+}
+.modalbackground .modalcontainer .contentbox .reslistbox .item #place {
+  display: block;
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 3px;
+}
+.modalbackground .modalcontainer .contentbox .reslistbox .item #address {
+  display: block;
+  font-size: 0.785rem;
+  font-weight: bold;
+  padding: 3px;
+}
+.modalbackground .modalcontainer .contentbox .reslistbox .item button {
+  padding: 5px;
+  border-radius: 3px;
+  background-color: #4a8522;
+  color: #fff;
+  font-weight: bold;
+}

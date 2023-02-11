@@ -803,6 +803,14 @@ app.post("/tripview", async (req, res) => {
   result.data = queryresult[0];
   res.send(result);
 });
+app.post("/timelineadd", async (req, res) => {
+  console.log(req.body);
+
+  const result = {
+    code: "success",
+    message: "여행 추가",
+  };
+});
 
 app.post("/tripadd", async (req, res) => {
   const title = req.body.title;
