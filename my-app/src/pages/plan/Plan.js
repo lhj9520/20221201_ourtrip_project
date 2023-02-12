@@ -7,9 +7,9 @@ import "./Calendar.css";
 import "./Plan.css";
 import useDidMountEffect from "../useDidMountEffect";
 import SearchModal from "./SearchModal";
-import markimg from "../../img/map_mark.png";
+import marking from "../../img/map_mark.png";
 
-import { StoreContext, StoreContextM } from "../../App";
+import { StoreContext } from "../../App";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
@@ -25,6 +25,12 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 const { kakao } = window;
 
+let MarkerAddDAYALLHandler = (day, markers) => {};
+let MarkerDELALLHandler = (allmarkers) => {};
+let LineAddDAYALLHandler = (day, polylines) => {};
+let LineDELALLHandler = (allmarkers) => {};
+let CustomMarkerAddDAYALLHandler = (day, markers) => {};
+
 // 타이틀 바
 function Htitle() {
   const navigation = useNavigate();
@@ -38,11 +44,11 @@ function Htitle() {
   });
 
   React.useEffect(() => {
-    if (tripdata) {
+    if (tripdata.trip) {
       setTitle((prevState) => {
         return {
           ...prevState,
-          value: tripdata.title,
+          value: tripdata.trip.title,
         };
       });
     }
@@ -57,7 +63,7 @@ function Htitle() {
     await axios({
       url: "http://localhost:5000/triptitlechange",
       method: "POST",
-      data: { seq: tripdata.seq, title: title.value },
+      data: { seq: tripdata.trip.seq, title: title.value },
     })
       .then((res) => {
         const { code } = res.data;
@@ -65,7 +71,7 @@ function Htitle() {
           setDispatchType((prevState) => {
             return {
               ...prevState,
-              code: "triprefresh",
+              code: "refresh",
             };
           });
         }
@@ -145,7 +151,7 @@ function Htitle() {
           </div>
         ) : (
           <div className="viewmode">
-            <span>{tripdata.title}</span>
+            <span>{tripdata.trip && tripdata.trip.title}</span>
             <FontAwesomeIcon
               icon={faPen}
               className="imgicon"
@@ -164,9 +170,8 @@ function Matebar() {
   const [participants, setParticipants] = React.useState([]);
 
   React.useEffect(() => {
-    if (tripdata.mate_idx) {
-      // console.log(Object.entries(JSON.parse(tripdata.mate_idx)));
-      setParticipants(Object.entries(JSON.parse(tripdata.mate_idx)));
+    if (tripdata.trip) {
+      setParticipants(Object.entries(JSON.parse(tripdata.trip.mate_idx)));
     }
   }, [tripdata]);
 
@@ -177,7 +182,7 @@ function Matebar() {
       <ul>
         {participants.map((data, index) => (
           <li key={index} className="item">
-            {data[0] == tripdata.host_idx && (
+            {data[0] == tripdata.trip.host_idx && (
               <FontAwesomeIcon icon={faStar} className="imgicon" />
             )}
             {data[1]}
@@ -190,20 +195,64 @@ function Matebar() {
 
 // 여행에 등록된 타임라인 리스트
 function Timelinebar() {
+  const { mode, setMode } = React.useContext(StoreContextM);
+  const { tripdata } = React.useContext(StoreContextTrip);
+  const [timelinelist, setTimelinelist] = React.useState([]);
+  const [cursel, Setcursel] = React.useState(0);
+  const [status, setStatus] = React.useState(true);
+
+  React.useEffect(() => {
+    if (tripdata.timeline) {
+      setTimelinelist(tripdata.timeline);
+    }
+  }, [tripdata]);
+
+  React.useEffect(() => {
+    if (mode.code === "write") {
+      setStatus(false);
+    } else {
+      setStatus(true);
+      Setcursel(mode.index);
+    }
+  }, [mode]);
+
+  const FormOpenHanlder = () => {
+    // setStatus(false);
+    Setcursel(-1);
+    setMode((prevState) => {
+      return { ...prevState, code: "write" };
+    });
+  };
+
+  const ViewOpenHanlder = (data, index) => {
+    Setcursel(index);
+    setMode((prevState) => {
+      return { ...prevState, code: "view", index: index };
+    });
+  };
+
   return (
     <div className="listbox timelinelist">
       <span className="listtitle">
         타임 라인
-        <FontAwesomeIcon
-          icon={faPlus}
-          className="imgicon"
-          onClick={formopenHandler}
-        />
+        {status && (
+          <FontAwesomeIcon
+            icon={faPlus}
+            className="imgicon"
+            onClick={FormOpenHanlder}
+          />
+        )}
       </span>
       <ul>
-        <li className="item select">타임라인1</li>
-        <li className="item">타임라인2</li>
-        <li className="item">타임라인3</li>
+        {timelinelist.map((data, index) => (
+          <li
+            key={index}
+            className={cursel === index ? "item select" : "item"}
+            onClick={() => ViewOpenHanlder(data, index)}
+          >
+            {data.title}
+          </li>
+        ))}
       </ul>
     </div>
   );
@@ -318,27 +367,27 @@ function ReactCalender() {
 
 //카카오 지도
 function KakaoMap() {
-  const { tmptimeline, setTmptimeline } = React.useContext(StoreContextT);
+  const { tmptimeline } = React.useContext(StoreContextT);
   const [map, setMap] = React.useState(null);
-
-  // let bounds = new kakao.maps.LatLngBounds();
   const [boundslist, setBoundslist] = React.useState({});
   const [markers, SetMarkers] = React.useState([]);
 
   React.useEffect(() => {
-    if (tmptimeline.code === "add") {
-      MarkerAddHandler(tmptimeline.curday, tmptimeline.curdata);
-    } else if (tmptimeline.code === "del") {
-      MarkerDelHandler(tmptimeline.curday, tmptimeline.delidx);
-    } else if (tmptimeline.code === "reset") {
-      //지도 마커 전부 삭제
-      markers.map((data, index) => {
-        data.marker.setMap(null);
-      });
-      SetMarkers([]);
-      setBoundslist({});
-      //지도 중심 이동
-      panTo(37.566828708166284, 126.97865508730158);
+    if (map) {
+      if (tmptimeline.code === "add") {
+        MarkerAddHandler(tmptimeline.curday, tmptimeline.curdata);
+      } else if (tmptimeline.code === "del") {
+        MarkerDelHandler(tmptimeline.curday, tmptimeline.delidx);
+      } else if (tmptimeline.code === "reset") {
+        //지도 마커 전부 삭제
+        markers.map((data, index) => {
+          data.marker.setMap(null);
+        });
+        SetMarkers([]);
+        setBoundslist({});
+        //지도 중심 이동
+        panTo(37.566828708166284, 126.97865508730158);
+      }
     }
   }, [tmptimeline]);
 
@@ -364,19 +413,30 @@ function KakaoMap() {
     setMap(map);
   }, []);
 
+  React.useEffect(() => {});
+
   const MarkerDelHandler = (day, idx) => {
+    //해당 날짜 마커 보여주기
+    const tmp0 = [...markers];
+    const showmark = tmp0.filter((it) => it.day === day);
+    showmark.map((it) => it.marker.setMap(map));
+    //다른날 마커 모두 감추기
+    const tmp1 = [...markers];
+    const hiddenmark = tmp1.filter((it) => it.day !== day);
+    hiddenmark.map((it) => it.marker.setMap(null));
+
     //마커 삭제
-    const tmp = [...markers];
-    const removemark = tmp.filter((it) => it.day === day && it.idx === idx);
+    const tmp2 = [...markers];
+    const removemark = tmp2.filter((it) => it.day === day && it.idx === idx);
     removemark[0].marker.setMap(null);
 
-    const ress = tmp.filter((it) => it.idx !== idx);
+    const ress = tmp2.filter((it) => it.idx !== idx);
     SetMarkers(ress);
 
     // 범위 좌표 리스트만큼 저장
     let bounds = new kakao.maps.LatLngBounds();
-    const tmp1 = [...tmptimeline.daylist];
-    tmp1.map((data, index) => {
+    const tmp = [...tmptimeline.daylist];
+    tmp.map((data, index) => {
       if (data.day === day) {
         // console.log(data);
         data.list.map((d, i) => {
@@ -388,6 +448,15 @@ function KakaoMap() {
   };
 
   const MarkerAddHandler = (day, curdata) => {
+    //해당 날짜 마커 보여주기
+    const tmp0 = [...markers];
+    const showmark = tmp0.filter((it) => it.day === day);
+    showmark.map((it) => it.marker.setMap(map));
+    //다른날 마커 모두 감추기
+    const tmp1 = [...markers];
+    const hiddenmark = tmp1.filter((it) => it.day !== day);
+    hiddenmark.map((it) => it.marker.setMap(null));
+
     //마커 저장
     curdata.marker.setMap(map);
     SetMarkers([...markers, curdata]);
@@ -404,6 +473,50 @@ function KakaoMap() {
       }
     });
     setBoundslist(bounds);
+  };
+
+  //해당 날짜에 해당하는 마커 그리기
+  MarkerAddDAYALLHandler = (day, markerlist) => {
+    let bounds = new kakao.maps.LatLngBounds();
+    markerlist[day - 1].map((data, index) => {
+      data.setMap(map);
+      bounds.extend(data.getPosition());
+    });
+    setBoundslist(bounds);
+  };
+
+  //해당 날짜에 해당하는 커스텀 오버레이 마커 그리기
+  CustomMarkerAddDAYALLHandler = (day, markerlist) => {
+    markerlist[day - 1].map((data, index) => {
+      const content = `<div class ="label"><span class="left"></span><span class="center">${
+        index + 1
+      }</span><span class="right"></span></div>`;
+      data.setContent(content);
+      data.setMap(map);
+    });
+  };
+
+  //마커 전체 지우기
+  MarkerDELALLHandler = (markerlist) => {
+    //지도 중심 이동
+    panTo(37.566828708166284, 126.97865508730158);
+    //지도 레벨 변경
+    map.setLevel(4);
+
+    markerlist.map((data) => {
+      data.map((it) => it.setMap(null));
+    });
+  };
+
+  //해당 날짜에 해당하는 라인 그리기
+  LineAddDAYALLHandler = (day, linelist) => {
+    linelist[day - 1].setMap(map);
+  };
+
+  //라인 전체 지우기
+  LineDELALLHandler = (linelist) => {
+    // console.log(linelist);
+    linelist.map((data) => data.setMap(null));
   };
 
   const setBounds = (bounds) => {
@@ -501,15 +614,13 @@ const StoreContextModal = React.createContext([]);
 // 타임라인 작성 폼
 function TimelineInputForm() {
   const { loginUser } = React.useContext(StoreContext);
+  const { setMode } = React.useContext(StoreContextM);
   const { setDispatchType } = React.useContext(StoreContextDis);
   const { tripdata } = React.useContext(StoreContextTrip);
-  const { tmptimeline, setTmptimeline } = React.useContext(StoreContextT);
+  const { tmptimeline } = React.useContext(StoreContextT);
   const [modalOpen, setModalOpen] = React.useState({ code: false, day: "" });
   const [title, setTitle] = React.useState("");
-
-  // React.useEffect(() => {
-  //   console.log(timeline);
-  // }, [timeline]);
+  const [markerstore, setMarkerstore] = React.useState([]);
 
   const TimelineAddHandler = async () => {
     let tmp = title;
@@ -521,7 +632,7 @@ function TimelineInputForm() {
       url: "http://localhost:5000/timelineadd",
       method: "POST",
       data: {
-        tripseq: tripdata.seq,
+        tripseq: tripdata.trip.seq,
         title: tmp,
         start: tmptimeline.start,
         end: tmptimeline.end,
@@ -533,11 +644,25 @@ function TimelineInputForm() {
       .then((res) => {
         const { code, data } = res.data;
         if (code === "success") {
+          setDispatchType((prevState) => {
+            return {
+              ...prevState,
+              code: "refresh",
+            };
+          });
         }
       })
       .catch((e) => {
         console.log("타임라인 작성 오류!", e);
       });
+  };
+
+  const FormColseHanlder = () => {
+    if (tripdata.timeline.length !== 0) {
+      setMode((prevState) => {
+        return { ...prevState, code: "view" };
+      });
+    }
   };
 
   const valuechange = (e) => {
@@ -546,6 +671,38 @@ function TimelineInputForm() {
       setTitle(data);
     }
   };
+
+  React.useEffect(() => {
+    if (tmptimeline.daylist.length > 0) {
+      //전체 마커 생성
+      const markers = [];
+      let tmp = [];
+      tmptimeline.daylist.map((item, index) => {
+        item.list.map((d, i) => {
+          const imageSize = new kakao.maps.Size(24, 35);
+          const markerImage = new kakao.maps.MarkerImage(marking, imageSize);
+          const marker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(Number(d.y), Number(d.x)),
+            title: d.place_name,
+            image: markerImage,
+          });
+          tmp.push(marker);
+        });
+        markers.push(tmp);
+        tmp = [];
+      });
+      //전체 마커 저장
+      setMarkerstore(markers);
+    }
+  }, [tmptimeline]);
+
+  const onMarkerHandler = (day) => {
+    //이전에 생성된 마커 제거
+    MarkerDELALLHandler(markerstore);
+    //특정 날짜 마커 그리기
+    MarkerAddDAYALLHandler(day, markerstore);
+  };
+
   return (
     <StoreContextModal.Provider value={{ modalOpen, setModalOpen }}>
       <div className="form">
@@ -560,7 +717,7 @@ function TimelineInputForm() {
             onChange={valuechange}
           />
           <button onClick={TimelineAddHandler}>작성</button>
-          <button>취소</button>
+          <button onClick={FormColseHanlder}>취소</button>
         </p>
         <ReactCalender />
         <div className="mapdaybox">
@@ -574,7 +731,12 @@ function TimelineInputForm() {
             <ul>
               {tmptimeline.daylist.map((data, index) => (
                 <li key={index} className="item">
-                  <div className="lidaytext">Day{data.day}</div>
+                  <div
+                    className="lidaytext"
+                    onClick={() => onMarkerHandler(data.day)}
+                  >
+                    Day{data.day}
+                  </div>
                   <DayListInput data={data} />
                 </li>
               ))}
@@ -589,8 +751,182 @@ function TimelineInputForm() {
   );
 }
 
-// 타임라인 목록 + 타임라인 작성/뷰 폼
+// Day안에 장소 리스트
+function DayListView(props) {
+  const value = props.data;
+
+  return (
+    <ul>
+      {value.list.map((data, index) => (
+        <li key={index} className="item">
+          <div className="itemindex">
+            {index < 9 ? <>&nbsp;{index + 1}&nbsp;</> : <>{index + 1}</>}
+          </div>
+          <div className="itemtext">
+            <span>{data.place_name}</span>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+// 타임라인 뷰 폼
+function TimelineViewForm() {
+  const { loginUser } = React.useContext(StoreContext);
+  const { mode, setMode } = React.useContext(StoreContextM);
+  const { tripdata } = React.useContext(StoreContextTrip);
+  const [data, setData] = React.useState([]);
+  const [markerstore, setMarkerstore] = React.useState([]);
+  const [polylinestore, setPolylinestore] = React.useState([]);
+  const [overlaystore, setOverlaystore] = React.useState([]);
+
+  React.useEffect(() => {
+    setData(JSON.parse(tripdata.timeline[mode.index].daylist));
+  }, [mode.index]);
+
+  React.useEffect(() => {
+    if (data.length > 0) {
+      //이전에 생성된 마커 제거
+      MarkerDELALLHandler(markerstore);
+      //이전에 생성된 라인 삭제
+      LineDELALLHandler(polylinestore);
+      //첫째날 순서 그리기
+      MarkerDELALLHandler(overlaystore);
+
+      //전체 마커 생성
+      const markers = [];
+      const polylines = [];
+      const overlays = [];
+
+      let markerstmp = [];
+      let linePath = [];
+      let overlaystmp = [];
+
+      data.map((item, index) => {
+        item.list.map((d, i) => {
+          //마커 저장
+          const imageSize = new kakao.maps.Size(24, 35);
+          const markerImage = new kakao.maps.MarkerImage(marking, imageSize);
+          const marker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(Number(d.y), Number(d.x)),
+            title: d.place_name,
+            image: markerImage,
+          });
+          markerstmp.push(marker);
+          //커스텀오버레이 저장
+          const customOverlay = new kakao.maps.CustomOverlay({
+            position: new kakao.maps.LatLng(Number(d.y), Number(d.x)),
+          });
+          overlaystmp.push(customOverlay);
+          //선을 이을 좌표 저장
+          linePath.push(new kakao.maps.LatLng(Number(d.y), Number(d.x)));
+        });
+        markers.push(markerstmp);
+        markerstmp = [];
+        overlays.push(overlaystmp);
+        overlaystmp = [];
+        //선 생성
+        const polyline = new kakao.maps.Polyline({
+          path: linePath, // 선을 구성하는 좌표배열 입니다
+          strokeWeight: 3, // 선의 두께 입니다
+          strokeColor: "#4a8522", // 선의 색깔입니다
+          strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+          strokeStyle: "solid", // 선의 스타일입니다
+        });
+        polylines.push(polyline);
+        linePath = [];
+      });
+
+      //첫째날 마커 그리기
+      MarkerAddDAYALLHandler(1, markers);
+      setMarkerstore(markers);
+      //첫째날 라인 그리기
+      LineAddDAYALLHandler(1, polylines);
+      setPolylinestore(polylines);
+      //첫째날 순서 그리기
+      CustomMarkerAddDAYALLHandler(1, overlays);
+      setOverlaystore(overlays);
+    }
+  }, [data]);
+
+  const onMarkerHandler = (day) => {
+    //이전에 생성된 마커 삭제
+    MarkerDELALLHandler(markerstore);
+    //이전에 생성된 라인 삭제
+    LineDELALLHandler(polylinestore);
+    //이전에 생성된 커스텀마커 삭제
+    MarkerDELALLHandler(overlaystore);
+    //특정 날짜 마커 그리기
+    MarkerAddDAYALLHandler(day, markerstore);
+    //특정 날짜 커스텀 마커 그리기
+    CustomMarkerAddDAYALLHandler(day, overlaystore);
+    //특정 날짜 라인 그리기
+    LineAddDAYALLHandler(day, polylinestore);
+  };
+
+  return (
+    <div className="form">
+      <p className="titletext">
+        <span></span>
+      </p>
+      <div className="calenderbox">
+        <p className="daytext">
+          <span className="text">{tripdata.timeline[mode.index].title}</span>
+          <span>
+            {tripdata.timeline[mode.index].start} ~{" "}
+            {tripdata.timeline[mode.index].end}
+          </span>
+
+          {tripdata.timeline[mode.index].writer === loginUser.mem_idx && (
+            <>
+              {" "}
+              <button>수정</button>
+              <button>삭제</button>
+            </>
+          )}
+        </p>
+      </div>
+      <div className="mapdaybox">
+        <div className="kakaomapbox">
+          <KakaoMap />
+        </div>
+        <div className="daybox">
+          <button className="lbtn">
+            <FontAwesomeIcon icon={faArrowLeft} className="imgicon" />
+          </button>
+          <ul>
+            {data.map((data, index) => (
+              <li key={index} className="item">
+                <div
+                  className="lidaytext"
+                  onClick={() => onMarkerHandler(data.day)}
+                >
+                  Day{data.day}
+                </div>
+                <DayListView data={data} />
+              </li>
+            ))}
+          </ul>
+          <button className="rbtn">
+            <FontAwesomeIcon icon={faArrowRight} className="imgicon" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// 타임라인+작성/뷰폼
 function Content() {
+  const { tripdata } = React.useContext(StoreContextTrip);
+  const [timelinelist, setTimelinelist] = React.useState([]);
+  const [max, setMax] = React.useState(0);
+  const [mode, setMode] = React.useState({
+    code: "",
+    index: 0,
+  });
+
   const [tmptimeline, setTmptimeline] = React.useState({
     start: "",
     end: "",
@@ -602,22 +938,58 @@ function Content() {
     daylist: [],
   });
 
+  useDidMountEffect(() => {
+    setTimelinelist(tripdata.timeline);
+    if (tripdata.timeline && timelinelist) {
+      if (
+        tripdata.timeline.length > 1 &&
+        tripdata.timeline.length > timelinelist.length &&
+        timelinelist.length !== 0
+      ) {
+        setMode((prevState) => {
+          return {
+            ...prevState,
+            code: "view",
+            index: tripdata.timeline.length - 1,
+          };
+        });
+      }
+    }
+  }, [tripdata]);
+
+  useDidMountEffect(() => {
+    if (timelinelist) {
+      if (timelinelist.length === 0) {
+        setMode((prevState) => {
+          return { ...prevState, code: "write" };
+        });
+      } else {
+        setMode((prevState) => {
+          return { ...prevState, code: "view" };
+        });
+      }
+    }
+  }, [timelinelist]);
+
   /**
    * 전역 변수
    * 1. 작성중인 타임라인 데이터 timeline
    */
 
   return (
-    <StoreContextT.Provider value={{ tmptimeline, setTmptimeline }}>
-      <Timelinebar />
-      <TimelineInputForm />
-      {/* <TimelineViewtForm /> */}
-    </StoreContextT.Provider>
+    <StoreContextM.Provider value={{ mode, setMode }}>
+      <StoreContextT.Provider value={{ tmptimeline, setTmptimeline }}>
+        <Timelinebar />
+        {mode.code === "view" && <TimelineViewForm />}
+        {mode.code === "write" && <TimelineInputForm />}
+        {mode.code === "modify" && <TimelineInputForm />}
+      </StoreContextT.Provider>
+    </StoreContextM.Provider>
   );
 }
 
 export const StoreContextT = React.createContext({});
-// export const StoreContextC = React.createContext({});
+const StoreContextM = React.createContext({});
 const StoreContextTrip = React.createContext({});
 const StoreContextDis = React.createContext({});
 
@@ -640,43 +1012,41 @@ function Plan() {
    * 3. 검색 모달 on/off modalOpen
    */
   const [tripdata, setTripdata] = React.useState({});
-  const [timelinelist, setTimeline] = React.useState([]);
-  // const [idx, setIdx] = React.useState(0);
 
   //로그인 세션 상태 새로고침 하면 실행
   React.useEffect(() => {
     if (loginUser) {
-      triplist();
+      TripLoadHandler();
     }
   }, [loginUser]);
 
-  React.useEffect(() => {
-    if (dispatch.code === "triprefresh") {
-      triplist();
+  useDidMountEffect(() => {
+    if (dispatch.code === "refresh") {
+      TripLoadHandler();
     }
   }, [dispatch]);
 
   React.useEffect(() => {
     if (Object.keys(tripdata).length !== 0) {
-      console.log(tripdata);
     }
   }, [tripdata]);
 
   //seq에 해당하는 여행 데이터 가져오기
-  const triplist = async () => {
+  const TripLoadHandler = async () => {
     await axios({
-      url: "http://localhost:5000/tripview",
+      url: "http://localhost:5000/planlist",
       method: "POST",
       data: { seq: seq },
     })
       .then((res) => {
-        const { code, data } = res.data;
+        const { code, trip, timeline } = res.data;
+        // console.log(trip, timeline);
         if (code === "success") {
-          setTripdata(data);
+          setTripdata({ trip, timeline });
         }
       })
       .catch((e) => {
-        console.log("여행계획 업데이트 오류!", e);
+        console.log("여행 계획 업데이트 오류!", e);
       });
   };
 

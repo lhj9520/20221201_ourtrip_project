@@ -4,7 +4,7 @@ import { StoreContextT } from "./Plan";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import markimg from "../../img/map_mark.png";
+import marking from "../../img/map_mark.png";
 
 const { kakao } = window;
 
@@ -58,7 +58,7 @@ function SearchModal({ setModalOpen, day }) {
 
     //마커 생성
     const imageSize = new kakao.maps.Size(24, 35);
-    const markerImage = new kakao.maps.MarkerImage(markimg, imageSize);
+    const markerImage = new kakao.maps.MarkerImage(marking, imageSize);
     const marker = new kakao.maps.Marker({
       position: new kakao.maps.LatLng(Number(props.y), Number(props.x)),
       title: props.place_name,
@@ -107,7 +107,7 @@ function SearchModal({ setModalOpen, day }) {
   // 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
   const placesSearchCB = (data, status, pagination) => {
     if (status === kakao.maps.services.Status.OK) {
-      console.log("검색결과", data);
+      // console.log("검색결과", data);
       setResultlist([...data]);
     } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
       alert("검색 결과가 존재하지 않습니다.");

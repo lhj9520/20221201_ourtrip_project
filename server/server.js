@@ -786,30 +786,56 @@ app.post("/triplist", async (req, res) => {
   res.send(result);
 });
 
-app.post("/tripview", async (req, res) => {
-  // console.log(req.body);
+app.post("/planlist", async (req, res) => {
+  //해당 여행 + 여행에 저장된 타임라인 리스트
   const seq = req.body.seq;
 
   const result = {
     code: "success",
     message: seq + "번째 여행",
-    data: "",
+    trip: "",
+    timeline: "",
   };
 
   const queryresult = await runDB(
     `SELECT trip.*,mem_nickname AS host_nickname FROM trip,USER WHERE seq = ${seq} AND mem_idx = host_idx;`
   );
 
-  result.data = queryresult[0];
+  if (queryresult.length === 0) {
+    result.code = "error";
+    result.message = "해당 여행 데이터가 없습니다.";
+    res.send(result);
+    return;
+  }
+
+  result.trip = queryresult[0];
+
+  const timelinequeryresult = await runDB(
+    `SELECT timeline.*,mem_nickname AS writer_nickname FROM timeline,USER WHERE trip_seq = ${seq} AND mem_idx = writer`
+  );
+
+  result.timeline = timelinequeryresult;
   res.send(result);
 });
-app.post("/timelineadd", async (req, res) => {
-  console.log(req.body);
 
+app.post("/timelineadd", async (req, res) => {
+  // console.log(req.body);
+  const { tripseq, title, start, end, day, writer, daylist } = req.body;
+  //daylist는 json 데이터로 insert
+  // const dayjson = { ...daylist };
+  console.log(JSON.stringify(daylist));
   const result = {
     code: "success",
-    message: "여행 추가",
+    message: "타임라인 추가",
   };
+
+  const queryresult = await runDB(
+    `INSERT INTO timeline(trip_seq,title,start,end,day,writer,daylist,reg_time) VALUES (${tripseq},'${title}','${start}','${end}',${day},${writer},'${JSON.stringify(
+      daylist
+    )}',NOW())`
+  );
+
+  res.send(result);
 });
 
 app.post("/tripadd", async (req, res) => {
@@ -887,7 +913,6 @@ app.post("/tripexcept", async (req, res) => {
 });
 
 app.post("/triptitlechange", async (req, res) => {
-  console.log(req.body);
   const seq = req.body.seq;
   const title = req.body.title;
 
