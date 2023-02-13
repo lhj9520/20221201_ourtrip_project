@@ -789,6 +789,7 @@ app.post("/triplist", async (req, res) => {
 app.post("/planlist", async (req, res) => {
   //해당 여행 + 여행에 저장된 타임라인 리스트
   const seq = req.body.seq;
+  const idx = req.body.idx;
 
   const result = {
     code: "success",
@@ -798,7 +799,7 @@ app.post("/planlist", async (req, res) => {
   };
 
   const queryresult = await runDB(
-    `SELECT trip.*,mem_nickname AS host_nickname FROM trip,USER WHERE seq = ${seq} AND mem_idx = host_idx;`
+    `SELECT trip.*,mem_nickname AS host_nickname FROM trip,USER WHERE JSON_EXTRACT( mate_idx, '$.${idx}' ) IS NOT NULL AND mem_idx = host_idx AND seq = ${seq}`
   );
 
   if (queryresult.length === 0) {
@@ -820,7 +821,7 @@ app.post("/planlist", async (req, res) => {
 
 app.post("/timelineadd", async (req, res) => {
   // console.log(req.body);
-  const { tripseq, title, start, end, day, writer, daylist } = req.body;
+  const { tripseq, title, start, end, day, writer, daylist, curidx } = req.body;
   //daylist는 json 데이터로 insert
   // const dayjson = { ...daylist };
   console.log(JSON.stringify(daylist));
@@ -830,10 +831,43 @@ app.post("/timelineadd", async (req, res) => {
   };
 
   const queryresult = await runDB(
-    `INSERT INTO timeline(trip_seq,title,start,end,day,writer,daylist,reg_time) VALUES (${tripseq},'${title}','${start}','${end}',${day},${writer},'${JSON.stringify(
+    `INSERT INTO timeline(trip_seq,title,start,end,day,writer,daylist,reg_time,curidx) VALUES (${tripseq},'${title}','${start}','${end}',${day},${writer},'${JSON.stringify(
       daylist
-    )}',NOW())`
+    )}',NOW(),${curidx})`
   );
+
+  res.send(result);
+});
+
+app.post("/timelineupdate", async (req, res) => {
+  // console.log(req.body);
+  const { seq, tripseq, title, start, end, day, writer, daylist, curidx } =
+    req.body;
+
+  console.log(JSON.stringify(daylist));
+  const result = {
+    code: "success",
+    message: "타임라인 수정",
+  };
+
+  const queryresult = await runDB(
+    `UPDATE timeline SET title='${title}',start='${start}',end='${end}',day=${day},daylist='${JSON.stringify(
+      daylist
+    )}',update_time=NOW(),curidx=${curidx} WHERE seq=${seq}`
+  );
+
+  res.send(result);
+});
+
+app.post("/timelinedelete", async (req, res) => {
+  const seq = req.body.seq;
+
+  const result = {
+    code: "success",
+    message: "타임라인 삭제 완료",
+  };
+
+  const queryresult = await runDB(`DELETE FROM timeline WHERE seq = ${seq}`);
 
   res.send(result);
 });
@@ -876,7 +910,6 @@ app.post("/tripupdate", async (req, res) => {
 
 app.post("/tripdelete", async (req, res) => {
   const seq = req.body.seq;
-  // console.log("삭제할게시글", seq);
 
   const result = {
     code: "success",

@@ -10,7 +10,6 @@ const { kakao } = window;
 
 function SearchModal({ setModalOpen, day }) {
   const { tmptimeline, setTmptimeline } = React.useContext(StoreContextT);
-  // const { idx, setIdx } = React.useContext(StoreContextC);
   const [keyword, setKeyword] = React.useState("");
   const [resultlist, setResultlist] = React.useState([]);
   const ps = new kakao.maps.services.Places();
@@ -85,7 +84,7 @@ function SearchModal({ setModalOpen, day }) {
       }
     });
 
-    // console.log(tmp);
+    // console.log(curdata);
     setTmptimeline((prevState) => {
       return {
         ...prevState,
@@ -96,8 +95,6 @@ function SearchModal({ setModalOpen, day }) {
         daylist: tmp,
       };
     });
-
-    // setIdx((idx) => idx + 1);
   };
 
   const searchHanlder = () => {

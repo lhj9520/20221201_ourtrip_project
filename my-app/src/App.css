@@ -21,4 +21,23 @@ span {
   cursor: default;
 }
 
+/* 스크롤바 설정*/
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* 스크롤바 막대 설정*/
+::-webkit-scrollbar-thumb {
+  height: 10%;
+  background-color: #2b4e13;
+  /* 스크롤바 둥글게 설정    */
+  border-radius: 10px;
+}
+
+/* 스크롤바 뒷 배경 설정*/
+::-webkit-scrollbar-track {
+  background-color: rgba(0, 0, 0, 0);
+}
+
 @import "./pages/my/Headerbar.css";

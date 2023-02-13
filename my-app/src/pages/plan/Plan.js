@@ -10,6 +10,7 @@ import SearchModal from "./SearchModal";
 import marking from "../../img/map_mark.png";
 
 import { StoreContext } from "../../App";
+import { useHorizontalScroll } from "../../component/useSideScroll";
 import { useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
@@ -30,6 +31,7 @@ let MarkerDELALLHandler = (allmarkers) => {};
 let LineAddDAYALLHandler = (day, polylines) => {};
 let LineDELALLHandler = (allmarkers) => {};
 let CustomMarkerAddDAYALLHandler = (day, markers) => {};
+let MoveToCenter = () => {};
 
 // 타이틀 바
 function Htitle() {
@@ -179,11 +181,11 @@ function Matebar() {
     <div className="listbox">
       {/* 친구목록입니다. */}
       <span className="listtitle">메이트</span>
-      <ul>
+      <ul className="scrollnone">
         {participants.map((data, index) => (
           <li key={index} className="item">
             {data[0] == tripdata.trip.host_idx && (
-              <FontAwesomeIcon icon={faStar} className="imgicon" />
+              <FontAwesomeIcon icon={faStar} />
             )}
             {data[1]}
           </li>
@@ -243,7 +245,7 @@ function Timelinebar() {
           />
         )}
       </span>
-      <ul>
+      <ul className="type scrollnone">
         {timelinelist.map((data, index) => (
           <li
             key={index}
@@ -259,9 +261,10 @@ function Timelinebar() {
 }
 
 // 리액트 캘린더
-function ReactCalender() {
+function ReactCalender(props) {
   const { setTmptimeline } = React.useContext(StoreContextT);
-  // const { setIdx } = React.useContext(StoreContextC);
+  let { start, end } = props;
+  const [reset, setReset] = React.useState(false);
 
   const [selectday, setSelectday] = React.useState({
     start: "",
@@ -276,17 +279,18 @@ function ReactCalender() {
   const [cstatus, setCstatus] = React.useState(false);
 
   const datechange = (e) => {
-    onChange(e);
-    calcday();
-    setCstatus(!cstatus);
+    if (window.confirm("데이터가 초기화 됩니다. 변경하시겠습니까?")) {
+      onChange(e);
+      setCstatus(!cstatus);
+    }
   };
 
   const calcday = () => {
     //일수 계산
     const day = moment(value[1]).diff(moment(value[0]), "days");
     //시작 종료 날짜 포맷 변경
-    const startDate = moment.tz(value[0], "Asia/Seoul").format("YY-MM-DD");
-    const endDate = moment.tz(value[1], "Asia/Seoul").format("YY-MM-DD");
+    const startDate = moment.tz(value[0], "Asia/Seoul").format("YYYY-MM-DD");
+    const endDate = moment.tz(value[1], "Asia/Seoul").format("YYYY-MM-DD");
 
     setSelectday((prevState) => {
       return {
@@ -318,15 +322,45 @@ function ReactCalender() {
         code: "reset",
       };
     });
-    // setIdx(0);
   };
 
   useDidMountEffect(() => {
-    calcday();
+    if (
+      (reset && ((start && end) || (!start && !end))) ||
+      (!reset && !start && !end)
+    ) {
+      calcday();
+    } else if (!reset && start && end) {
+      //일수 계산
+      const day = moment(value[1]).diff(moment(value[0]), "days");
+      //시작 종료 날짜 포맷 변경
+      const startDate = moment.tz(value[0], "Asia/Seoul").format("YYYY-MM-DD");
+      const endDate = moment.tz(value[1], "Asia/Seoul").format("YYYY-MM-DD");
+
+      setSelectday((prevState) => {
+        return {
+          ...prevState,
+          start: startDate,
+          end: endDate,
+        };
+      });
+
+      setReset(true);
+    }
   }, [value]);
 
   React.useEffect(() => {
-    calcday();
+    if (start && end) {
+      const [syear, smonth, sday] = start.split("-");
+      const [eyear, emonth, eday] = end.split("-");
+      //날짜 설정
+      onChange([
+        new Date(Number(syear), Number(smonth) - 1, Number(sday)),
+        new Date(Number(eyear), Number(emonth) - 1, Number(eday)),
+      ]);
+    } else {
+      calcday();
+    }
   }, []);
 
   const CalendarHandler = () => {
@@ -367,32 +401,10 @@ function ReactCalender() {
 
 //카카오 지도
 function KakaoMap() {
-  const { tmptimeline } = React.useContext(StoreContextT);
   const [map, setMap] = React.useState(null);
   const [boundslist, setBoundslist] = React.useState({});
-  const [markers, SetMarkers] = React.useState([]);
 
   React.useEffect(() => {
-    if (map) {
-      if (tmptimeline.code === "add") {
-        MarkerAddHandler(tmptimeline.curday, tmptimeline.curdata);
-      } else if (tmptimeline.code === "del") {
-        MarkerDelHandler(tmptimeline.curday, tmptimeline.delidx);
-      } else if (tmptimeline.code === "reset") {
-        //지도 마커 전부 삭제
-        markers.map((data, index) => {
-          data.marker.setMap(null);
-        });
-        SetMarkers([]);
-        setBoundslist({});
-        //지도 중심 이동
-        panTo(37.566828708166284, 126.97865508730158);
-      }
-    }
-  }, [tmptimeline]);
-
-  useDidMountEffect(() => {
-    // console.log("범위 좌표", boundslist);
     if (Object.keys(boundslist).length !== 0) {
       //등록된 마커를 기준으로 지도 레벨 변경
       setBounds(boundslist);
@@ -412,68 +424,6 @@ function KakaoMap() {
     const map = new kakao.maps.Map(container, options);
     setMap(map);
   }, []);
-
-  React.useEffect(() => {});
-
-  const MarkerDelHandler = (day, idx) => {
-    //해당 날짜 마커 보여주기
-    const tmp0 = [...markers];
-    const showmark = tmp0.filter((it) => it.day === day);
-    showmark.map((it) => it.marker.setMap(map));
-    //다른날 마커 모두 감추기
-    const tmp1 = [...markers];
-    const hiddenmark = tmp1.filter((it) => it.day !== day);
-    hiddenmark.map((it) => it.marker.setMap(null));
-
-    //마커 삭제
-    const tmp2 = [...markers];
-    const removemark = tmp2.filter((it) => it.day === day && it.idx === idx);
-    removemark[0].marker.setMap(null);
-
-    const ress = tmp2.filter((it) => it.idx !== idx);
-    SetMarkers(ress);
-
-    // 범위 좌표 리스트만큼 저장
-    let bounds = new kakao.maps.LatLngBounds();
-    const tmp = [...tmptimeline.daylist];
-    tmp.map((data, index) => {
-      if (data.day === day) {
-        // console.log(data);
-        data.list.map((d, i) => {
-          bounds.extend(new kakao.maps.LatLng(Number(d.y), Number(d.x)));
-        });
-      }
-    });
-    setBoundslist(bounds);
-  };
-
-  const MarkerAddHandler = (day, curdata) => {
-    //해당 날짜 마커 보여주기
-    const tmp0 = [...markers];
-    const showmark = tmp0.filter((it) => it.day === day);
-    showmark.map((it) => it.marker.setMap(map));
-    //다른날 마커 모두 감추기
-    const tmp1 = [...markers];
-    const hiddenmark = tmp1.filter((it) => it.day !== day);
-    hiddenmark.map((it) => it.marker.setMap(null));
-
-    //마커 저장
-    curdata.marker.setMap(map);
-    SetMarkers([...markers, curdata]);
-
-    // 범위 좌표 리스트만큼 저장
-    let bounds = new kakao.maps.LatLngBounds();
-    const tmp = [...tmptimeline.daylist];
-    tmp.map((data, index) => {
-      if (data.day === day) {
-        // console.log(data);
-        data.list.map((d, i) => {
-          bounds.extend(new kakao.maps.LatLng(Number(d.y), Number(d.x)));
-        });
-      }
-    });
-    setBoundslist(bounds);
-  };
 
   //해당 날짜에 해당하는 마커 그리기
   MarkerAddDAYALLHandler = (day, markerlist) => {
@@ -498,11 +448,6 @@ function KakaoMap() {
 
   //마커 전체 지우기
   MarkerDELALLHandler = (markerlist) => {
-    //지도 중심 이동
-    panTo(37.566828708166284, 126.97865508730158);
-    //지도 레벨 변경
-    map.setLevel(4);
-
     markerlist.map((data) => {
       data.map((it) => it.setMap(null));
     });
@@ -515,10 +460,17 @@ function KakaoMap() {
 
   //라인 전체 지우기
   LineDELALLHandler = (linelist) => {
-    // console.log(linelist);
     linelist.map((data) => data.setMap(null));
   };
 
+  MoveToCenter = () => {
+    if (map) {
+      //지도 중심 이동
+      panTo(37.566828708166284, 126.97865508730158);
+      //지도 레벨 변경
+      map.setLevel(3);
+    }
+  };
   const setBounds = (bounds) => {
     // LatLngBounds 객체에 추가된 좌표들을 기준으로 지도의 범위를 재설정합니다
     // 이때 지도의 중심좌표와 레벨이 변경될 수 있습니다
@@ -542,13 +494,7 @@ function KakaoMap() {
     map.panTo(moveLatLon);
   };
 
-  return (
-    <div
-      id="map"
-      className="kakomap"
-      // style={{ width: "100%", height: "80%" }}
-    ></div>
-  );
+  return <div id="map" className="kakomap"></div>;
 }
 
 // Day안에 장소 리스트
@@ -563,13 +509,13 @@ function DayListInput(props) {
     setModalOpen({ code: true, day: value.day });
   };
 
-  const delHanlder = (props) => {
+  const delHanlder = (propsidx) => {
     let tmp = [...tmptimeline.daylist];
     let newPlaceList = [];
 
     tmp.map((data, index) => {
       if (data.day === value.day) {
-        newPlaceList = data.list.filter((it) => it.idx !== props);
+        newPlaceList = data.list.filter((it, idx) => idx !== propsidx);
         data.list = [...newPlaceList];
       }
     });
@@ -598,7 +544,7 @@ function DayListInput(props) {
           <FontAwesomeIcon
             icon={faTrashCan}
             className="imgicon"
-            onClick={() => delHanlder(data.idx)}
+            onClick={() => delHanlder(index)}
           />
         </li>
       ))}
@@ -621,6 +567,93 @@ function TimelineInputForm() {
   const [modalOpen, setModalOpen] = React.useState({ code: false, day: "" });
   const [title, setTitle] = React.useState("");
   const [markerstore, setMarkerstore] = React.useState([]);
+  const [polylinestore, setPolylinestore] = React.useState([]);
+  const [overlaystore, setOverlaystore] = React.useState([]);
+  const horizontalScrollRef = React.useRef();
+
+  React.useEffect(() => {
+    if (tmptimeline.daylist.length > 0) {
+      //이전에 생성된 마커 삭제
+      MarkerDELALLHandler(markerstore);
+      //이전에 생성된 라인 삭제
+      LineDELALLHandler(polylinestore);
+      //이전에 생성된 커스텀 오버레이 삭제
+      MarkerDELALLHandler(overlaystore);
+
+      //전체 마커 생성
+      const markers = [];
+      const polylines = [];
+      const overlays = [];
+
+      let markerstmp = [];
+      let linePath = [];
+      let overlaystmp = [];
+
+      tmptimeline.daylist.map((item, index) => {
+        item.list.map((d, i) => {
+          //마커 저장
+          const imageSize = new kakao.maps.Size(24, 35);
+          const markerImage = new kakao.maps.MarkerImage(marking, imageSize);
+          const marker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(Number(d.y), Number(d.x)),
+            title: d.place_name,
+            image: markerImage,
+          });
+          markerstmp.push(marker);
+          //커스텀오버레이 저장
+          const customOverlay = new kakao.maps.CustomOverlay({
+            position: new kakao.maps.LatLng(Number(d.y), Number(d.x)),
+          });
+          overlaystmp.push(customOverlay);
+          //선을 이을 좌표 저장
+          linePath.push(new kakao.maps.LatLng(Number(d.y), Number(d.x)));
+        });
+        markers.push(markerstmp);
+        markerstmp = [];
+        overlays.push(overlaystmp);
+        overlaystmp = [];
+        //선 생성
+        const polyline = new kakao.maps.Polyline({
+          path: linePath, // 선을 구성하는 좌표배열 입니다
+          strokeWeight: 3, // 선의 두께 입니다
+          strokeColor: "#4a8522", // 선의 색깔입니다
+          strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+          strokeStyle: "solid", // 선의 스타일입니다
+        });
+        polylines.push(polyline);
+        linePath = [];
+      });
+
+      if (tmptimeline.code === "add" || tmptimeline.code === "del") {
+        //마커 그리기
+        MarkerAddDAYALLHandler(tmptimeline.curday, markers);
+        setMarkerstore(markers);
+        //라인 그리기
+        LineAddDAYALLHandler(tmptimeline.curday, polylines);
+        setPolylinestore(polylines);
+        //커스텀 오버레이 그리기
+        CustomMarkerAddDAYALLHandler(tmptimeline.curday, overlays);
+        setOverlaystore(overlays);
+      } else if (tmptimeline.code === "reset") {
+        MoveToCenter();
+      }
+    }
+  }, [tmptimeline]);
+
+  const onMarkerHandler = (day) => {
+    //이전에 생성된 마커 삭제
+    MarkerDELALLHandler(markerstore);
+    //이전에 생성된 라인 삭제
+    LineDELALLHandler(polylinestore);
+    //이전에 생성된 커스텀오버레이 삭제
+    MarkerDELALLHandler(overlaystore);
+    //특정 날짜 마커 그리기
+    MarkerAddDAYALLHandler(day, markerstore);
+    //특정 날짜 커스텀오버레이 그리기
+    CustomMarkerAddDAYALLHandler(day, overlaystore);
+    //특정 날짜 라인 그리기
+    LineAddDAYALLHandler(day, polylinestore);
+  };
 
   const TimelineAddHandler = async () => {
     let tmp = title;
@@ -639,6 +672,7 @@ function TimelineInputForm() {
         day: tmptimeline.day,
         writer: loginUser.mem_idx,
         daylist: tmptimeline.daylist,
+        curidx: tmptimeline.curidx,
       },
     })
       .then((res) => {
@@ -672,35 +706,24 @@ function TimelineInputForm() {
     }
   };
 
-  React.useEffect(() => {
-    if (tmptimeline.daylist.length > 0) {
-      //전체 마커 생성
-      const markers = [];
-      let tmp = [];
-      tmptimeline.daylist.map((item, index) => {
-        item.list.map((d, i) => {
-          const imageSize = new kakao.maps.Size(24, 35);
-          const markerImage = new kakao.maps.MarkerImage(marking, imageSize);
-          const marker = new kakao.maps.Marker({
-            position: new kakao.maps.LatLng(Number(d.y), Number(d.x)),
-            title: d.place_name,
-            image: markerImage,
-          });
-          tmp.push(marker);
-        });
-        markers.push(tmp);
-        tmp = [];
-      });
-      //전체 마커 저장
-      setMarkerstore(markers);
-    }
-  }, [tmptimeline]);
+  const MoveToLeftHandler = () => {
+    if (!horizontalScrollRef.current) return;
+    horizontalScrollRef.current.scrollTo({
+      left:
+        horizontalScrollRef.current.scrollLeft -
+        horizontalScrollRef.current.offsetWidth / 5,
+      behavior: "smooth",
+    });
+  };
 
-  const onMarkerHandler = (day) => {
-    //이전에 생성된 마커 제거
-    MarkerDELALLHandler(markerstore);
-    //특정 날짜 마커 그리기
-    MarkerAddDAYALLHandler(day, markerstore);
+  const MoveToRightHandler = () => {
+    if (!horizontalScrollRef.current) return;
+    horizontalScrollRef.current.scrollTo({
+      left:
+        horizontalScrollRef.current.scrollLeft +
+        horizontalScrollRef.current.offsetWidth / 5,
+      behavior: "smooth",
+    });
   };
 
   return (
@@ -725,12 +748,12 @@ function TimelineInputForm() {
             <KakaoMap />
           </div>
           <div className="daybox">
-            <button className="lbtn">
+            <button className="lbtn" onClick={MoveToLeftHandler}>
               <FontAwesomeIcon icon={faArrowLeft} className="imgicon" />
             </button>
-            <ul>
+            <ul ref={horizontalScrollRef}>
               {tmptimeline.daylist.map((data, index) => (
-                <li key={index} className="item">
+                <li key={index} className="item scrollnone">
                   <div
                     className="lidaytext"
                     onClick={() => onMarkerHandler(data.day)}
@@ -741,7 +764,254 @@ function TimelineInputForm() {
                 </li>
               ))}
             </ul>
-            <button className="rbtn">
+            <button className="rbtn" onClick={MoveToRightHandler}>
+              <FontAwesomeIcon icon={faArrowRight} className="imgicon" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </StoreContextModal.Provider>
+  );
+}
+
+// 타임라인 수정 폼
+function TimelineUpdateForm() {
+  const { loginUser } = React.useContext(StoreContext);
+  const { mode, setMode } = React.useContext(StoreContextM);
+  const { setDispatchType } = React.useContext(StoreContextDis);
+  const { tripdata } = React.useContext(StoreContextTrip);
+  const { tmptimeline, setTmptimeline } = React.useContext(StoreContextT);
+  const [modalOpen, setModalOpen] = React.useState({ code: false, day: "" });
+  const [title, setTitle] = React.useState("");
+  const [markerstore, setMarkerstore] = React.useState([]);
+  const [polylinestore, setPolylinestore] = React.useState([]);
+  const [overlaystore, setOverlaystore] = React.useState([]);
+  const horizontalScrollRef = React.useRef();
+
+  React.useEffect(() => {
+    //제목
+    setTitle(tripdata.timeline[mode.index].title);
+    //tmptimeline에 데이터 저장
+    setTmptimeline((prevState) => {
+      return {
+        ...prevState,
+        start: tripdata.timeline[mode.index].start,
+        end: tripdata.timeline[mode.index].end,
+        day: tripdata.timeline[mode.index].day,
+        daylist: JSON.parse(tripdata.timeline[mode.index].daylist),
+        curidx: tripdata.timeline[mode.index].curidx,
+      };
+    });
+  }, [mode.index]);
+
+  React.useEffect(() => {
+    if (tmptimeline.daylist.length > 0) {
+      //이전에 생성된 마커 삭제
+      MarkerDELALLHandler(markerstore);
+      //이전에 생성된 라인 삭제
+      LineDELALLHandler(polylinestore);
+      //이전에 커스텀 오버레이 삭제
+      MarkerDELALLHandler(overlaystore);
+
+      //전체 마커 생성
+      const markers = [];
+      const polylines = [];
+      const overlays = [];
+
+      let markerstmp = [];
+      let linePath = [];
+      let overlaystmp = [];
+
+      tmptimeline.daylist.map((item, index) => {
+        item.list.map((d, i) => {
+          //마커 저장
+          const imageSize = new kakao.maps.Size(24, 35);
+          const markerImage = new kakao.maps.MarkerImage(marking, imageSize);
+          const marker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(Number(d.y), Number(d.x)),
+            title: d.place_name,
+            image: markerImage,
+          });
+          markerstmp.push(marker);
+          //커스텀오버레이 저장
+          const customOverlay = new kakao.maps.CustomOverlay({
+            position: new kakao.maps.LatLng(Number(d.y), Number(d.x)),
+          });
+          overlaystmp.push(customOverlay);
+          //선을 이을 좌표 저장
+          linePath.push(new kakao.maps.LatLng(Number(d.y), Number(d.x)));
+        });
+        markers.push(markerstmp);
+        markerstmp = [];
+        overlays.push(overlaystmp);
+        overlaystmp = [];
+        //선 생성
+        const polyline = new kakao.maps.Polyline({
+          path: linePath, // 선을 구성하는 좌표배열 입니다
+          strokeWeight: 3, // 선의 두께 입니다
+          strokeColor: "#4a8522", // 선의 색깔입니다
+          strokeOpacity: 0.7, // 선의 불투명도 입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
+          strokeStyle: "solid", // 선의 스타일입니다
+        });
+        polylines.push(polyline);
+        linePath = [];
+      });
+
+      //마커 저장
+      setMarkerstore(markers);
+      //라인 저장
+      setPolylinestore(polylines);
+      //커스텀오버레이 저장
+      setOverlaystore(overlays);
+
+      if (tmptimeline.code === "add" || tmptimeline.code === "del") {
+        //마커 그리기
+        MarkerAddDAYALLHandler(tmptimeline.curday, markers);
+        //마커 저장
+        setMarkerstore(markers);
+        //라인 그리기
+        LineAddDAYALLHandler(tmptimeline.curday, polylines);
+        //라인 저장
+        setPolylinestore(polylines);
+        //순서 그리기
+        CustomMarkerAddDAYALLHandler(tmptimeline.curday, overlays);
+        //커스텀오버레이 저장
+        setOverlaystore(overlays);
+      } else if (tmptimeline.code === "reset") {
+        MoveToCenter();
+      }
+    }
+  }, [tmptimeline]);
+
+  const onMarkerHandler = (day) => {
+    //이전에 생성된 마커 삭제
+    MarkerDELALLHandler(markerstore);
+    //이전에 생성된 라인 삭제
+    LineDELALLHandler(polylinestore);
+    //이전에 생성된 커스텀오버레이 삭제
+    MarkerDELALLHandler(overlaystore);
+    //특정 날짜 마커 그리기
+    MarkerAddDAYALLHandler(day, markerstore);
+    //특정 날짜 커스텀오버레이 그리기
+    CustomMarkerAddDAYALLHandler(day, overlaystore);
+    //특정 날짜 라인 그리기
+    LineAddDAYALLHandler(day, polylinestore);
+  };
+
+  const TimelineUpdateHandler = async () => {
+    let tmp = title;
+    if (!tmp) {
+      tmp = moment.tz(new Date(), "Asia/Seoul").format("YY-MM-DD HH:mm 작성");
+    }
+
+    await axios({
+      url: "http://localhost:5000/timelineupdate",
+      method: "POST",
+      data: {
+        seq: tripdata.timeline[mode.index].seq,
+        tripseq: tripdata.trip.seq,
+        title: tmp,
+        start: tmptimeline.start,
+        end: tmptimeline.end,
+        day: tmptimeline.day,
+        writer: loginUser.mem_idx,
+        daylist: tmptimeline.daylist,
+        curidx: tmptimeline.curidx,
+      },
+    })
+      .then((res) => {
+        const { code, data } = res.data;
+        if (code === "success") {
+          setDispatchType((prevState) => {
+            return {
+              ...prevState,
+              code: "refresh",
+            };
+          });
+        }
+      })
+      .catch((e) => {
+        console.log("타임라인 작성 오류!", e);
+      });
+  };
+
+  const FormColseHanlder = () => {
+    if (tripdata.timeline.length !== 0) {
+      setMode((prevState) => {
+        return { ...prevState, code: "view" };
+      });
+    }
+  };
+
+  const valuechange = (e) => {
+    const data = e.target.value;
+    if (data.length <= 20) {
+      setTitle(data);
+    }
+  };
+
+  const MoveToLeftHandler = () => {
+    if (!horizontalScrollRef.current) return;
+    horizontalScrollRef.current.scrollTo({
+      left:
+        horizontalScrollRef.current.scrollLeft -
+        horizontalScrollRef.current.offsetWidth / 5,
+      behavior: "smooth",
+    });
+  };
+
+  const MoveToRightHandler = () => {
+    if (!horizontalScrollRef.current) return;
+    horizontalScrollRef.current.scrollTo({
+      left:
+        horizontalScrollRef.current.scrollLeft +
+        horizontalScrollRef.current.offsetWidth / 5,
+      behavior: "smooth",
+    });
+  };
+
+  return (
+    <StoreContextModal.Provider value={{ modalOpen, setModalOpen }}>
+      <div className="form">
+        {modalOpen.code && (
+          <SearchModal setModalOpen={setModalOpen} day={modalOpen.day} />
+        )}
+        <p className="titletext">
+          <input
+            maxLength={20}
+            value={title}
+            placeholder="제목 입력"
+            onChange={valuechange}
+          />
+          <button onClick={TimelineUpdateHandler}>완료</button>
+          <button onClick={FormColseHanlder}>취소</button>
+        </p>
+        <ReactCalender
+          start={tripdata.timeline[mode.index].start}
+          end={tripdata.timeline[mode.index].end}
+        />
+        <div className="mapdaybox">
+          <div className="kakaomapbox">
+            <KakaoMap />
+          </div>
+          <div className="daybox">
+            <button className="lbtn" onClick={MoveToLeftHandler}>
+              <FontAwesomeIcon icon={faArrowLeft} className="imgicon" />
+            </button>
+            <ul ref={horizontalScrollRef}>
+              {tmptimeline.daylist.map((data, index) => (
+                <li key={index} className="item scrollnone">
+                  <div
+                    className="lidaytext"
+                    onClick={() => onMarkerHandler(data.day)}
+                  >
+                    Day{data.day}
+                  </div>
+                  <DayListInput data={data} />
+                </li>
+              ))}
+            </ul>
+            <button className="rbtn" onClick={MoveToRightHandler}>
               <FontAwesomeIcon icon={faArrowRight} className="imgicon" />
             </button>
           </div>
@@ -774,12 +1044,14 @@ function DayListView(props) {
 // 타임라인 뷰 폼
 function TimelineViewForm() {
   const { loginUser } = React.useContext(StoreContext);
+  const { setDispatchType } = React.useContext(StoreContextDis);
   const { mode, setMode } = React.useContext(StoreContextM);
   const { tripdata } = React.useContext(StoreContextTrip);
   const [data, setData] = React.useState([]);
   const [markerstore, setMarkerstore] = React.useState([]);
   const [polylinestore, setPolylinestore] = React.useState([]);
   const [overlaystore, setOverlaystore] = React.useState([]);
+  const horizontalScrollRef = React.useRef();
 
   React.useEffect(() => {
     setData(JSON.parse(tripdata.timeline[mode.index].daylist));
@@ -865,6 +1137,66 @@ function TimelineViewForm() {
     LineAddDAYALLHandler(day, polylinestore);
   };
 
+  const FormOpenHanlder = () => {
+    if (tripdata.timeline.length !== 0) {
+      setMode((prevState) => {
+        return { ...prevState, code: "modify" };
+      });
+    }
+  };
+
+  const TimelineDelHandler = async () => {
+    await axios({
+      url: "http://localhost:5000/timelinedelete",
+      method: "POST",
+      data: {
+        seq: tripdata.timeline[mode.index].seq,
+      },
+    })
+      .then((res) => {
+        const { code, data } = res.data;
+        if (code === "success") {
+          setDispatchType((prevState) => {
+            return {
+              ...prevState,
+              code: "refresh",
+            };
+          });
+        }
+      })
+      .catch((e) => {
+        console.log("타임라인 작성 오류!", e);
+      });
+
+    setMode((prevState) => {
+      return {
+        ...prevState,
+        code: "",
+        index: 0,
+      };
+    });
+  };
+
+  const MoveToLeftHandler = () => {
+    if (!horizontalScrollRef.current) return;
+    horizontalScrollRef.current.scrollTo({
+      left:
+        horizontalScrollRef.current.scrollLeft -
+        horizontalScrollRef.current.offsetWidth / 5,
+      behavior: "smooth",
+    });
+  };
+
+  const MoveToRightHandler = () => {
+    if (!horizontalScrollRef.current) return;
+    horizontalScrollRef.current.scrollTo({
+      left:
+        horizontalScrollRef.current.scrollLeft +
+        horizontalScrollRef.current.offsetWidth / 5,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <div className="form">
       <p className="titletext">
@@ -877,13 +1209,15 @@ function TimelineViewForm() {
             {tripdata.timeline[mode.index].start} ~{" "}
             {tripdata.timeline[mode.index].end}
           </span>
-
+          <span className="line">
+            {tripdata.timeline[mode.index].writer_nickname} 작성
+          </span>
           {tripdata.timeline[mode.index].writer === loginUser.mem_idx && (
-            <>
+            <span className="line">
               {" "}
-              <button>수정</button>
-              <button>삭제</button>
-            </>
+              <button onClick={FormOpenHanlder}>수정</button>
+              <button onClick={TimelineDelHandler}>삭제</button>
+            </span>
           )}
         </p>
       </div>
@@ -892,12 +1226,12 @@ function TimelineViewForm() {
           <KakaoMap />
         </div>
         <div className="daybox">
-          <button className="lbtn">
+          <button className="lbtn" onClick={MoveToLeftHandler}>
             <FontAwesomeIcon icon={faArrowLeft} className="imgicon" />
           </button>
-          <ul>
+          <ul ref={horizontalScrollRef}>
             {data.map((data, index) => (
-              <li key={index} className="item">
+              <li key={index} className="item scrollnone">
                 <div
                   className="lidaytext"
                   onClick={() => onMarkerHandler(data.day)}
@@ -908,7 +1242,7 @@ function TimelineViewForm() {
               </li>
             ))}
           </ul>
-          <button className="rbtn">
+          <button className="rbtn" onClick={MoveToRightHandler}>
             <FontAwesomeIcon icon={faArrowRight} className="imgicon" />
           </button>
         </div>
@@ -938,9 +1272,10 @@ function Content() {
     daylist: [],
   });
 
-  useDidMountEffect(() => {
+  React.useEffect(() => {
     setTimelinelist(tripdata.timeline);
     if (tripdata.timeline && timelinelist) {
+      //타임라인이 추가
       if (
         tripdata.timeline.length > 1 &&
         tripdata.timeline.length > timelinelist.length &&
@@ -949,7 +1284,7 @@ function Content() {
         setMode((prevState) => {
           return {
             ...prevState,
-            code: "view",
+            code: "",
             index: tripdata.timeline.length - 1,
           };
         });
@@ -957,7 +1292,7 @@ function Content() {
     }
   }, [tripdata]);
 
-  useDidMountEffect(() => {
+  React.useEffect(() => {
     if (timelinelist) {
       if (timelinelist.length === 0) {
         setMode((prevState) => {
@@ -982,7 +1317,7 @@ function Content() {
         <Timelinebar />
         {mode.code === "view" && <TimelineViewForm />}
         {mode.code === "write" && <TimelineInputForm />}
-        {mode.code === "modify" && <TimelineInputForm />}
+        {mode.code === "modify" && <TimelineUpdateForm />}
       </StoreContextT.Provider>
     </StoreContextM.Provider>
   );
@@ -1028,6 +1363,7 @@ function Plan() {
 
   React.useEffect(() => {
     if (Object.keys(tripdata).length !== 0) {
+      console.log(tripdata);
     }
   }, [tripdata]);
 
@@ -1036,11 +1372,10 @@ function Plan() {
     await axios({
       url: "http://localhost:5000/planlist",
       method: "POST",
-      data: { seq: seq },
+      data: { seq: seq, idx: loginUser.mem_idx },
     })
       .then((res) => {
         const { code, trip, timeline } = res.data;
-        // console.log(trip, timeline);
         if (code === "success") {
           setTripdata({ trip, timeline });
         }
@@ -1053,13 +1388,24 @@ function Plan() {
   return (
     <StoreContextDis.Provider value={{ setDispatchType }}>
       <StoreContextTrip.Provider value={{ tripdata }}>
-        <div className="plancontainer">
+        {/* <div className="plancontainer">
           <Htitle />
           <div className="contentbox">
             <Matebar />
             <Content />
           </div>
-        </div>
+        </div> */}
+        {Object.keys(tripdata).length !== 0 ? (
+          <div className="plancontainer">
+            <Htitle />
+            <div className="contentbox">
+              <Matebar />
+              <Content />
+            </div>
+          </div>
+        ) : (
+          <div>접근할 수 없는 페이지입니다!</div>
+        )}
       </StoreContextTrip.Provider>
     </StoreContextDis.Provider>
   );
