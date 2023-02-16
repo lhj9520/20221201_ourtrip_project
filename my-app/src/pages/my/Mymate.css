@@ -1,74 +1,79 @@
-.contents-container > .content-mymate {
-  /* border: solid 1px blue; */
+.mymatecon > .topbtn {
+  position: fixed;
+  width: 45px;
+  height: 45px;
+  right: calc(10% - 27.5px);
+  bottom: 50px;
+  color: gray;
+  cursor: pointer;
+}
+.mymatecon > .mymate {
+  min-width: 575px;
+}
+.mymatecon .content-mymate {
   width: 60%;
+  min-width: 575px;
   height: 100%;
-  /* height: calc(100vh - 300px); */
   margin: auto;
   border-left: solid 1px lightgray;
   border-right: solid 1px lightgray;
 }
 
-.contents-container > .content-mymate > ul {
+.mymatecon .content-mymate > ul {
   width: 100%;
-  height: auto;
+  height: 100%;
+  margin: auto;
+  padding: 42px 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 64px 32px;
-  padding: 42px 32px;
-  /* justify-content: center; */
+  justify-content: center;
+  gap: 1.2rem;
 }
 
-.contents-container > .content-mymate > ul > span {
-  display: block;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  font-size: 1.375rem;
+.mymatecon .content-mymate > ul > .item {
+  display: inline-block;
+  position: relative;
+  width: 200px;
+  height: 200px;
 }
-
-.contents-container > .content-mymate > ul > .item {
-  width: 244.5px;
-  height: 130px;
-  border: solid 1px black;
-  border-radius: 10px;
-  box-shadow: 0 2px 2px 2px lightgrey;
-  display: flex;
-  /* margin: auto; */
+.mymatecon .content-mymate > ul > li .postit {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
 }
-
-.contents-container > .content-mymate > ul > .item > .img {
-  width: 35%;
-  height: 100%;
-  text-align: center;
-  /* border: solid 1px red; */
-}
-
-.contents-container > .content-mymate > ul > .item > .img > .imgicon {
-  width: 100%;
-  height: 30%;
-  margin-top: 20px;
-  /* border: solid 1px red; */
-}
-.contents-container > .content-mymate > ul > .item > .info {
-  width: 65%;
-  height: 100%;
+.mymatecon .content-mymate > ul > li .userinfo {
+  position: absolute;
+  top: 40px;
+  left: 20px;
+  right: 20px;
+  bottom: 10px;
   display: flex;
   flex-direction: column;
   text-align: center;
-  font-size: 1rem;
-  font-weight: bold;
-  /* border: solid 1px red; */
 }
-.contents-container > .content-mymate > ul > .item > div > .nickname {
-  /* border: solid 1px red; */
+.mymatecon .content-mymate > ul > li .userinfo .imgbox {
   width: 100%;
   height: 50%;
-  padding-top: 15px;
 }
-
-.contents-container > .content-mymate > ul > .item > div > .id {
-  /* border: solid 1px red; */
+.mymatecon .content-mymate > ul > li .userinfo .imgbox .userprofile {
+  width: 50%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.mymatecon .content-mymate > ul > li .userinfo .infobox {
   width: 100%;
   height: 50%;
-  padding-top: 15px;
+}
+.mymatecon .content-mymate > ul > li .userinfo .infobox > span {
+  display: block;
+}
+.mymatecon .content-mymate > ul > li .userinfo .infobox > .nickname {
+  font-size: 0.875rem;
+  margin-top: 10px;
+}
+.mymatecon .content-mymate > ul > li .userinfo .infobox > .id {
+  font-size: 0.785rem;
+  margin-top: 10px;
+  color: gray;
 }

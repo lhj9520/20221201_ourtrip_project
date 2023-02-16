@@ -8,10 +8,9 @@ import "./Plan.css";
 import useDidMountEffect from "../useDidMountEffect";
 import SearchModal from "./SearchModal";
 import marking from "../../img/map_mark.png";
-
+import Loading from "../../component/Loading";
 import { StoreContext } from "../../App";
-import { useHorizontalScroll } from "../../component/useSideScroll";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
@@ -63,7 +62,7 @@ function Htitle() {
     }
 
     await axios({
-      url: "http://localhost:5000/triptitlechange",
+      url: "http://localhost:5000/mytrip/triptitlechange",
       method: "POST",
       data: { seq: tripdata.trip.seq, title: title.value },
     })
@@ -227,6 +226,7 @@ function Timelinebar() {
   };
 
   const ViewOpenHanlder = (data, index) => {
+    MoveToCenter();
     Setcursel(index);
     setMode((prevState) => {
       return { ...prevState, code: "view", index: index };
@@ -662,7 +662,7 @@ function TimelineInputForm() {
     }
 
     await axios({
-      url: "http://localhost:5000/timelineadd",
+      url: "http://localhost:5000/mytrip/timelineadd",
       method: "POST",
       data: {
         tripseq: tripdata.trip.seq,
@@ -905,7 +905,7 @@ function TimelineUpdateForm() {
     }
 
     await axios({
-      url: "http://localhost:5000/timelineupdate",
+      url: "http://localhost:5000/mytrip/timelineupdate",
       method: "POST",
       data: {
         seq: tripdata.timeline[mode.index].seq,
@@ -1147,7 +1147,7 @@ function TimelineViewForm() {
 
   const TimelineDelHandler = async () => {
     await axios({
-      url: "http://localhost:5000/timelinedelete",
+      url: "http://localhost:5000/mytrip/timelinedelete",
       method: "POST",
       data: {
         seq: tripdata.timeline[mode.index].seq,
@@ -1255,7 +1255,6 @@ function TimelineViewForm() {
 function Content() {
   const { tripdata } = React.useContext(StoreContextTrip);
   const [timelinelist, setTimelinelist] = React.useState([]);
-  const [max, setMax] = React.useState(0);
   const [mode, setMode] = React.useState({
     code: "",
     index: 0,
@@ -1329,28 +1328,21 @@ const StoreContextTrip = React.createContext({});
 const StoreContextDis = React.createContext({});
 
 function Plan() {
-  // const navigation = useNavigate();
+  const navigation = useNavigate();
 
   let { seq } = useParams();
-
   const { loginUser } = React.useContext(StoreContext);
-
   const [dispatch, setDispatchType] = React.useState({
     code: null,
     params: null,
   });
-
-  /**
-   * 전역 변수
-   * 1. 여행 게시글 데이터 tripdata
-   * 2. 여행 게시글에 속한 타임라인 목록 timelinelist
-   * 3. 검색 모달 on/off modalOpen
-   */
+  const [loading, setLoading] = React.useState(null);
   const [tripdata, setTripdata] = React.useState({});
 
-  //로그인 세션 상태 새로고침 하면 실행
   React.useEffect(() => {
-    if (loginUser) {
+    if (loginUser.session === "none") {
+      navigation("/login", { replace: true });
+    } else if (Object.keys(loginUser).length > 1) {
       TripLoadHandler();
     }
   }, [loginUser]);
@@ -1369,16 +1361,16 @@ function Plan() {
 
   //seq에 해당하는 여행 데이터 가져오기
   const TripLoadHandler = async () => {
+    setLoading(true);
     await axios({
-      url: "http://localhost:5000/planlist",
+      url: "http://localhost:5000/mytrip/planlist",
       method: "POST",
       data: { seq: seq, idx: loginUser.mem_idx },
     })
       .then((res) => {
         const { code, trip, timeline } = res.data;
-        if (code === "success") {
-          setTripdata({ trip, timeline });
-        }
+        setTripdata({ trip, timeline });
+        setLoading(false);
       })
       .catch((e) => {
         console.log("여행 계획 업데이트 오류!", e);
@@ -1386,28 +1378,35 @@ function Plan() {
   };
 
   return (
-    <StoreContextDis.Provider value={{ setDispatchType }}>
-      <StoreContextTrip.Provider value={{ tripdata }}>
-        {/* <div className="plancontainer">
-          <Htitle />
-          <div className="contentbox">
-            <Matebar />
-            <Content />
-          </div>
-        </div> */}
-        {Object.keys(tripdata).length !== 0 ? (
-          <div className="plancontainer">
-            <Htitle />
-            <div className="contentbox">
-              <Matebar />
-              <Content />
-            </div>
-          </div>
-        ) : (
-          <div>접근할 수 없는 페이지입니다!</div>
-        )}
-      </StoreContextTrip.Provider>
-    </StoreContextDis.Provider>
+    <>
+      {loading ? <Loading /> : null}
+      {Object.keys(loginUser).length > 1 && (
+        <>
+          {Object.keys(tripdata).length > 0 &&
+          tripdata.trip !== "none" &&
+          Object.keys(tripdata.trip).length > 1 ? (
+            <StoreContextDis.Provider value={{ setDispatchType }}>
+              <StoreContextTrip.Provider value={{ tripdata }}>
+                <div className="plancontainer">
+                  <Htitle />
+                  <div className="contentbox">
+                    <Matebar />
+                    <Content />
+                  </div>
+                </div>
+              </StoreContextTrip.Provider>
+            </StoreContextDis.Provider>
+          ) : (
+            <>
+              {Object.keys(tripdata).length !== 0 &&
+                tripdata.trip === "none" && (
+                  <div>해당 여행계획 게시글에 권한이 없습니다.</div>
+                )}
+            </>
+          )}
+        </>
+      )}
+    </>
   );
 }
 

@@ -217,9 +217,12 @@
   z-index: 2;
 }
 /* 카카오맵+타임라인 */
+.plancontainer .contentbox .form .mapdaybox > * {
+  font-family: var(--font-NotoSansKR-Regular) !important;
+}
 .plancontainer .contentbox .form .mapdaybox {
   width: 100%;
-  height: calc(100vh - 213px);
+  height: calc(100vh - 220px);
   position: relative;
 }
 
@@ -229,7 +232,7 @@
   top: 0;
   left: 0;
   bottom: 0;
-  padding: 32px;
+  padding: 12px;
 }
 .plancontainer .contentbox .form .daybox {
   position: absolute;
@@ -238,7 +241,7 @@
   left: 50%;
   right: 0;
   bottom: 0;
-  padding: 32px;
+  padding: 12px;
 }
 
 /* 카카오맵 */
@@ -327,7 +330,7 @@
 }
 .plancontainer .contentbox .form .daybox > ul > li > ul > li > .itemindex {
   margin: 0 15px;
-  padding: 5px;
+  padding: 5px 7px;
   border-radius: 50%;
   background-color: #4a8522;
   color: #fff;
@@ -335,6 +338,18 @@
 .plancontainer .contentbox .form .daybox > ul > li > ul > li > .itemtext {
   display: inline-block;
   font-size: 0.875rem;
+}
+.plancontainer
+  .contentbox
+  .form
+  .daybox
+  > ul
+  > li
+  > ul
+  > li
+  > .itemtext
+  > span {
+  font-family: var(--font-NotoSansKR-Regular) !important;
 }
 .plancontainer .contentbox .form .daybox > ul > li > ul > li > .imgicon {
   padding: 5px 5px;

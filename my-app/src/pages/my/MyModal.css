@@ -6,14 +6,12 @@
 }
 
 .modal > section > main > .pwdmod > div > div {
-  /* border: solid 1px red; */
   height: 55px;
   display: flex;
   flex-direction: column;
   position: relative;
 }
 .modal > section > main > .pwdmod > div > .btncontainer {
-  /* border: solid 1px red; */
   height: 30px;
 }
 .modal > section > main > .pwdmod > div > div > input {
@@ -26,7 +24,6 @@
   width: 30px;
   top: 8px;
   right: 8px;
-  /* border: solid 1px red; */
 }
 
 .modal > section > main > .pwdmod > div > div > .msg {
@@ -45,26 +42,50 @@
 }
 
 .modal > section > main > .pwdmod > .pwdchanged {
-  /* border: solid 1px red; */
   width: 100%;
   margin: auto;
 }
 
 .modal > section > main > .pwdmod > .pwdchanged > span {
-  /* border: solid 1px blue; */
   display: inline-block;
   font-size: 1rem;
   font-weight: bold;
   width: 100%;
   text-align: center;
 }
+
+.modal > section > main > .emailchangebox {
+  width: 100%;
+  height: 170px;
+}
+.modal > section > main > .emailchangebox > div {
+  padding: 10px 20px;
+  width: 100%;
+}
+.modal > section > main > .emailchangebox > div > span:first-child {
+  display: inline-block;
+  width: 100px;
+}
+.modal > section > main > .emailchangebox > div > input {
+  padding: 3px 0;
+}
+.modal > section > main > .emailchangebox .msg {
+  display: block;
+  font-size: 0.685rem;
+  color: #dc3545;
+  margin-left: 100px;
+}
+.modal > section > main > .emailchangebox button {
+  font-size: 0.765rem;
+  margin-left: 3px;
+  padding: 3px;
+}
+
 .modal > section > main > .Withdrawal-box {
-  /* border: solid 1px red; */
   width: 100%;
   height: 100px;
 }
 .modal > section > main > .Withdrawal-box > span {
-  /* border: solid 1px red; */
   display: inline-block;
   width: 100%;
   font-size: 1.1rem;
@@ -79,21 +100,18 @@
   margin-bottom: 16px;
 }
 .modal > section > main > .Withdrawal-box > div {
-  /* border: solid 1px black; */
   width: 100%;
   height: 30px;
   display: flex;
   justify-content: center;
 }
 .modal > section > main > .Withdrawal-box button {
-  /* border: solid 1px blue; */
   width: 50px;
   border-radius: 4px;
   background-color: lightgray;
   color: #ffffff;
 }
 .modal > section > main > .Withdrawal-box .withdrawalbtn {
-  /* border: solid 1px black; */
   margin-right: 12px;
   background-color: gray;
 }

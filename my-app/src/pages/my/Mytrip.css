@@ -1,58 +1,85 @@
-.contents-container > .content-mytrip {
-  /* border: solid 1px blue; */
-  width: 60%;
+.mytripcon > .mytrip {
+  min-width: 725px;
+}
+.mytripcon > .content-mytrip {
+  width: 70%;
+  min-width: 725px;
   height: 100%;
-  /* height: calc(100vh - 300px); */
   margin: auto;
   border-left: solid 1px lightgray;
   border-right: solid 1px lightgray;
-}
-
-.contents-container > .content-mytrip > ul {
-  width: 100%;
-  height: auto;
-  display: flex;
-  flex-wrap: wrap;
-  padding: 0 32px;
-  /* justify-content: center; */
-}
-
-.contents-container > .content-mytrip > ul > span {
-  display: block;
-  width: 100%;
-  height: 100%;
   text-align: center;
-  font-size: 1.375rem;
+  padding-top: 12px;
+}
+.content-mytrip .number {
+  width: 5%;
+}
+.content-mytrip .triptitle {
+  width: 30%;
+}
+.content-mytrip .host {
+  width: 15%;
+}
+.content-mytrip .matecnt {
+  width: 10%;
+}
+.content-mytrip .time1 {
+  width: 20%;
+}
+.content-mytrip .time2 {
+  width: 20%;
 }
 
-.contents-container > .content-mytrip > ul > .item {
+.mytripcon .content-mytrip .mytriptitlebar {
   width: 100%;
-  height: 100%;
-  border-bottom: solid 1px lightgrey;
-  padding: 16px 12px;
-  font-size: 0.875rem;
+  border-top: solid 2.5px black;
+  border-bottom: solid 2.5px black;
+}
+.mytripcon .content-mytrip .mytriptitlebar > span {
+  display: inline-block;
+  padding: 16px 0;
 }
 
-.contents-container > .content-mytrip > ul > .mytrip:hover {
-  color: rgb(155, 155, 155);
-}
-
-.contents-container > .content-mytrip > ul > .mytrip > .tripinfo > .triptitle {
+.content-mytrip > .triplistbox .item > span {
+  font-family: var(--font-NotoSansKR-Regular) !important;
+  display: inline-block;
+  padding: 12px 0;
   cursor: pointer;
-  font-weight: bold;
-  font-size: 1.25rem;
-  margin-bottom: 6px;
+}
+.content-mytrip > .triplistbox .item {
+  border-bottom: dashed 2px lightgray;
+}
+.content-mytrip > .triplistbox .item:hover {
+  color: gray;
+  cursor: pointer;
 }
 
-.contents-container
-  > .content-mytrip
-  > ul
-  > .mytrip
-  > .tripinfo
-  > .triptitle:hover {
-  color: rgb(95, 95, 95);
+.content-mytrip > .pagelistbox {
+  height: 56px;
+  padding: 14px 0;
 }
-
-.contents-container > .content-mytrip > ul > .mytrip > .tripinfo > section {
-  margin-bottom: 4px;
+.content-mytrip > .pagelistbox > * {
+  display: inline-block;
+}
+.content-mytrip > .pagelistbox > span:hover {
+  text-decoration: underline;
+}
+.content-mytrip > .pagelistbox .pagelist {
+  margin: 0 12px;
+}
+.content-mytrip > .pagelistbox .pagelist .item {
+  display: inline;
+  cursor: pointer;
+  margin: 0 12px;
+}
+.content-mytrip > .pagelistbox .pagelist .item:hover {
+  text-decoration: underline;
+}
+.content-mytrip > .pagelistbox .pagelist .select {
+  color: #4a8522;
+}
+.content-mytrip > .pagelistbox > span {
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 0 6px;
 }

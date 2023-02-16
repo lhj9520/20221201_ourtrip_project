@@ -342,7 +342,7 @@ function Join() {
     }
 
     await axios({
-      url: "http://localhost:5000/idcheck",
+      url: "http://localhost:5000/dupcheck/id",
       method: "POST",
       data: { id: id.value },
     })
@@ -388,7 +388,7 @@ function Join() {
     }
 
     await axios({
-      url: "http://localhost:5000/emailcheck",
+      url: "http://localhost:5000/dupcheck/email",
       method: "POST",
       data: { email: email.value },
     })
@@ -427,7 +427,7 @@ function Join() {
     setDisable(false);
 
     await axios({
-      url: "http://localhost:5000/mail",
+      url: "http://localhost:5000/auth/mail",
       method: "POST",
       data: {
         yourname: "join",
@@ -502,7 +502,7 @@ function Join() {
     }
 
     await axios({
-      url: "http://localhost:5000/nicknamecheck",
+      url: "http://localhost:5000/dupcheck/nickname",
       method: "POST",
       data: { nickname: nickname.value },
     })
@@ -573,7 +573,7 @@ function Join() {
     }
 
     await axios({
-      url: "http://localhost:5000/join",
+      url: "http://localhost:5000/auth/join",
       method: "POST",
       data: {
         id: id.value,
@@ -602,14 +602,16 @@ function Join() {
   return (
     <div className="join-container">
       <div className="centerfix">
-        <img
-          src={logoimg}
-          alt="logo이미지"
-          onClick={() => {
-            navigation("/");
-          }}
-        />
-        <span className="title">회원가입</span>
+        <div className="first">
+          <img
+            src={logoimg}
+            alt="logo이미지"
+            onClick={() => {
+              navigation("/");
+            }}
+          />
+          <span className="title">회원가입</span>
+        </div>
         <div className="userinfo">
           <div className="idcontainer">
             <section className="title">
@@ -757,11 +759,7 @@ function Join() {
               className="item overlap"
               onChange={emailvaluechange}
             />
-            <button
-              className="overlapbtn"
-              // className={classnames("overlapbtn", { over: email.dupisvalid })}
-              onClick={duplicateEmailCheck}
-            >
+            <button className="overlapbtn" onClick={duplicateEmailCheck}>
               인증번호전송
             </button>
             <div className="emailcode">

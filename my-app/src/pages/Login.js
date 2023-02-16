@@ -1,11 +1,10 @@
 import React from "react";
 import axios from "axios";
-import classnames from "classnames";
 import "./Login.css";
 import logoimg from "../img/logo_oco.png";
 
-import { importsession } from "../App";
 import { useNavigate } from "react-router-dom";
+import { importsession } from "../App";
 
 function Login() {
   const navigation = useNavigate();
@@ -15,10 +14,9 @@ function Login() {
     pw: "",
     msg1: "",
     msg2: "",
-    autologin: false,
   });
 
-  const idchange = (event) => {
+  const IdvaluechangeHandler = (event) => {
     const data = event.target.value;
     if (data.length <= 12) {
       setUserlogin((prevState) => {
@@ -27,7 +25,7 @@ function Login() {
     }
   };
 
-  const pwchange = (event) => {
+  const PwvaluechangeHandler = (event) => {
     const data = event.target.value;
     if (data.length <= 20) {
       setUserlogin((prevState) => {
@@ -36,7 +34,7 @@ function Login() {
     }
   };
 
-  const userloginHandler = async () => {
+  const UserLoginHandler = async () => {
     if (!userlogin.id) {
       setUserlogin((prevState) => {
         return { ...prevState, msg1: "아이디를 입력하세요.", msg2: "" };
@@ -50,57 +48,37 @@ function Login() {
       return;
     }
 
-    //자동로그인 확인
     await axios({
-      url: "http://localhost:5000/login",
+      url: "http://localhost:5000/auth/login",
       method: "POST",
       data: {
         id: userlogin.id,
         pw: userlogin.pw,
-        autologin: userlogin.autologin,
       },
     })
       .then((res) => {
-        const { code, message } = res.data;
+        const { code, message, redirect } = res.data;
         if (code === "error") {
           alert(message);
           return;
+        } else {
+          importsession();
+          navigation(redirect);
         }
-        importsession();
-        navigation("/", { replace: true }); //{ replace: true }
       })
       .catch((e) => {
         console.log("로그인 오류!", e);
       });
   };
 
-  //체크 확인(자동로그인)
-  const handleClickRadioButton = (e) => {
-    if (e.target.checked) {
-      // console.log("체크");
-      setUserlogin((prevState) => {
-        return { ...prevState, autologin: true };
-      });
-    } else {
-      // console.log("안체크");
-      setUserlogin((prevState) => {
-        return { ...prevState, autologin: false };
-      });
-    }
-  };
-
   return (
     <div className="login-container">
-      <div className="centerfix">
-        <div className="logininfo">
-          <img
-            src={logoimg}
-            alt="logo이미지"
-            onClick={() => {
-              navigation("/");
-            }}
-          />
+      <div className="loginbox">
+        <div className="first">
+          <img src={logoimg} alt="logo이미지" onClick={() => navigation("/")} />
           <span className="title">로그인</span>
+        </div>
+        <div className="inputbox">
           <input
             type="text"
             maxLength={12}
@@ -108,7 +86,7 @@ function Login() {
             name="id"
             placeholder="아이디"
             className="item"
-            onChange={idchange}
+            onChange={IdvaluechangeHandler}
           />
           <span className="msg">{userlogin.msg1}</span>
           <input
@@ -117,43 +95,23 @@ function Login() {
             value={userlogin.pw}
             name="pw"
             placeholder="비밀번호"
-            className="item pwbox"
-            onChange={pwchange}
+            className="item"
+            onChange={PwvaluechangeHandler}
           />
           <span className="msg">{userlogin.msg2}</span>
-          {/* <span className="autologincheck">
-            <input type="checkbox" onClick={handleClickRadioButton} />
-            자동로그인
-          </span> */}
-          <button className="loginbtn" onClick={userloginHandler}>
+          <button className="loginbtn" onClick={UserLoginHandler}>
             로그인
           </button>
         </div>
         <div className="more">
-          <span
-            onClick={() => {
-              navigation("/join");
-            }}
-          >
-            회원가입
-          </span>
-          <span
-            onClick={() => {
-              navigation("/userfind", { state: "id" });
-            }}
-          >
+          <span onClick={() => navigation("/join")}>회원가입</span>
+          <span onClick={() => navigation("/userfind", { state: "id" })}>
             아이디 찾기
           </span>
-          <span
-            onClick={() => {
-              navigation("/userfind", { state: "pw" });
-            }}
-          >
+          <span onClick={() => navigation("/userfind", { state: "pw" })}>
             비밀번호 찾기
           </span>
         </div>
-        {/* <div className="hr-sect">SNS 간편 로그인</div>
-        <div className="easylogin">여기에 아이콘들</div> */}
       </div>
     </div>
   );

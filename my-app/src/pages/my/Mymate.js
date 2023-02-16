@@ -1,48 +1,26 @@
 import React from "react";
 import axios from "axios";
-import Menubar from "../../component/menubar";
-import Modal from "../../component/modal";
 import "./Mymate.css";
 import "./MymateModal.css";
-// import bimg from "../../img/pexels-trace-hudson-2770933.jpg";
-
-import { StoreContext, StoreContextM, importmate } from "../../App";
+import useDidMountEffect from "../useDidMountEffect";
+import Menubar from "../../component/menubar";
+import Modal from "../../component/modal";
+import Loading from "../../component/Loading";
+import greenpostit from "../../img/greenpostit.png";
+import userprofile from "../../img/userprofile.png";
+import { StoreContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleUser } from "@fortawesome/free-regular-svg-icons";
+import { faSquareCaretUp } from "@fortawesome/free-regular-svg-icons";
 
 function MateReq() {
   const { loginUser } = React.useContext(StoreContext);
   const { setDispatchType } = React.useContext(StoreContextDis);
-  const { setReqcnt } = React.useContext(StoreContextCnt);
-  const [matereqdata, setMatereqdata] = React.useState([]);
+  const { mymate } = React.useContext(StoreContextM);
 
-  React.useEffect(() => {
-    matereqlist();
-  }, []);
-
-  const matereqlist = async () => {
+  const MateAcceptHanlder = async (idx) => {
     await axios({
-      url: "http://localhost:5000/matereqlist",
-      method: "POST",
-      data: { idx: loginUser.mem_idx },
-    })
-      .then((res) => {
-        const { code, data } = res.data;
-        if (code === "success") {
-          const tmp = [...data];
-          setMatereqdata(tmp);
-          setReqcnt(tmp.length);
-        }
-      })
-      .catch((e) => {
-        console.log("메이트 목록 업데이트 오류!", e);
-      });
-  };
-
-  const mateaccept = async (idx) => {
-    await axios({
-      url: "http://localhost:5000/mateaccept",
+      url: "http://localhost:5000/mymate/accept",
       method: "POST",
       data: {
         idx: loginUser.mem_idx,
@@ -52,8 +30,7 @@ function MateReq() {
       .then((res) => {
         const { code, message } = res.data;
         if (code === "success") {
-          matereqlist();
-          setDispatchType({ code: "matelist" });
+          setDispatchType({ code: "refresh" });
         }
       })
       .catch((e) => {
@@ -61,9 +38,9 @@ function MateReq() {
       });
   };
 
-  const matedecline = async (idx) => {
+  const MateDeclineHandler = async (idx) => {
     await axios({
-      url: "http://localhost:5000/matedecline",
+      url: "http://localhost:5000/mymate/decline",
       method: "POST",
       data: {
         idx: loginUser.mem_idx,
@@ -73,8 +50,7 @@ function MateReq() {
       .then((res) => {
         const { code, message } = res.data;
         if (code === "success") {
-          matereqlist();
-          setDispatchType({ code: "matelist" });
+          setDispatchType({ code: "refresh" });
         }
       })
       .catch((e) => {
@@ -83,36 +59,34 @@ function MateReq() {
   };
 
   return (
-    <ul className="matereq">
-      {matereqdata.length === 0 ? (
+    <>
+      {mymate.req.length === 0 ? (
         <span>메이트 요청이 없습니다.</span>
       ) : (
-        matereqdata.map((data, index) => (
-          <li key={index} className="item">
-            <span className="nickname">{data.mem_nickname}</span>
-            <span className="id">(@{data.mem_userid})</span>
-            <div>
-              <button
-                className="acceptbtn"
-                onClick={() => {
-                  mateaccept(data.mem_idx);
-                }}
-              >
-                수락
-              </button>
-              <button
-                className="declinebtn"
-                onClick={() => {
-                  matedecline(data.mem_idx);
-                }}
-              >
-                거절
-              </button>
-            </div>
-          </li>
-        ))
+        <ul className="matereq">
+          {mymate.req.map((data, index) => (
+            <li key={index} className="item">
+              <span className="nickname">{data.mem_nickname}</span>
+              <span className="id">(@{data.mem_userid})</span>
+              <div>
+                <button
+                  className="acceptbtn"
+                  onClick={() => MateAcceptHanlder(data.mem_idx)}
+                >
+                  수락
+                </button>
+                <button
+                  className="declinebtn"
+                  onClick={() => MateDeclineHandler(data.mem_idx)}
+                >
+                  거절
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
-    </ul>
+    </>
   );
 }
 function MateAddModal() {
@@ -132,30 +106,18 @@ function MateAddModal() {
 
   const valuechange = (event) => {
     const data = event.target.value;
-    setSearchdata(data);
-    setSearchmsg({ code: "", msg: "" });
-  };
-
-  const findid = () => {
-    // console.log(searchdata);
-    //아이디 예외처리
-    if (searchdata.length < 4 || searchdata.length > 12) {
-      setSearchmsg({
-        code: "error",
-        msg: "소문자+영어 조합 4~12자리로 입력해주세요.",
-      });
-    } else {
-      findidreq(searchdata);
+    if (data.length <= 12) {
+      setSearchdata(data);
     }
   };
 
-  const findidreq = async (id) => {
+  const MateFindHandler = async () => {
     await axios({
-      url: "http://localhost:5000/findidreq",
+      url: "http://localhost:5000/mymate/idfind",
       method: "POST",
       data: {
         idx: loginUser.mem_idx,
-        mateid: id,
+        mateid: searchdata,
       },
     })
       .then((res) => {
@@ -171,9 +133,9 @@ function MateAddModal() {
       });
   };
 
-  const matereq = async () => {
+  const MateReqHandler = async () => {
     await axios({
-      url: "http://localhost:5000/matereq",
+      url: "http://localhost:5000/mymate/req",
       method: "POST",
       data: {
         idx: loginUser.mem_idx,
@@ -193,17 +155,23 @@ function MateAddModal() {
   return (
     <div className="mateadd">
       <div className="findcontainer">
-        <input type="text" placeholder="아이디 입력" onChange={valuechange} />
-        <button onClick={findid}>조회</button>
+        <input
+          type="text"
+          maxLength={12}
+          value={searchdata}
+          placeholder="아이디 입력"
+          onChange={valuechange}
+        />
+        <button onClick={MateFindHandler}>조회</button>
       </div>
       {searchmsg.code === "success" ? (
         <div className="result">
           <span id="id">{searchreq.id}</span>
           <span id="nickname">({searchreq.nickname})</span>
-          {searchmsg.msg === "mate" && null}
+          {searchmsg.msg === "mate" && <></>}
           {searchmsg.msg === "requested" && <button>요청됨</button>}
           {searchmsg.msg === "true" && (
-            <button className="req" onClick={matereq}>
+            <button className="req" onClick={MateReqHandler}>
               요청
             </button>
           )}
@@ -217,11 +185,12 @@ function MateAddModal() {
 function MateDelModal() {
   const { loginUser } = React.useContext(StoreContext);
   const { setDispatchType } = React.useContext(StoreContextDis);
-  const { Mate } = React.useContext(StoreContextM);
+  const { mymate } = React.useContext(StoreContextM);
 
-  const matedelete = async (idx) => {
+  const MateDeleteHandler = async (idx) => {
+    console.log(idx, "회원 삭제");
     await axios({
-      url: "http://localhost:5000/matedelete",
+      url: "http://localhost:5000/mymate/delete",
       method: "POST",
       data: {
         idx: loginUser.mem_idx,
@@ -231,7 +200,7 @@ function MateDelModal() {
       .then((res) => {
         const { code, message } = res.data;
         if (code === "success") {
-          setDispatchType({ code: "matelist" });
+          setDispatchType({ code: "refresh" });
         }
       })
       .catch((e) => {
@@ -240,32 +209,32 @@ function MateDelModal() {
   };
 
   return (
-    <ul className="matereq">
-      {Mate.length === 0 ? (
+    <>
+      {mymate.mate.length === 0 ? (
         <span>메이트가 없습니다.</span>
       ) : (
-        Mate.map((data, index) => (
-          <li key={index} className="item">
-            <span className="nickname">{data.mem_nickname}</span>
-            <span className="id">(@{data.mem_userid})</span>
-            <div>
-              <button
-                className="declinebtn"
-                onClick={() => {
-                  matedelete(data.mem_idx2);
-                }}
-              >
-                삭제
-              </button>
-            </div>
-          </li>
-        ))
+        <ul className="matereq">
+          {mymate.mate.map((data, index) => (
+            <li key={index} className="item">
+              <span className="nickname">{data.mem_nickname}</span>
+              <span className="id">(@{data.mem_userid})</span>
+              <div>
+                <button
+                  className="declinebtn"
+                  onClick={() => MateDeleteHandler(data.idx)}
+                >
+                  삭제
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
-    </ul>
+    </>
   );
 }
 function Modalcontainer() {
-  const { reqcnt } = React.useContext(StoreContextCnt);
+  const { mymate } = React.useContext(StoreContextM);
 
   const [modalOpen1, setModalOpen1] = React.useState(false);
   const [modalOpen2, setModalOpen2] = React.useState(false);
@@ -273,163 +242,159 @@ function Modalcontainer() {
 
   return (
     <div>
-      <span
-        onClick={() => {
-          setModalOpen1(true);
-        }}
-      >
-        {/* 메이트 요청 */}
-        메이트 요청({reqcnt})
+      <span onClick={() => setModalOpen1(true)}>
+        메이트 요청({mymate.req.length})
       </span>
       <Modal
         open={modalOpen1}
-        close={() => {
-          setModalOpen1(false);
-        }}
+        close={() => setModalOpen1(false)}
         header="메이트 요청"
       >
-        <MateReq></MateReq>
+        <MateReq />
       </Modal>
-      <span
-        onClick={() => {
-          setModalOpen2(true);
-        }}
-      >
-        메이트 추가
-      </span>
+      <span onClick={() => setModalOpen2(true)}>메이트 추가</span>
       <Modal
         open={modalOpen2}
-        close={() => {
-          setModalOpen2(false);
-        }}
+        close={() => setModalOpen2(false)}
         header="메이트 추가"
       >
-        <MateAddModal></MateAddModal>
+        <MateAddModal />
       </Modal>
-      <span
-        onClick={() => {
-          setModalOpen3(true);
-        }}
-      >
-        메이트 관리
-      </span>
+      <span onClick={() => setModalOpen3(true)}>메이트 관리</span>
       <Modal
         open={modalOpen3}
-        close={() => {
-          setModalOpen3(false);
-        }}
+        close={() => setModalOpen3(false)}
         header="메이트 관리"
       >
-        <MateDelModal></MateDelModal>
+        <MateDelModal />
       </Modal>
     </div>
   );
 }
 function Contents() {
-  const { Mate } = React.useContext(StoreContextM);
+  const { mymate } = React.useContext(StoreContextM);
 
   return (
     <div className="content-mymate">
-      {Mate && (
+      {mymate.mate.length === 0 ? (
+        <span>아직 메이트가 없습니다! 메이트를 추가해보세요!</span>
+      ) : (
         <ul>
-          {Mate.length === 0 ? (
-            <span>아직 메이트가 없습니다! 메이트를 추가해보세요!</span>
-          ) : (
-            Mate.map((data, index) => (
-              <li key={index} className="item">
-                <div className="img">
-                  <FontAwesomeIcon icon={faCircleUser} className="imgicon" />
+          {mymate.mate.map((data, index) => (
+            <li key={index} className="item">
+              <img src={greenpostit} alt="matelist" className="postit" />
+              <div className="userinfo">
+                <div className="imgbox">
+                  <img
+                    src={userprofile}
+                    alt="userprofile"
+                    className="userprofile"
+                  />
                 </div>
-                <div className="info">
+                <div className="infobox">
                   <span className="nickname">{data.mem_nickname}</span>
                   <span className="id">{data.mem_userid}</span>
                 </div>
-              </li>
-            ))
-          )}
-          {/* <li className="item">
-            <div className="img">
-              <FontAwesomeIcon icon={faCircleUser} className="imgicon" />
-            </div>
-            <div className="info">
-              <span className="nickname">어쩌고</span>
-              <span className="id">저쩌고</span>
-            </div>
-          </li> */}
+              </div>
+            </li>
+          ))}
         </ul>
       )}
     </div>
   );
 }
 const StoreContextDis = React.createContext({});
-const StoreContextCnt = React.createContext({});
+const StoreContextM = React.createContext({});
 
 function Mymate() {
   const navigation = useNavigate();
 
   //App에서 StoreContext 받아온 후 로그인세션 사용
   const { loginUser } = React.useContext(StoreContext);
-  // const { Mate } = React.useContext(StoreContextM);
-
-  const [State, setState] = React.useState({
-    session: "로그인",
-  });
 
   const [dispatch, setDispatchType] = React.useState({
     code: null,
     params: null,
   });
 
-  // const [matedata, setMatedata] = React.useState([]);
-  const [reqcnt, setReqcnt] = React.useState(0);
+  const [mymate, setMymate] = React.useState({
+    mate: null,
+    req: null,
+  });
 
-  //로그인 세션 상태 새로고침 하면 친구 목록 불러오기
+  const [loading, setLoading] = React.useState(null);
+
   React.useEffect(() => {
-    if (loginUser) {
-      setState({ session: "마이페이지" });
-      matereqlistcnt();
+    if (loginUser.session === "none") {
+      navigation("/login", { replace: true });
+    } else if (Object.keys(loginUser).length > 1) {
+      MyMateListHandler();
     }
   }, [loginUser]);
 
-  React.useEffect(() => {
-    if (dispatch.code === "matelist") {
-      importmate();
+  useDidMountEffect(() => {
+    if (dispatch.code === "refresh") {
+      MyMateListHandler();
     }
   }, [dispatch]);
 
-  const matereqlistcnt = async () => {
+  const MyMateListHandler = async () => {
+    setLoading(true);
     await axios({
-      url: "http://localhost:5000/matereqlistcnt",
+      url: "http://localhost:5000/mymate/reqlist",
       method: "POST",
       data: { idx: loginUser.mem_idx },
     })
       .then((res) => {
-        const { code, data } = res.data;
+        const { code, mate, req } = res.data;
         if (code === "success") {
-          setReqcnt(data.cnt);
+          setMymate((prevState) => {
+            return {
+              ...prevState,
+              mate: mate,
+              req: req,
+            };
+          });
         }
+        setLoading(false);
       })
       .catch((e) => {
         console.log("메이트 목록 업데이트 오류!", e);
       });
   };
 
+  const ScrollTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
-    <StoreContextDis.Provider value={{ setDispatchType }}>
-      <div className="container">
-        <Menubar />
-        <div className="contents-container">
-          <div className="title">
-            {/* <img src={bimg} alt="" /> */}
-            <span>나의 여행 메이트</span>
-            <StoreContextCnt.Provider value={{ reqcnt, setReqcnt }}>
-              <Modalcontainer></Modalcontainer>
-            </StoreContextCnt.Provider>
-          </div>
-          <Contents></Contents>
-        </div>
-      </div>
-    </StoreContextDis.Provider>
+    <>
+      {loading ? <Loading /> : null}
+      {Object.keys(loginUser).length > 1 && (
+        <StoreContextDis.Provider value={{ setDispatchType }}>
+          <StoreContextM.Provider value={{ mymate }}>
+            <Menubar />
+            {mymate.mate && mymate.req && (
+              <div className="contents-container mymatecon">
+                <div className="title mymate">
+                  <span>나의 여행 메이트</span>
+                  <Modalcontainer />
+                </div>
+                <Contents />
+                <FontAwesomeIcon
+                  icon={faSquareCaretUp}
+                  className="imgicon topbtn"
+                  onClick={ScrollTop}
+                />
+              </div>
+            )}
+          </StoreContextM.Provider>
+        </StoreContextDis.Provider>
+      )}
+    </>
   );
 }
 

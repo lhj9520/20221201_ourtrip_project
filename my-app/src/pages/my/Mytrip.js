@@ -5,62 +5,15 @@ import "./Mytrip.css";
 import "./MytripModal.css";
 import Menubar from "../../component/menubar";
 import Modal from "../../component/modal";
-
-import { StoreContext, StoreContextM } from "../../App";
+import useDidMountEffect from "../useDidMountEffect";
+import Loading from "../../component/Loading";
+import { StoreContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 
-function Contents() {
-  const navigation = useNavigate();
-  const { tripdata } = React.useContext(StoreContextTrip);
-
-  return (
-    <div className="content-mytrip">
-      <ul>
-        {tripdata.length === 0 ? (
-          <span>아직 작성된 여행이 없습니다! 여행 계획을 세워보세요!</span>
-        ) : (
-          tripdata.map((data, index) => (
-            <li key={index} className="item mytrip">
-              <div className="tripinfo">
-                <section
-                  className="triptitle"
-                  onClick={() => {
-                    navigation(`/mytrip/plan/${data.seq}`);
-                  }}
-                >
-                  {data.title}
-                </section>
-                {Object.keys(JSON.parse(data.mate_idx)).length === 1 ? (
-                  <section>방장 {data.host_nickname}</section>
-                ) : (
-                  <section>
-                    방장 {data.host_nickname} 외{" "}
-                    {Object.keys(JSON.parse(data.mate_idx)).length - 1}명
-                  </section>
-                )}
-                <section>
-                  모임 생성 날짜 {data.reg_time.replace("T", " ").slice(0, 16)}
-                </section>
-                {data.update_time === null ? (
-                  <section>최근 수정 날짜 </section>
-                ) : (
-                  <section>
-                    최근 수정 날짜{" "}
-                    {data.update_time.replace("T", " ").slice(0, 16)}
-                  </section>
-                )}
-              </div>
-            </li>
-          ))
-        )}
-      </ul>
-    </div>
-  );
-}
 function TripAddModal() {
   const { setDispatchType } = React.useContext(StoreContextDis);
   const { loginUser } = React.useContext(StoreContext);
-  const { Mate } = React.useContext(StoreContextM);
+  const { mytrip } = React.useContext(StoreContextTrip);
 
   const [adddata, setAdddata] = React.useState({
     title: "",
@@ -79,8 +32,6 @@ function TripAddModal() {
   };
 
   const TripAddHandler = async () => {
-    console.log("모달데이터", adddata);
-
     let trip_data = {};
     let mate = {};
 
@@ -105,17 +56,15 @@ function TripAddModal() {
     trip_data.host_idx = idx;
     trip_data.mate_idx = mate;
 
-    console.log("여행데이터", trip_data);
-
     await axios({
-      url: "http://localhost:5000/tripadd",
+      url: "http://localhost:5000/mytrip/tripadd",
       method: "POST",
       data: trip_data,
     })
       .then((res) => {
         const { code } = res.data;
         if (code === "success") {
-          setDispatchType({ code: "triplist" });
+          setDispatchType({ code: "refresh" });
         }
         //폼 초기화
         setAdddata((prevState) => {
@@ -135,11 +84,9 @@ function TripAddModal() {
 
   const mateplusHandler = () => {
     //추가할 메이트 목록에 해당 메이트 추가
-    const mateidx = Mate[adddata.isSelectedname].mem_idx2;
-    const nickname = Mate[adddata.isSelectedname].mem_nickname;
+    const mateidx = mytrip.mate[adddata.isSelectedname].mem_idx;
+    const nickname = mytrip.mate[adddata.isSelectedname].mem_nickname;
     const mate = [mateidx, nickname];
-    // mate[mateidx] = nickname;
-    console.log(mate);
 
     if (adddata.isSelectedname !== "" && adddata.selectlist.length === 0) {
       setAdddata((prevState) => {
@@ -164,7 +111,7 @@ function TripAddModal() {
   };
   const mateminusHandler = () => {
     //추가할 메이트 목록에 해당 메이트 제외
-    const mateidx = Mate[adddata.isSelectedname].mem_idx2;
+    const mateidx = mytrip.mate[adddata.isSelectedname].mem_idx;
 
     if (adddata.isSelectedname !== "" && adddata.selectlist.length > 0) {
       const result = adddata.selectlist.filter((data, index) => {
@@ -191,77 +138,74 @@ function TripAddModal() {
       <span>여행 메이트 선택</span>
       <div className="tripmate-container">
         <div className="matelistbox">
-          {Mate && (
-            <ul>
-              {Mate.length === 0 ? (
-                <li></li>
-              ) : (
-                Mate.map((data, index) => (
-                  <li
-                    key={index}
-                    className={`item ${
-                      adddata.isSelectedname === index ? "true" : "false"
-                    }`}
-                    onClick={(e) => {
+          <ul>
+            {mytrip.mate.length === 0 ? (
+              <li></li>
+            ) : (
+              mytrip.mate.map((data, index) => (
+                <li
+                  key={index}
+                  className={`item ${
+                    adddata.isSelectedname === index ? "true" : "false"
+                  }`}
+                  onClick={(e) => {
+                    setAdddata((prevState) => {
+                      return { ...prevState, isSelectedname: index };
+                    });
+                    if (
+                      adddata.isSelectedname === index &&
+                      e.currentTarget.className === "item true"
+                    ) {
                       setAdddata((prevState) => {
-                        return { ...prevState, isSelectedname: index };
+                        return { ...prevState, isSelectedname: "" };
                       });
-                      if (
-                        adddata.isSelectedname === index &&
-                        e.currentTarget.className === "item true"
-                      ) {
-                        setAdddata((prevState) => {
-                          return { ...prevState, isSelectedname: "" };
-                        });
-                      }
-                    }}
-                    onDoubleClick={() => {
-                      // const tmp = { ...Mate[index] };
-                      const mateidx = Mate[index].mem_idx2;
-                      const nickname = Mate[index].mem_nickname;
-                      const mate = [mateidx, nickname];
+                    }
+                  }}
+                  onDoubleClick={() => {
+                    const mateidx = mytrip.mate[index].mem_idx;
+                    const nickname = mytrip.mate[index].mem_nickname;
+                    const mate = [mateidx, nickname];
 
-                      if (adddata.selectlist.length === 0) {
+                    if (adddata.selectlist.length === 0) {
+                      setAdddata((prevState) => {
+                        return {
+                          ...prevState,
+                          selectlist: [...adddata.selectlist, mate],
+                        };
+                      });
+                    } else if (adddata.selectlist.length > 0) {
+                      const result = adddata.selectlist.filter(
+                        (data, index) => {
+                          return data[0] === mateidx;
+                        }
+                      );
+                      if (result.length === 0) {
+                        //목록 추가
                         setAdddata((prevState) => {
                           return {
                             ...prevState,
                             selectlist: [...adddata.selectlist, mate],
                           };
                         });
-                      } else if (adddata.selectlist.length > 0) {
+                      } else {
+                        //목록 삭제
                         const result = adddata.selectlist.filter(
                           (data, index) => {
-                            return data[0] === mateidx;
+                            return data[0] !== mateidx;
                           }
                         );
-                        if (result.length === 0) {
-                          //목록 추가
-                          setAdddata((prevState) => {
-                            return {
-                              ...prevState,
-                              selectlist: [...adddata.selectlist, mate],
-                            };
-                          });
-                        } else {
-                          //목록 삭제
-                          const result = adddata.selectlist.filter(
-                            (data, index) => {
-                              return data[0] !== mateidx;
-                            }
-                          );
-                          setAdddata((prevState) => {
-                            return { ...prevState, selectlist: result };
-                          });
-                        }
+                        setAdddata((prevState) => {
+                          return { ...prevState, selectlist: result };
+                        });
                       }
-                    }}
-                  >
-                    <span className="nickname">{data.mem_nickname}</span>
-                  </li>
-                ))
-              )}
-            </ul>
-          )}
+                    }
+                  }}
+                >
+                  <span className="nickname">{data.mem_nickname}</span>
+                </li>
+              ))
+            )}
+          </ul>
         </div>
         <div className="listarrow">
           <button className="mateselectbox" onClick={mateplusHandler}>
@@ -291,12 +235,11 @@ function TripAddModal() {
     </div>
   );
 }
-
 function TripModModal(props) {
   const { setModstate } = React.useContext(StoreContextMod);
   const { setDispatchType } = React.useContext(StoreContextDis);
   const { loginUser } = React.useContext(StoreContext);
-  const { Mate } = React.useContext(StoreContextM);
+  const { mytrip } = React.useContext(StoreContextTrip);
 
   const [adddata, setAdddata] = React.useState({
     title: props.data.title,
@@ -321,8 +264,6 @@ function TripModModal(props) {
   };
 
   const TripModHandler = async () => {
-    console.log("모달데이터", adddata);
-
     let trip_data = {};
     let mate = {};
 
@@ -349,21 +290,19 @@ function TripModModal(props) {
     trip_data.host_idx = idx;
     trip_data.mate_idx = mate;
 
-    console.log("여행데이터", trip_data);
-
     setModstate((prevState) => {
       return { ...prevState, code: false, data: {} };
     });
 
     await axios({
-      url: "http://localhost:5000/tripupdate",
+      url: "http://localhost:5000/mytrip/tripupdate",
       method: "POST",
       data: trip_data,
     })
       .then((res) => {
         const { code } = res.data;
         if (code === "success") {
-          setDispatchType({ code: "triplist" });
+          setDispatchType({ code: "refresh" });
         }
         //폼 초기화
         setModstate((prevState) => {
@@ -376,11 +315,9 @@ function TripModModal(props) {
   };
   const mateplusHandler = () => {
     //추가할 메이트 목록에 해당 메이트 추가
-    const mateidx = Mate[adddata.isSelectedname].mem_idx2;
-    const nickname = Mate[adddata.isSelectedname].mem_nickname;
+    const mateidx = mytrip.mate[adddata.isSelectedname].mem_idx;
+    const nickname = mytrip.mate[adddata.isSelectedname].mem_nickname;
     const mate = [mateidx, nickname];
-    // mate[mateidx] = nickname;
-    console.log(mate);
 
     if (adddata.isSelectedname !== "" && adddata.selectlist.length === 0) {
       setAdddata((prevState) => {
@@ -405,7 +342,7 @@ function TripModModal(props) {
   };
   const mateminusHandler = () => {
     //추가할 메이트 목록에 해당 메이트 제외
-    const mateidx = Mate[adddata.isSelectedname].mem_idx2;
+    const mateidx = mytrip.mate[adddata.isSelectedname].mem_idx;
 
     if (adddata.isSelectedname !== "" && adddata.selectlist.length > 0) {
       const result = adddata.selectlist.filter((data, index) => {
@@ -432,77 +369,75 @@ function TripModModal(props) {
       <span>여행 메이트 선택</span>
       <div className="tripmate-container">
         <div className="matelistbox">
-          {Mate && (
-            <ul>
-              {Mate.length === 0 ? (
-                <li></li>
-              ) : (
-                Mate.map((data, index) => (
-                  <li
-                    key={index}
-                    className={`item ${
-                      adddata.isSelectedname === index ? "true" : "false"
-                    }`}
-                    onClick={(e) => {
+          <ul>
+            {mytrip.mate.length === 0 ? (
+              <li></li>
+            ) : (
+              mytrip.mate.map((data, index) => (
+                <li
+                  key={index}
+                  className={`item ${
+                    adddata.isSelectedname === index ? "true" : "false"
+                  }`}
+                  onClick={(e) => {
+                    setAdddata((prevState) => {
+                      return { ...prevState, isSelectedname: index };
+                    });
+                    if (
+                      adddata.isSelectedname === index &&
+                      e.currentTarget.className === "item true"
+                    ) {
                       setAdddata((prevState) => {
-                        return { ...prevState, isSelectedname: index };
+                        return { ...prevState, isSelectedname: "" };
                       });
-                      if (
-                        adddata.isSelectedname === index &&
-                        e.currentTarget.className === "item true"
-                      ) {
-                        setAdddata((prevState) => {
-                          return { ...prevState, isSelectedname: "" };
-                        });
-                      }
-                    }}
-                    onDoubleClick={() => {
-                      // const tmp = { ...Mate[index] };
-                      const mateidx = Mate[index].mem_idx2;
-                      const nickname = Mate[index].mem_nickname;
-                      const mate = [mateidx, nickname];
+                    }
+                  }}
+                  onDoubleClick={() => {
+                    // const tmp = { ...Mate[index] };
+                    const mateidx = mytrip.mate[index].mem_idx;
+                    const nickname = mytrip.mate[index].mem_nickname;
+                    const mate = [mateidx, nickname];
 
-                      if (adddata.selectlist.length === 0) {
+                    if (adddata.selectlist.length === 0) {
+                      setAdddata((prevState) => {
+                        return {
+                          ...prevState,
+                          selectlist: [...adddata.selectlist, mate],
+                        };
+                      });
+                    } else if (adddata.selectlist.length > 0) {
+                      const result = adddata.selectlist.filter(
+                        (data, index) => {
+                          return data[0] == mateidx;
+                        }
+                      );
+                      if (result.length === 0) {
+                        //목록 추가
                         setAdddata((prevState) => {
                           return {
                             ...prevState,
                             selectlist: [...adddata.selectlist, mate],
                           };
                         });
-                      } else if (adddata.selectlist.length > 0) {
+                      } else {
+                        //목록 삭제
                         const result = adddata.selectlist.filter(
                           (data, index) => {
-                            return data[0] == mateidx;
+                            return data[0] != mateidx;
                           }
                         );
-                        if (result.length === 0) {
-                          //목록 추가
-                          setAdddata((prevState) => {
-                            return {
-                              ...prevState,
-                              selectlist: [...adddata.selectlist, mate],
-                            };
-                          });
-                        } else {
-                          //목록 삭제
-                          const result = adddata.selectlist.filter(
-                            (data, index) => {
-                              return data[0] != mateidx;
-                            }
-                          );
-                          setAdddata((prevState) => {
-                            return { ...prevState, selectlist: result };
-                          });
-                        }
+                        setAdddata((prevState) => {
+                          return { ...prevState, selectlist: result };
+                        });
                       }
-                    }}
-                  >
-                    <span className="nickname">{data.mem_nickname}</span>
-                  </li>
-                ))
-              )}
-            </ul>
-          )}
+                    }
+                  }}
+                >
+                  <span className="nickname">{data.mem_nickname}</span>
+                </li>
+              ))
+            )}
+          </ul>
         </div>
         <div className="listarrow">
           <button className="mateselectbox" onClick={mateplusHandler}>
@@ -542,13 +477,12 @@ function TripModModal(props) {
 function TripUpdateModal() {
   const { setDispatchType } = React.useContext(StoreContextDis);
   const { loginUser } = React.useContext(StoreContext);
-  const { tripdata } = React.useContext(StoreContextTrip);
-
+  const { mytrip } = React.useContext(StoreContextTrip);
   const [modstate, setModstate] = React.useState({ code: false, data: {} });
 
   const tripdelete = async (seq) => {
     await axios({
-      url: "http://localhost:5000/tripdelete",
+      url: "http://localhost:5000/mytrip/tripdelete",
       method: "POST",
       data: {
         seq: seq,
@@ -557,7 +491,7 @@ function TripUpdateModal() {
       .then((res) => {
         const { code } = res.data;
         if (code === "success") {
-          setDispatchType({ code: "triplist" });
+          setDispatchType({ code: "refresh" });
         }
       })
       .catch((e) => {
@@ -567,7 +501,7 @@ function TripUpdateModal() {
 
   const tripexcept = async (seq) => {
     await axios({
-      url: "http://localhost:5000/tripexcept",
+      url: "http://localhost:5000/mytrip/tripexcept",
       method: "POST",
       data: {
         seq: seq,
@@ -577,7 +511,7 @@ function TripUpdateModal() {
       .then((res) => {
         const { code } = res.data;
         if (code === "success") {
-          setDispatchType({ code: "triplist" });
+          setDispatchType({ code: "refresh" });
         }
       })
       .catch((e) => {
@@ -586,7 +520,6 @@ function TripUpdateModal() {
   };
 
   const TripModopenHandler = (props) => {
-    console.log(props.data.seq, "번째글수정");
     setModstate((prevState) => {
       return { ...prevState, code: true, data: { ...props.data } };
     });
@@ -601,48 +534,46 @@ function TripUpdateModal() {
           </div>
         ) : (
           <ul className="tripsetlist">
-            {tripdata.length === 0 ? (
+            {mytrip.trip.length === 0 ? (
               <span>작성된 여행이 없습니다.</span>
             ) : (
-              tripdata
-                // .filter((data) => data.host_idx === loginUser.mem_idx)
-                .map((data) =>
-                  data.host_idx === loginUser.mem_idx ? (
-                    <li key={data.seq} className="item">
-                      <span className="triptitle">{data.title}</span>
-                      <div>
-                        <button
-                          className="updatebtn"
-                          onClick={() => TripModopenHandler({ data: data })}
-                        >
-                          수정
-                        </button>
-                        <button
-                          className="declinebtn"
-                          onClick={() => {
-                            tripdelete(data.seq);
-                          }}
-                        >
-                          삭제
-                        </button>
-                      </div>
-                    </li>
-                  ) : (
-                    <li key={data.seq} className="item">
-                      <span className="triptitle">{data.title}</span>
-                      <div>
-                        <button
-                          className="declinebtn"
-                          onClick={() => {
-                            tripexcept(data.seq);
-                          }}
-                        >
-                          나가기
-                        </button>
-                      </div>
-                    </li>
-                  )
+              mytrip.trip.map((data) =>
+                data.host_idx === loginUser.mem_idx ? (
+                  <li key={data.seq} className="item">
+                    <span className="triptitle">{data.title}</span>
+                    <div>
+                      <button
+                        className="updatebtn"
+                        onClick={() => TripModopenHandler({ data: data })}
+                      >
+                        수정
+                      </button>
+                      <button
+                        className="declinebtn"
+                        onClick={() => {
+                          tripdelete(data.seq);
+                        }}
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </li>
+                ) : (
+                  <li key={data.seq} className="item">
+                    <span className="triptitle">{data.title}</span>
+                    <div>
+                      <button
+                        className="declinebtn"
+                        onClick={() => {
+                          tripexcept(data.seq);
+                        }}
+                      >
+                        나가기
+                      </button>
+                    </div>
+                  </li>
                 )
+              )
             )}
           </ul>
         )}
@@ -653,6 +584,7 @@ function TripUpdateModal() {
 function Modalcontainer() {
   const [modalOpen1, setModalOpen1] = React.useState(false);
   const [modalOpen2, setModalOpen2] = React.useState(false);
+  const { mytrip } = React.useContext(StoreContextTrip);
 
   return (
     <div>
@@ -670,7 +602,7 @@ function Modalcontainer() {
         }}
         header="여행 만들기"
       >
-        <TripAddModal></TripAddModal>
+        {mytrip.mate && <TripAddModal></TripAddModal>}
       </Modal>
       <span
         onClick={() => {
@@ -686,8 +618,222 @@ function Modalcontainer() {
         }}
         header="여행 관리"
       >
-        <TripUpdateModal></TripUpdateModal>
+        {mytrip.mate && <TripUpdateModal></TripUpdateModal>}
       </Modal>
+    </div>
+  );
+}
+function Contents() {
+  const navigation = useNavigate();
+  const { mytrip } = React.useContext(StoreContextTrip);
+  const cnt = 5;
+
+  const [viewlist, setViewlist] = React.useState([]);
+  const [curpage, setCurpage] = React.useState(1);
+  const [pagelist, setPagelist] = React.useState({
+    index: 0,
+    list: [],
+  });
+
+  React.useEffect(() => {
+    if (mytrip.trip.length > 0) {
+      //총 페이지 계산
+      const totalpage = Math.ceil(mytrip.trip.length / cnt);
+      const array = PageListMakeHandler(totalpage);
+      //현재 페이지가 총 페이지보다 뒤에 있으면 마지막 페이지로 set
+      if (totalpage < curpage) {
+        setCurpage(totalpage);
+      }
+      //인덱스가 삭제되고 -1 해주기
+      if (pagelist.list.length > 0 && !pagelist.list[pagelist.index]) {
+        setPagelist((prevState) => {
+          return {
+            ...prevState,
+            index: pagelist.list.length - 1,
+          };
+        });
+      }
+      // 페이지 리스트 저장
+      setPagelist((prevState) => {
+        return {
+          ...prevState,
+          list: array,
+        };
+      });
+    }
+  }, [mytrip.trip]);
+
+  let PageListMakeHandler = (totalpage) => {
+    let array = [];
+    let tmp = [];
+    //페이지 리스트 만들기
+    for (let i = 1; i <= totalpage; i++) {
+      tmp.push(i);
+      if (i % 5 === 0) {
+        array.push(tmp);
+        tmp = [];
+      } else if (i === totalpage && tmp.length < 5) {
+        array.push(tmp);
+        tmp = [];
+      }
+    }
+    return array;
+  };
+
+  React.useEffect(() => {
+    //현재 페이지에 따라 보여줄 데이터 필터
+    if (mytrip.trip.length > 0) {
+      const start = curpage * cnt - cnt;
+      const end = curpage * cnt - 1;
+      const array = mytrip.trip.filter(
+        (data, index) => index >= start && index <= end
+      );
+      setViewlist(array);
+    }
+  }, [curpage, mytrip.trip]);
+
+  const FirstPageHandler = () => {
+    //처음 페이지가 아닌 경우
+    if (pagelist.index > 0) {
+      setPagelist((prevState) => {
+        return {
+          ...prevState,
+          index: 0,
+        };
+      });
+    }
+  };
+  const LastPageHandler = () => {
+    //마지막 페이지가 아닌 경우
+    if (pagelist.index !== pagelist.list.length - 1) {
+      setPagelist((prevState) => {
+        return {
+          ...prevState,
+          index: pagelist.list.length - 1,
+        };
+      });
+    }
+  };
+  const PrevPageHandler = () => {
+    //처음 페이지가 아닌 경우
+    if (pagelist.index > 0) {
+      setPagelist((prevState) => {
+        return {
+          ...prevState,
+          index: pagelist.index - 1,
+        };
+      });
+    }
+  };
+  const NextPageHandler = () => {
+    //마지막 페이지가 아닌 경우
+    if (pagelist.index !== pagelist.list.length - 1) {
+      setPagelist((prevState) => {
+        return {
+          ...prevState,
+          index: pagelist.index + 1,
+        };
+      });
+    }
+  };
+
+  return (
+    <div className="content-mytrip">
+      {mytrip.trip.length === 0 ? (
+        <span>아직 작성된 여행이 없습니다! 여행 계획을 세워보세요!</span>
+      ) : (
+        <>
+          <div className="mytriptitlebar">
+            <span className="number">번호</span>
+            <span className="triptitle">타이틀</span>
+            <span className="host">방장</span>
+            <span className="matecnt">참여</span>
+            <span className="time1">생성 날짜</span>
+            <span className="time2">수정 날짜</span>
+          </div>
+          <div className="triplistbox">
+            <ul>
+              {viewlist.map((data, index) => (
+                <li
+                  key={index}
+                  className="item mytrip"
+                  onClick={() => navigation(`/mytrip/${data.seq}`)}
+                >
+                  <span className="number">
+                    {index + cnt * (curpage - 1) + 1}
+                  </span>
+                  <span className="triptitle">{data.title}</span>
+                  <span className="host">{data.host_nickname}</span>
+                  {Object.keys(JSON.parse(data.mate_idx)).length === 1 ? (
+                    <span className="matecnt">1명</span>
+                  ) : (
+                    <span className="matecnt">
+                      {Object.keys(JSON.parse(data.mate_idx)).length}명
+                    </span>
+                  )}
+                  <span className="time1">
+                    {moment.tz(data.reg_time, "Asia/Seoul").format("YY-MM-DD")}
+                  </span>
+                  {!data.update_time ? (
+                    <span className="time2"></span>
+                  ) : (
+                    <span className="time2">
+                      {moment
+                        .tz(data.update_time, "Asia/Seoul")
+                        .format("YY-MM-DD")}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="pagelistbox">
+            <span className="tofirst" onClick={FirstPageHandler}>
+              {"<<"}
+            </span>
+            <span className="toprev" onClick={PrevPageHandler}>
+              {"<"}
+            </span>
+            <ul className="pagelist">
+              {pagelist.list.length > 0 && (
+                <>
+                  {pagelist.list[pagelist.index] ? (
+                    <>
+                      {pagelist.list[pagelist.index].map((data, index) => (
+                        <li
+                          key={index}
+                          className={data === curpage ? "item select" : "item"}
+                          onClick={() => setCurpage(data)}
+                        >
+                          {data}
+                        </li>
+                      ))}
+                    </>
+                  ) : (
+                    <>
+                      {pagelist.list[pagelist.index - 1].map((data, index) => (
+                        <li
+                          key={index}
+                          className={data === curpage ? "item select" : "item"}
+                          onClick={() => setCurpage(data)}
+                        >
+                          {data}
+                        </li>
+                      ))}
+                    </>
+                  )}
+                </>
+              )}
+            </ul>
+            <span className="tonext" onClick={NextPageHandler}>
+              {">"}
+            </span>
+            <span className="tolast" onClick={LastPageHandler}>
+              {">>"}
+            </span>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -698,75 +844,104 @@ const StoreContextMod = React.createContext({});
 
 function Mytrip() {
   const navigation = useNavigate();
-
-  //App에서 StoreContext 받아온 후 로그인세션 사용
   const { loginUser } = React.useContext(StoreContext);
-  // const { Mate } = React.useContext(StoreContextM);
 
-  const [State, setState] = React.useState({
-    session: "로그인",
+  const [mytrip, setMytrip] = React.useState({
+    trip: null,
+    mate: null,
   });
 
   const [dispatch, setDispatchType] = React.useState({
     code: null,
     params: null,
   });
-  /**
-   * 전역 변수
-   * 1. 로그인한 사용자의 친구 목록 matedata
-   * 2. 로그인한 사용자의 여행 목록 tripdata
-   */
-  const [tripdata, setTripdata] = React.useState([]);
 
-  //로그인 세션 상태 새로고침 하면 실행
+  const [loading, setLoading] = React.useState(null);
+
   React.useEffect(() => {
-    if (loginUser) {
-      setState({ session: "마이페이지" });
-      triplist();
+    if (loginUser.session === "none") {
+      navigation("/login", { replace: true });
+    } else if (Object.keys(loginUser).length > 1) {
+      MyTripListHandler();
+      MyMateListHandler();
     }
   }, [loginUser]);
 
-  React.useEffect(() => {
-    if (dispatch.code === "triplist") {
-      triplist();
+  useDidMountEffect(() => {
+    if (dispatch.code === "refresh") {
+      MyTripListHandler();
+      MyMateListHandler();
     }
   }, [dispatch]);
 
   //여행 목록 데이터 받아오기
-  const triplist = async () => {
+  const MyTripListHandler = async () => {
+    setLoading(true);
     await axios({
-      url: "http://localhost:5000/triplist",
+      url: "http://localhost:5000/mytrip/triplist",
       method: "POST",
       data: { idx: loginUser.mem_idx },
     })
       .then((res) => {
-        const { code, data } = res.data;
+        const { code, trip } = res.data;
         if (code === "success") {
-          const tmp = [...data];
-          console.log("여행 목록은?", tmp);
-          setTripdata(tmp);
+          setMytrip((prevState) => {
+            return {
+              ...prevState,
+              trip: trip,
+            };
+          });
         }
+        setLoading(false);
       })
       .catch((e) => {
         console.log("여행 목록 업데이트 오류!", e);
       });
   };
+  const MyMateListHandler = async () => {
+    setLoading(true);
+    await axios({
+      url: "http://localhost:5000/mymate/list",
+      method: "POST",
+      data: { idx: loginUser.mem_idx },
+    })
+      .then((res) => {
+        const { code, mate } = res.data;
+        if (code === "success") {
+          setMytrip((prevState) => {
+            return {
+              ...prevState,
+              mate: mate,
+            };
+          });
+        }
+        setLoading(false);
+      })
+      .catch((e) => {
+        console.log("메이트 목록 업데이트 오류!", e);
+      });
+  };
 
   return (
-    <StoreContextDis.Provider value={{ setDispatchType }}>
-      <StoreContextTrip.Provider value={{ tripdata }}>
-        <div className="container">
-          <Menubar />
-          <div className="contents-container">
-            <div className="title">
-              <span>나의 여행 계획</span>
-              <Modalcontainer></Modalcontainer>
-            </div>
-            <Contents></Contents>
-          </div>
-        </div>
-      </StoreContextTrip.Provider>
-    </StoreContextDis.Provider>
+    <>
+      {loading ? <Loading /> : null}
+      {Object.keys(loginUser).length > 1 && (
+        <StoreContextDis.Provider value={{ setDispatchType }}>
+          <StoreContextTrip.Provider value={{ mytrip }}>
+            <Menubar />
+            {mytrip.trip && mytrip.mate && (
+              <div className="contents-container mytripcon">
+                <div className="title mytrip">
+                  <span>나의 여행 계획</span>
+                  <Modalcontainer></Modalcontainer>
+                </div>
+                <Contents></Contents>
+              </div>
+            )}
+          </StoreContextTrip.Provider>
+        </StoreContextDis.Provider>
+      )}
+    </>
   );
 }
 

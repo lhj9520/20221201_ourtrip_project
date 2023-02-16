@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import axios from "axios";
+import moment from "moment-timezone";
 import "./My.css";
 import "./MyModal.css";
 import Menubar from "../../component/menubar";
@@ -13,9 +14,7 @@ import { faEye } from "@fortawesome/free-regular-svg-icons";
 
 function NicknameValue() {
   const { loginUser } = React.useContext(StoreContext);
-
   const inputFocus = useRef(null);
-
   const [inputstate, setInputstate] = React.useState(true);
   const [nickname, setNickname] = React.useState("");
   const [emsg, setEmsg] = React.useState("");
@@ -36,7 +35,7 @@ function NicknameValue() {
 
   const nicknamechange = async () => {
     await axios({
-      url: "http://localhost:5000/nicknamechange",
+      url: "http://localhost:5000/updateuser/nickname",
       method: "POST",
       data: { idx: loginUser.mem_idx, nickname: nickname },
     })
@@ -67,7 +66,7 @@ function NicknameValue() {
       return;
     }
     await axios({
-      url: "http://localhost:5000/nicknamecheck",
+      url: "http://localhost:5000/dupcheck/nickname",
       method: "POST",
       data: { nickname: nickname },
     })
@@ -131,34 +130,57 @@ function EmailValue() {
 
   const inputFocus = useRef(null);
 
-  const [inputstate, setInputstate] = React.useState(true);
+  const [state, setState] = React.useState(false);
+  const [disable, setDibable] = React.useState(true);
+  const [inemail, setInemail] = React.useState("");
   const [email, setEmail] = React.useState("");
-  const [emsg, setEmsg] = React.useState("");
+  const [emsg1, setEmsg1] = React.useState("");
 
-  React.useEffect(() => {
-    if (!inputstate) {
-      inputFocus.current.focus();
-      return;
-    }
-  }, [inputstate]);
+  const [incode, setIncode] = React.useState("");
+  const [servercode, setServercode] = React.useState("");
+  const [emsg2, setEmsg2] = React.useState("");
 
   const valuechange = (event) => {
     const data = event.target.value;
-    setEmail(data);
+    if (data.length <= 320) {
+      setInemail(data);
+    }
+  };
+
+  const codevaluechange = (event) => {
+    const data = event.target.value;
+    if (data.length <= 6) {
+      setIncode(data);
+    }
   };
 
   const emailchange = async () => {
+    console.log("인증번호 확인하고 비밀번호 바꿔");
+
+    if (!disable && incode === "") {
+      setEmsg2("인증번호를 입력하세요.");
+      return;
+    }
+
+    if (incode != servercode) {
+      setEmsg2("인증번호가 틀렸습니다.");
+      return;
+    }
+
+    setEmsg2("");
+
+    console.log({ idx: loginUser.mem_idx, email: email });
+
     await axios({
-      url: "http://localhost:5000/emailchange",
+      url: "http://localhost:5000/updateuser/email",
       method: "POST",
       data: { idx: loginUser.mem_idx, email: email },
     })
       .then((res) => {
         const { code } = res.data;
         if (code === "success") {
+          setState(true);
           importsession();
-          setEmsg("");
-          setInputstate(!inputstate);
         }
       })
       .catch((e) => {
@@ -170,32 +192,34 @@ function EmailValue() {
     const emailRegex =
       /([\w-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
 
-    if (email === "") {
-      setEmsg("이메일을 입력하세요.");
+    if (inemail === "") {
+      setEmsg1("이메일을 입력하세요.");
       inputFocus.current.focus();
       return;
     }
-    if (!emailRegex.test(email)) {
-      setEmsg("이메일 형식이 아닙니다.");
+    if (!emailRegex.test(inemail)) {
+      setEmsg1("이메일 형식이 아닙니다.");
       inputFocus.current.focus();
       return;
     }
-    if (email === loginUser.mem_email) {
-      setEmsg("");
-      setInputstate(!inputstate);
+    if (inemail === loginUser.mem_email) {
+      setEmsg1("같은 이메일입니동");
       return;
     }
+
     await axios({
-      url: "http://localhost:5000/emailcheck",
+      url: "http://localhost:5000/dupcheck/email",
       method: "POST",
-      data: { nickname: email },
+      data: { email: inemail },
     })
       .then((res) => {
         const { code, message } = res.data;
         if (code === "error") {
-          setEmsg(message);
+          setEmsg1(message);
         } else {
-          emailchange();
+          // emailcodeHandler();
+          setEmsg1("인증번호를 전송하였습니다.");
+          setDibable(false);
         }
       })
       .catch((e) => {
@@ -203,44 +227,98 @@ function EmailValue() {
       });
   };
 
+  const emailcodeHandler = async () => {
+    await axios({
+      url: "http://localhost:5000/auth/mail",
+      method: "POST",
+      data: { youremail: inemail },
+    })
+      .then((res) => {
+        const { code, useremail, vericode } = res.data;
+        if (code === 200) {
+          // console.log("이메일 전송 완", useremail, vericode);
+          setEmail(useremail);
+          setServercode(vericode);
+        }
+      })
+      .catch((e) => {
+        console.log("이메일 인증 코드 발송 오류!", e);
+      });
+  };
+
+  return (
+    <div className="emailchangebox">
+      {!state && (
+        <>
+          <div>
+            <span>현재 이메일</span>
+            <span>{loginUser && loginUser.mem_email}</span>
+          </div>
+          <div>
+            <span>변경 이메일</span>
+            <input
+              ref={inputFocus}
+              type="text"
+              maxLength={320}
+              value={inemail}
+              onChange={valuechange}
+            />
+            <button onClick={emailvalidcheck}>인증번호 받기</button>
+            <span className="msg">{emsg1}</span>
+          </div>
+          <div>
+            <span>인증 번호</span>
+            <input
+              type="text"
+              value={incode}
+              maxLength={6}
+              onChange={codevaluechange}
+              placeholder="인증번호 6자리 숫자 입력"
+              disabled={disable}
+            />
+            <button onClick={emailchange} disabled={disable}>
+              확인
+            </button>
+            <span className="msg">{emsg2}</span>
+          </div>
+        </>
+      )}
+      {state && (
+        <div className="emailchanged">
+          <span>이메일이 변경되었습니다.</span>
+        </div>
+      )}
+    </div>
+  );
+}
+function EmailModModal() {
+  const { loginUser } = React.useContext(StoreContext);
+
+  const [modalOpen, setModalOpen] = React.useState(false);
+
   return (
     <div className="item">
       <span>이메일</span>
       <div className="info-box">
-        {inputstate && <span>{loginUser && loginUser.mem_email}</span>}
-        {!inputstate && (
-          <input
-            ref={inputFocus}
-            type="text"
-            value={email}
-            onChange={valuechange}
-          />
-        )}
-        {inputstate && (
-          <button
-            onClick={() => {
-              setInputstate(!inputstate);
-              setEmail(loginUser.mem_email);
-            }}
-          >
-            수정
-          </button>
-        )}
-        {!inputstate && (
-          <div>
-            <button onClick={emailvalidcheck}>확인</button>
-            <button
-              onClick={(e) => {
-                setInputstate(!inputstate);
-                setEmsg("");
-              }}
-            >
-              취소
-            </button>
-          </div>
-        )}
+        <span>{loginUser.mem_email}</span>{" "}
+        <button
+          className="pwdbtn"
+          onClick={() => {
+            setModalOpen(true);
+          }}
+        >
+          수정
+        </button>
       </div>
-      <span className="msg">{emsg}</span>
+      <Modal
+        open={modalOpen}
+        close={() => {
+          setModalOpen(false);
+        }}
+        header="이메일 변경"
+      >
+        <EmailValue />
+      </Modal>
     </div>
   );
 }
@@ -286,7 +364,7 @@ function NameValue() {
       return;
     }
     await axios({
-      url: "http://localhost:5000/usernamechange",
+      url: "http://localhost:5000/updateuser/name",
       method: "POST",
       data: { idx: loginUser.mem_idx, username: username },
     })
@@ -382,7 +460,7 @@ function PhoneValue() {
       return;
     }
     await axios({
-      url: "http://localhost:5000/phonechange",
+      url: "http://localhost:5000/updateuser/phone",
       method: "POST",
       data: { idx: loginUser.mem_idx, phone: phone },
     })
@@ -467,7 +545,7 @@ function Pwdvalue() {
 
   const pwdcheck = async () => {
     await axios({
-      url: "http://localhost:5000/pwdcheck",
+      url: "http://localhost:5000/updateuser/pwdcheck",
       method: "POST",
       data: { idx: loginUser.mem_idx, curpwd: curpwd },
     })
@@ -478,16 +556,13 @@ function Pwdvalue() {
           inputFocus.current[0].focus();
         } else {
           if (!pwisvalid) {
-            // console.log("비밀번호를 확인하세요.");
             inputFocus.current[1].focus();
             return;
           }
           if (!samepwisvalid) {
-            // console.log("비밀번호확인을 확인하세요.");
             inputFocus.current[2].focus();
             return;
           }
-          // console.log("여기서 비밀번호 바꾸면 됩니다.");
           pwdvalchange();
         }
       })
@@ -498,7 +573,7 @@ function Pwdvalue() {
 
   const pwdvalchange = async () => {
     await axios({
-      url: "http://localhost:5000/pwdchange",
+      url: "http://localhost:5000/auth/pwdchange",
       method: "POST",
       data: { idx: loginUser.mem_idx, modpwd: modpwd },
     })
@@ -704,24 +779,18 @@ function PwdModModal() {
 function My() {
   const navigation = useNavigate();
 
-  //App에서 StoreContext 받아온 후 로그인세션 사용
   const { loginUser } = React.useContext(StoreContext);
-
   const [modalOpen, setModalOpen] = React.useState(false);
 
-  const [State, setState] = React.useState({
-    session: "로그인",
-  });
-
-  // React.useEffect(() => {
-  //   if (loginUser === null) {
-  //     // navigation("/login", { replace: true });
-  //   }
-  // }, [loginUser]);
+  React.useEffect(() => {
+    if (loginUser.session === "none") {
+      navigation("/login", { replace: true });
+    }
+  }, [loginUser]);
 
   const withdrawalreq = async () => {
     await axios({
-      url: "http://localhost:5000/withdrawalreq",
+      url: "http://localhost:5000/auth/withdrawalreq",
       method: "POST",
       data: { idx: loginUser.mem_idx },
     })
@@ -738,80 +807,68 @@ function My() {
   };
 
   return (
-    <div className="container">
-      <Menubar />
-      <div className="contents-container">
-        <div className="title">
-          <span className="myinfo">내정보 관리</span>
-        </div>
-        <div className="myinfo-container">
-          <section className="login-info">
-            <span className="title">로그인 정보</span>
-            <div className="item">
-              <span>아이디</span>
-              <div className="info-box">
-                <span>{loginUser && loginUser.mem_userid}</span>
-              </div>
+    <>
+      {Object.keys(loginUser).length > 1 && (
+        <>
+          <Menubar />
+          <div className="contents-container mycon">
+            <div className="title my">
+              <span className="myinfo">내정보 관리</span>
             </div>
-            <PwdModModal></PwdModModal>
-            <NicknameValue></NicknameValue>
-            {/* <EmailValue></EmailValue> */}
-            <div className="item">
-              <span>이메일</span>
-              <div className="info-box">
-                <span>{loginUser && loginUser.mem_email}</span>
-              </div>
-            </div>
-          </section>
-          <section className="user-info">
-            <span className="title">본인 확인 정보</span>
-            <NameValue></NameValue>
-            <div className="item">
-              <span>생년월일</span>
-              <div className="info-box">
-                <span>{loginUser && loginUser.mem_birth}</span>
-              </div>
-            </div>
-            <PhoneValue></PhoneValue>
-          </section>
-          <section className="Withdrawal">
-            <span
-              onClick={() => {
-                setModalOpen(true);
-              }}
-            >
-              회원탈퇴하기
-            </span>
-            <Modal
-              open={modalOpen}
-              close={() => {
-                setModalOpen(false);
-              }}
-              header="회원 탈퇴"
-            >
-              <div className="Withdrawal-box">
-                <span>정말로 탈퇴하시겠습니까?</span>
-                <span className="small">
-                  작성한 글은 자동으로 삭제되지 않습니다.
-                </span>
-                <div>
-                  <button className="withdrawalbtn" onClick={withdrawalreq}>
-                    확인
-                  </button>
-                  <button
-                    onClick={() => {
-                      setModalOpen(false);
-                    }}
-                  >
-                    취소
-                  </button>
+            <div className="myinfo-container">
+              <section className="login-info">
+                <span className="title">로그인 정보</span>
+                <div className="item">
+                  <span>아이디</span>
+                  <div className="info-box">
+                    <span>{loginUser.mem_userid}</span>
+                  </div>
                 </div>
-              </div>
-            </Modal>
-          </section>
-        </div>
-      </div>
-    </div>
+                <PwdModModal />
+                <NicknameValue />
+              </section>
+              <section className="user-info">
+                <span className="title">본인 확인 정보</span>
+                <NameValue />
+                <EmailModModal />
+                <div className="item">
+                  <span>생년월일</span>
+                  <div className="info-box">
+                    <span>
+                      {moment
+                        .tz(loginUser.mem_birth, "Asia/Seoul")
+                        .format("YYYY-MM-DD")}
+                    </span>
+                  </div>
+                </div>
+                <PhoneValue />
+              </section>
+              <section className="Withdrawal">
+                <span onClick={() => setModalOpen(true)}>회원탈퇴하기</span>
+                <Modal
+                  open={modalOpen}
+                  close={() => setModalOpen(false)}
+                  header="회원 탈퇴"
+                >
+                  <div className="Withdrawal-box">
+                    <span>정말로 탈퇴하시겠습니까?</span>
+                    <span className="small">
+                      작성한 글은 자동으로 삭제되지 않습니다.
+                    </span>
+                    <div>
+                      <button className="withdrawalbtn" onClick={withdrawalreq}>
+                        확인
+                      </button>
+                      <button onClick={() => setModalOpen(false)}>취소</button>
+                    </div>
+                  </div>
+                </Modal>
+              </section>
+            </div>
+          </div>
+        </>
+      )}
+    </>
   );
 }
 

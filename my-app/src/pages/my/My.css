@@ -1,79 +1,67 @@
-.contents-container > .title > .myinfo {
-  padding: 54px 0 0 0;
+.mycon > .title {
+  width: 100%;
+  height: 160px;
 }
-
-.myinfo-container {
-  /* border: solid 1px black; */
-  width: 960px;
+.mycon > .my {
+  min-width: 730px;
+}
+.mycon .myinfo-container {
+  width: 60%;
+  min-width: 730px;
   height: 100%;
   margin: auto;
-  padding: 60px 180px;
+  padding: 30px 90px;
 }
 
-.login-info {
-  /* border: solid 1px red; */
-}
-
-.user-info {
-  /* border: solid 1px red; */
-}
-
-.myinfo-container .title {
+.mycon .myinfo-container .title {
   display: inline-block;
   font-size: 1rem;
   font-weight: bold;
   padding-bottom: 6px;
-  /* margin-top: 16px; */
   border-bottom: solid 2px black;
 }
-.myinfo-container > .user-info > .title {
+.mycon .myinfo-container > .user-info > .title {
   margin-top: 32px;
 }
 
-.myinfo-container .item > span:first-child {
+.mycon .myinfo-container .item > span:first-child {
   font-size: 0.785rem;
   font-weight: bold;
 }
-.myinfo-container .item > span {
-  /* border: solid 1px red; */
+.mycon .myinfo-container .item > span {
   display: inline-block;
   padding-top: 12px;
   margin-top: 20px;
 }
-.myinfo-container .item > .info-box {
+.mycon .myinfo-container .item > .info-box {
   border-bottom: solid 1px lightgray;
-  /* margin-bottom: 20px; */
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.myinfo-container .item > .info-box > span {
-  /* border: solid 1px red; */
+.mycon .myinfo-container .item > .info-box > span {
   display: inline-block;
   padding: 12px 0;
-  font-size: 1.075rem;
+  font-size: 1rem;
 }
-.myinfo-container .item > .msg {
-  /* border: solid 1px red; */
+.mycon .myinfo-container .item > .msg {
   padding: 0;
   margin-top: 6px;
   font-size: 0.78rem;
   color: #dc3545;
   font-weight: bold;
 }
-.myinfo-container .item > .info-box > input {
-  /* border: solid 1px red; */
+.mycon .myinfo-container .item > .info-box > input {
   outline: none;
   width: 300px;
   border: none;
   padding: 12px 0;
-  font-size: 1.075rem;
+  font-size: 1rem;
 }
-.myinfo-container .item > .info-box button,
-.myinfo-container .item > .pwdbtn {
-  /* border: solid 1px #4a8522; */
-  background-color: rgba(74, 133, 34, 0.8);
+.mycon .myinfo-container .item > .info-box button,
+.mycon .myinfo-container .item > .pwdbtn {
+  background-color: #4a8522;
   color: #ffffff;
   width: 50px;
   height: 30px;
@@ -81,21 +69,26 @@
   border-radius: 16px;
 }
 
-.myinfo-container .item > .info-box > div > button:first-child {
+.mycon .myinfo-container .item > .info-box button:hover,
+.mycon .myinfo-container .item > .pwdbtn:hover {
+  background-color: rgba(74, 133, 34, 0.8);
+}
+
+.mycon .myinfo-container .item > .info-box > div > button:first-child {
   margin-right: 12px;
 }
-.myinfo-container .item > .pwdbtn {
+.mycon .myinfo-container .item > .pwdbtn {
   width: 110px;
   height: 30px;
   margin-left: 12px;
 }
-.Withdrawal > span {
+.mycon .myinfo-container .Withdrawal > span {
   display: inline-block;
   margin-top: 16px;
   font-size: 0.785rem;
   cursor: pointer;
 }
-.Withdrawal > span:hover {
+.mycon .myinfo-container .Withdrawal > span:hover {
   color: #4a8522;
   border-bottom: solid 1px #4a8522;
 }

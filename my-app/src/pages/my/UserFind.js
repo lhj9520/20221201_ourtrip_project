@@ -93,7 +93,7 @@ function Inputbox(props) {
     setDisable(false);
 
     await axios({
-      url: "http://localhost:5000/mail",
+      url: "http://localhost:5000/auth/mail",
       method: "POST",
       data: {
         yourname: idata.name,
@@ -150,7 +150,7 @@ function Inputbox(props) {
     } else {
       // console.log("아이디 찾아줘");
       await axios({
-        url: "http://localhost:5000/findid",
+        url: "http://localhost:5000/auth/findid",
         method: "POST",
         data: sdata,
       })
@@ -253,7 +253,7 @@ function Inputbox2() {
     }
 
     await axios({
-      url: "http://localhost:5000/findpw",
+      url: "http://localhost:5000/auth/findpw",
       method: "POST",
       data: sdata,
     })
@@ -438,7 +438,7 @@ function PwModify() {
     }
 
     await axios({
-      url: "http://localhost:5000/pwdchange",
+      url: "http://localhost:5000/auth/pwdchange",
       method: "POST",
       data: { id: res2.id, modpwd: password.pwd },
     })

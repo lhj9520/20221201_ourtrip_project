@@ -21,6 +21,13 @@ span {
   cursor: default;
 }
 
+* {
+  font-family: var(--font-NotoSansKR-Bold) !important;
+}
+
+input {
+  font-family: var(--font-NotoSansKR-Regular) !important;
+}
 /* 스크롤바 설정*/
 ::-webkit-scrollbar {
   width: 6px;

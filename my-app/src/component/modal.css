@@ -22,6 +22,7 @@ div.tripmate-container {
 .modal > section {
   width: 90%;
   max-width: 450px;
+  min-width: 445px;
   margin: 0 auto;
   border-radius: 0.3rem;
   background-color: #fff;

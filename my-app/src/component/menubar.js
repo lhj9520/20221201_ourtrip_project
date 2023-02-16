@@ -13,37 +13,49 @@ function Menubar() {
   const { loginUser } = React.useContext(StoreContext);
 
   const [State, setState] = React.useState({
-    session: "로그인",
+    session: "",
   });
 
   React.useEffect(() => {
-    console.log("메뉴바 이팩트", loginUser);
-
-    if (loginUser === null) {
+    if (loginUser.session === "none") {
       setState({ session: "로그인" });
-      if (
-        location.pathname === "/mymate" ||
-        location.pathname === "/mytrip" ||
-        location.pathname === "/my"
-      ) {
-        console.log("유저권한이없습니다. 메인으로 이동");
-        navigation("/login", { replace: true });
-      }
-    } else {
-      setState({ session: "마이페이지" });
+    } else if (Object.keys(loginUser).length > 1) {
       if (location.pathname === "/my") {
         setState({ session: "로그아웃" });
+      } else {
+        setState({ session: "마이페이지" });
       }
     }
   }, [loginUser]);
 
-  const login = () => {
+  const LoginSessionHandler = () => {
     if (State.session === "로그인") {
       navigation("/login");
     } else if (State.session === "마이페이지") {
       navigation("/my");
     } else if (State.session === "로그아웃") {
       deletesession();
+    }
+  };
+
+  const MoveToMainHandler = () => {
+    navigation("/");
+    importsession();
+  };
+
+  const MoveToMyMateHandler = () => {
+    if (loginUser.session === "none") {
+      alert("로그인 후 이용가능합니다.");
+    } else {
+      navigation("/mymate");
+    }
+  };
+
+  const MoveToMyTripHandler = () => {
+    if (loginUser.session === "none") {
+      alert("로그인 후 이용가능합니다.");
+    } else {
+      navigation("/mytrip");
     }
   };
 
@@ -55,56 +67,22 @@ function Menubar() {
             src={logoimg}
             alt="logo이미지"
             className="item"
-            onClick={() => {
-              importsession();
-              navigation("/");
-            }}
+            onClick={MoveToMainHandler}
           />
           <div className="menu">
             <ul>
-              {/* <li
-                className="item"
-                onClick={() => {
-                  navigation("/community");
-                }}
-              >
-                커뮤니티
-              </li> */}
-              <li
-                className="item"
-                onClick={() => {
-                  if (loginUser === null) {
-                    alert("로그인 후 이용가능합니다.");
-                  } else {
-                    navigation("/mymate");
-                  }
-                }}
-              >
+              <li className="item" onClick={MoveToMyMateHandler}>
                 나의 메이트
               </li>
-              <li
-                className="item"
-                onClick={() => {
-                  if (loginUser === null) {
-                    alert("로그인 후 이용가능합니다.");
-                  } else {
-                    navigation("/mytrip");
-                  }
-                }}
-              >
+              <li className="item" onClick={MoveToMyTripHandler}>
                 나의 여행
               </li>
-              <li
-                className="item"
-                onClick={() => {
-                  navigation("/howtouse");
-                }}
-              >
+              <li className="item" onClick={() => navigation("/howtouse")}>
                 이용 방법
               </li>
             </ul>
             <div>
-              <button className="loginbtn" onClick={login}>
+              <button className="loginbtn" onClick={LoginSessionHandler}>
                 {State.session}
               </button>
             </div>

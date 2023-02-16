@@ -1,31 +1,10 @@
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  font-family: Handot;
-}
-
-u,
-li {
-  list-style: none;
-  text-decoration: none;
-}
-
-button {
-  border: 0;
-  outline: 0;
-  cursor: pointer;
-}
-
 .join-container {
   width: 100%;
   height: 100%;
-  /* border: solid 1px red; */
 }
-
 .join-container .centerfix {
-  /* border: solid 1px red; */
-  width: 790px;
+  width: 50%;
+  min-width: 680px;
   height: 100%;
   margin: auto;
   display: flex;
@@ -33,27 +12,32 @@ button {
   align-items: center;
 }
 
-.join-container .centerfix img {
-  width: 172px;
+.join-container .centerfix .first {
+  width: 100%;
+  padding-top: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.join-container .centerfix .first img {
+  width: 30%;
+  margin: auto;
   object-fit: contain;
-  margin: 58px 0;
   cursor: pointer;
 }
-.join-container .centerfix .title {
+.join-container .centerfix .first .title {
   font-size: 1.75rem;
-  font-weight: bold;
-  margin-bottom: 32px;
+  padding-top: 5%;
 }
 .join-container .centerfix .userinfo {
-  /* border: solid 1px red; */
-  width: 500px;
+  width: 90%;
+  margin-top: 10%;
   display: flex;
   flex-direction: column;
   gap: 32px;
 }
 
 .join-container .centerfix .userinfo div {
-  /* border: solid 1px red; */
   white-space: nowrap;
 }
 .join-container .centerfix .userinfo div select {
@@ -85,16 +69,13 @@ select::-ms-expand {
 
 .join-container .centerfix .userinfo div .title {
   font-size: 1rem;
-  font-weight: bold;
   margin-bottom: 12px;
 }
 
 .join-container .centerfix .userinfo div .title .essential {
-  /* border: solid 1px red; */
   margin-left: 4px;
   font-size: 1rem;
   vertical-align: top;
-  font-weight: bold;
   color: #dc3545;
 }
 
@@ -110,7 +91,7 @@ select::-ms-expand {
   border-bottom: solid 1px black;
 }
 .join-container .centerfix .userinfo div .overlap {
-  width: 380px;
+  width: calc(100% - 120px);
 }
 
 .join-container .centerfix .userinfo div .overlapbtn {
@@ -138,34 +119,28 @@ select::-ms-expand {
   cursor: auto;
 }
 .join-container .centerfix .userinfo div .msgtitle {
-  /* border: solid 1px red; */
   width: 100%;
   margin-top: 8px;
 }
 .join-container .centerfix .userinfo div .msgtitle .msg {
-  /* border: solid 1px red; */
   width: 100%;
   font-size: 0.75rem;
   letter-spacing: -0.6px;
-  font-weight: bold;
   color: #dc3545;
 }
 
 .join-container .centerfix .userinfo .pwcontainer > span {
   display: block;
   font-size: 0.725rem;
-  font-weight: bold;
   margin-top: 8px;
   color: #888888;
 }
 
 .join-container .centerfix .userinfo .birthcontainer .line {
-  /* border: solid 1px red; */
   display: flex;
 }
 
 .join-container .centerfix .userinfo div .small {
-  /* border: solid 1px red; */
   width: auto;
 }
 .join-container
@@ -174,7 +149,6 @@ select::-ms-expand {
   .birthcontainer
   .line
   > section:nth-child(2) {
-  /* border: solid 1px red; */
   margin-left: 16px;
   margin-right: 16px;
 }
@@ -195,13 +169,11 @@ select::-ms-expand {
 }
 
 .emailcontainer .emailcode {
-  /* border: solid 1px red; */
   padding-top: 10px;
 }
 
 .emailcontainer .emailcode > span {
   display: inline-block;
-  font-weight: bold;
 }
 
 .emailcontainer .emailcode > input {
