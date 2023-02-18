@@ -1,0 +1,73 @@
+.contbox {
+  width: 60%;
+  height: 100%;
+  border: solid 1px red;
+  margin: auto;
+}
+
+.maintitle {
+  width: 100%;
+  height: 250px;
+  margin: 20px 0;
+  border: solid 1px black;
+}
+.mainkakomap {
+  width: 100%;
+  height: 500px;
+}
+
+.area {
+  position: absolute;
+  background: #fff;
+  border: 1px solid #888;
+  border-radius: 3px;
+  font-size: 12px;
+  top: -5px;
+  left: 15px;
+  padding: 2px;
+}
+.info {
+  font-size: 12px;
+  padding: 5px;
+}
+
+.selbox {
+  display: inline-block;
+  width: 50%;
+  margin: auto;
+  overflow-x: hidden;
+}
+
+.citybox {
+  /* border: solid 1px red; */
+  display: inline-block;
+  white-space: nowrap;
+}
+.citybox > .select {
+  border-radius: 20px;
+  background-color: #4a8522;
+  color: #fff;
+}
+.citybox > li {
+  /* border: solid 1px red; */
+  display: inline-block;
+  padding: 3px;
+  cursor: pointer;
+  margin: 0 2px;
+}
+.citybox > li:hover {
+  background-color: #4a8522;
+  color: #fff;
+}
+
+.listbox {
+  margin-top: 5px;
+}
+.listbox > li {
+  border: solid 1px blue;
+  cursor: pointer;
+}
+.listbox > li:hover {
+  background-color: #4a8522;
+  color: #fff;
+}

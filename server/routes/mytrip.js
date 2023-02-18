@@ -45,7 +45,7 @@ router.post("/planlist", async (req, res) => {
   result.trip = queryresult[0];
 
   const timelinequeryresult = await DB.runDB(
-    `SELECT timeline.*,mem_nickname AS writer_nickname FROM timeline,USER WHERE trip_seq = ${seq} AND mem_idx = writer`
+    `SELECT timeline.*,mem_nickname AS writer_nickname FROM timeline,USER WHERE trip_seq = ${seq} AND mem_idx = writer ORDER BY seq`
   );
 
   result.timeline = timelinequeryresult;

@@ -12,7 +12,15 @@ function Howtouse() {
     <>
       <Menubar />
       <div className="contents-container">
-        <div>이용방법페이지입니다.</div>
+        <section className="use">
+          <span>나의 여행 메이트가 되어줘!</span>
+        </section>
+        <section className="use">
+          <span>같이 여행 갈 사람~?</span>
+        </section>
+        <section className="use">
+          <span>그래서 우리 어디로 여행갈까?</span>
+        </section>
       </div>
     </>
   );

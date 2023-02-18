@@ -12,10 +12,19 @@ function Join() {
   const navigation = useNavigate();
 
   const monthArr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  const dayArr = [
+  const dayArr1 = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23, 24, 25, 26, 27, 28, 29,
+  ];
+  const dayArr2 = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+    22, 23, 24, 25, 26, 27, 28, 29, 30,
+  ];
+  const dayArr3 = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
     22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
   ];
+  const [dayArrtmp, setDayArrtmp] = React.useState(dayArr3);
 
   const [id, setId] = React.useState({
     value: "",
@@ -73,7 +82,6 @@ function Join() {
   });
 
   const [disable, setDisable] = React.useState(true);
-
   const inputRef = useRef([]);
 
   const idvaluechange = (event) => {
@@ -223,6 +231,14 @@ function Join() {
     const target = $(event.target);
     const name = target.closest("select").attr("id");
     const vbrith = event.target.value;
+
+    if (vbrith == 2) {
+      setDayArrtmp(dayArr1);
+    } else if (vbrith == 4 || vbrith == 6 || vbrith == 9 || vbrith == 11) {
+      setDayArrtmp(dayArr2);
+    } else {
+      setDayArrtmp(dayArr3);
+    }
 
     const cloneData = { ...birth };
     cloneData[name] = vbrith;
@@ -732,7 +748,7 @@ function Join() {
               onChange={birthvaluechange}
             >
               <option value="">일</option>
-              {dayArr.map((day, index) => (
+              {dayArrtmp.map((day, index) => (
                 <option key={index} value={day}>
                   {day}
                 </option>

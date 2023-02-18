@@ -13,6 +13,7 @@ const dup = require(path + "/routes/duplicate");
 const mymate = require(path + "/routes/mymate");
 const mytrip = require(path + "/routes/mytrip");
 const usermanage = require(path + "/routes/usermanage");
+const datarequest = require(path + "/routes/datarequest");
 
 app.use(express.json());
 
@@ -44,3 +45,4 @@ app.use("/dupcheck", dup);
 app.use("/mymate", mymate);
 app.use("/mytrip", mytrip);
 app.use("/updateuser", usermanage);
+app.use("/datareq", datarequest);

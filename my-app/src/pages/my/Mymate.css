@@ -18,7 +18,12 @@
   border-left: solid 1px lightgray;
   border-right: solid 1px lightgray;
 }
-
+.mymatecon .content-mymate > span {
+  display: block;
+  padding: 23% 0;
+  text-align: center;
+  font-size: 1.3rem;
+}
 .mymatecon .content-mymate > ul {
   width: 100%;
   height: 100%;

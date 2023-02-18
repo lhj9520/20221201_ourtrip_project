@@ -205,6 +205,7 @@ function Timelinebar() {
   React.useEffect(() => {
     if (tripdata.timeline) {
       setTimelinelist(tripdata.timeline);
+      console.log(tripdata.timeline);
     }
   }, [tripdata]);
 
@@ -572,6 +573,7 @@ function TimelineInputForm() {
   const horizontalScrollRef = React.useRef();
 
   React.useEffect(() => {
+    MoveToCenter();
     if (tmptimeline.daylist.length > 0) {
       //이전에 생성된 마커 삭제
       MarkerDELALLHandler(markerstore);

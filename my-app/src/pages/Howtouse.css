@@ -1,0 +1,6 @@
+.contents-container .use {
+  text-align: center;
+}
+.contents-container .use > span {
+  font-size: 1.5rem;
+}

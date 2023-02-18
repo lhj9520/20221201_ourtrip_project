@@ -107,7 +107,8 @@ function SearchModal({ setModalOpen, day }) {
       // console.log("검색결과", data);
       setResultlist([...data]);
     } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-      alert("검색 결과가 존재하지 않습니다.");
+      // alert("검색 결과가 존재하지 않습니다.");
+      setResultlist("error");
       return;
     } else if (status === kakao.maps.services.Status.ERROR) {
       alert("검색 결과 중 오류가 발생했습니다.");
@@ -164,17 +165,24 @@ function SearchModal({ setModalOpen, day }) {
             </div>
           </div>
           <ul className="reslistbox">
-            {resultlist.map((data, index) => (
-              <li key={index} className="item">
-                <div className="first">
-                  <span id="place">{data.place_name}</span>
-                  <span id="address">{data.address_name}</span>
-                </div>
-                <div className="second">
-                  <button onClick={() => addHanlder(data)}>추가</button>
-                </div>
-              </li>
-            ))}
+            {resultlist === "error" ? (
+              <span>검색 결과가 존재하지 않습니다.</span>
+            ) : (
+              <>
+                {" "}
+                {resultlist.map((data, index) => (
+                  <li key={index} className="item">
+                    <div className="first">
+                      <span id="place">{data.place_name}</span>
+                      <span id="address">{data.address_name}</span>
+                    </div>
+                    <div className="second">
+                      <button onClick={() => addHanlder(data)}>추가</button>
+                    </div>
+                  </li>
+                ))}
+              </>
+            )}
           </ul>
         </div>
       </div>
