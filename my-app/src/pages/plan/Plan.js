@@ -205,7 +205,6 @@ function Timelinebar() {
   React.useEffect(() => {
     if (tripdata.timeline) {
       setTimelinelist(tripdata.timeline);
-      console.log(tripdata.timeline);
     }
   }, [tripdata]);
 
@@ -1354,12 +1353,6 @@ function Plan() {
       TripLoadHandler();
     }
   }, [dispatch]);
-
-  React.useEffect(() => {
-    if (Object.keys(tripdata).length !== 0) {
-      console.log(tripdata);
-    }
-  }, [tripdata]);
 
   //seq에 해당하는 여행 데이터 가져오기
   const TripLoadHandler = async () => {

@@ -1,6 +1,25 @@
 .contents-container .use {
+  min-width: 960px;
+  width: 70%;
+  height: 100%;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3% 0;
+  margin: auto;
+  border-bottom: dashed 1px gray;
 }
-.contents-container .use > span {
-  font-size: 1.5rem;
+
+.contents-container .use .explainbox {
+  width: 40%;
+  height: 30%;
+  margin: 0 3%;
+}
+
+.contents-container .use .explainbox h1 {
+  padding: 10px 0;
+}
+.contents-container .use .videobox {
+  margin: 0 3%;
 }

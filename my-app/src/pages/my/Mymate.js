@@ -188,7 +188,6 @@ function MateDelModal() {
   const { mymate } = React.useContext(StoreContextM);
 
   const MateDeleteHandler = async (idx) => {
-    console.log(idx, "회원 삭제");
     await axios({
       url: "http://localhost:5000/mymate/delete",
       method: "POST",

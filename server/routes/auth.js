@@ -42,6 +42,7 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/user", (req, res) => {
+  // console.log("로그인 세션 유저 정보 요청", req.session.loginUser);
   if (req.session.loginUser) {
     res.send(req.session.loginUser);
   } else {
@@ -50,6 +51,7 @@ router.get("/user", (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
+  // console.log("로그인 세션 유저 정보 삭제");
   req.session.destroy();
   res.send({ session: "none" });
 });

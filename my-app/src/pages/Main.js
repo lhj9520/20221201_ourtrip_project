@@ -1,18 +1,23 @@
-import React, { startTransition } from "react";
+import React from "react";
 import axios from "axios";
 import "./Main.css";
 import Menubar from "../component/menubar";
-import { StoreContext } from "../App";
 import { useNavigate } from "react-router-dom";
 import geojson_ctp from "../assets/geojsondata/ctp_rvn.json";
 import geojson_sig from "../assets/geojsondata/sig.json";
+import SimpleSlider from "./SimpleSlider";
+import APILoading from "../component/APILoading";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "./SimpleSlider.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCaretRight } from "@fortawesome/free-solid-svg-icons";
+import { faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 
 const { kakao } = window;
 
 function Main() {
   const navigation = useNavigate();
-  //App에서 StoreContext 받아온 후 로그인세션 사용
-  const { loginUser } = React.useContext(StoreContext);
   const data_ctp = geojson_ctp.features;
   const data_sig = geojson_sig.features;
   const [map, setMap] = React.useState(null);
@@ -24,13 +29,13 @@ function Main() {
   });
   const [tourlist, setTourlist] = React.useState([]);
   const horizontalScrollRef = React.useRef();
+  const [loading, setLoading] = React.useState(false);
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
     const container = document.getElementById("map"); //지도를 담을 영역의 DOM 레퍼런스
     const options = {
       //지도를 생성할 때 필요한 기본 옵션
-      // center: new kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
       center: new kakao.maps.LatLng(36.13247338124637, 127.8312630711475),
       level: 13, // 지도의 확대 레벨
     };
@@ -41,51 +46,14 @@ function Main() {
   }, []);
 
   React.useEffect(() => {
-    if (map && geojson.sig.length > 0) {
-      displayAreaSIG();
+    if (code !== 0) {
+      DisplayAreaHandler(code);
     }
-  }, [geojson]);
-
-  const displayAreaSIG = () => {
-    const customOverlay = new kakao.maps.CustomOverlay({});
-
-    //Polygon 전부 그리기
-    geojson.sig.map((data, index) =>
-      data.polygonarr.map((it) => {
-        it.setMap(map);
-
-        // 다각형에 mouseover 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 변경합니다
-        // 지역명을 표시하는 커스텀오버레이를 지도위에 표시합니다
-        kakao.maps.event.addListener(it, "mouseover", function (mouseEvent) {
-          it.setOptions({ fillColor: "#09f" });
-          customOverlay.setContent('<div class="area">' + data.name + "</div>");
-          customOverlay.setPosition(mouseEvent.latLng);
-          customOverlay.setMap(map);
-        });
-
-        // 다각형에 mousemove 이벤트를 등록하고 이벤트가 발생하면 커스텀 오버레이의 위치를 변경합니다
-        kakao.maps.event.addListener(it, "mousemove", function (mouseEvent) {
-          customOverlay.setPosition(mouseEvent.latLng);
-        });
-
-        // 다각형에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
-        // 커스텀 오버레이를 지도에서 제거합니다
-        kakao.maps.event.addListener(it, "mouseout", function () {
-          it.setOptions({ fillColor: "#fff" });
-          customOverlay.setMap(null);
-        });
-
-        // 다각형에 click 이벤트를 등록하고 이벤트가 발생하면 다각형의 이름과 면적을 인포윈도우에 표시합니다
-        kakao.maps.event.addListener(it, "click", function (mouseEvent) {
-          console.log(geojson.ctp_name, data.name, "관광지 목록 request");
-          getTourResource(geojson.ctp_name, data.name);
-        });
-      })
-    );
-  };
+  }, [code]);
 
   const getTourResource = async (sido, gungu) => {
     //로딩 시작
+    setLoading(true);
     await axios({
       url: "http://localhost:5000/datareq/list",
       method: "GET",
@@ -95,18 +63,20 @@ function Main() {
       },
     })
       .then((res) => {
-        console.log(res.data);
         setTourlist(res.data);
         //로딩 종료
+        setLoading(false);
       })
       .catch((e) => {
         console.log("관광정보 api 호출 오류", e);
+        //로딩 종료
+        setLoading(false);
       });
   };
 
   const getTourResourceDetail = async (props) => {
-    console.log(props);
     //로딩 시작
+    setLoading(true);
     await axios({
       url: "http://localhost:5000/datareq/more",
       method: "GET",
@@ -117,18 +87,16 @@ function Main() {
       },
     })
       .then((res) => {
-        console.log(res.data);
         //로딩 종료
+        setLoading(false);
       })
       .catch((e) => {
         console.log("관광정보 api 호출 오류", e);
+        setLoading(false);
       });
   };
 
   const DisplayAreaHandler = (code) => {
-    // console.log(code);
-    setCode(code);
-
     //시도 Polygon 전부 삭제
     geojson.polygon_ctp.map((it) => it.setMap(null));
     //시군구 Polygon 전부 삭제
@@ -199,7 +167,39 @@ function Main() {
       sigarr.push(sig);
     });
 
-    // console.log(sigarr);
+    const customOverlay = new kakao.maps.CustomOverlay({});
+    //Polygon 전부 그리기
+    sigarr.map((data, index) =>
+      data.polygonarr.map((it) => {
+        it.setMap(map);
+
+        // 다각형에 mouseover 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 변경합니다
+        // 지역명을 표시하는 커스텀오버레이를 지도위에 표시합니다
+        kakao.maps.event.addListener(it, "mouseover", function (mouseEvent) {
+          it.setOptions({ fillColor: "#09f" });
+          customOverlay.setContent('<div class="area">' + data.name + "</div>");
+          customOverlay.setPosition(mouseEvent.latLng);
+          customOverlay.setMap(map);
+        });
+
+        // 다각형에 mousemove 이벤트를 등록하고 이벤트가 발생하면 커스텀 오버레이의 위치를 변경합니다
+        kakao.maps.event.addListener(it, "mousemove", function (mouseEvent) {
+          customOverlay.setPosition(mouseEvent.latLng);
+        });
+
+        // 다각형에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
+        // 커스텀 오버레이를 지도에서 제거합니다
+        kakao.maps.event.addListener(it, "mouseout", function () {
+          it.setOptions({ fillColor: "#fff" });
+          customOverlay.setMap(null);
+        });
+
+        // 다각형에 click 이벤트를 등록하고 이벤트가 발생하면 다각형의 이름과 면적을 인포윈도우에 표시합니다
+        kakao.maps.event.addListener(it, "click", function (mouseEvent) {
+          getTourResource(arr_ctp[0].properties.CTP_KOR_NM, data.name);
+        });
+      })
+    );
 
     setGeojson({
       ctp_name: arr_ctp[0].properties.CTP_KOR_NM,
@@ -231,134 +231,184 @@ function Main() {
   return (
     <>
       <Menubar />
-      <div className="contents-container">
-        <div className="contbox">
-          <div className="maintitle">여기에 소개 문구같은거</div>
-          <div>시도를 선택하여 관광정보를 확인하세요.</div>
-          <span onClick={MoveToLeftHandler}>{"<"}</span>
-          <div ref={horizontalScrollRef} className="selbox">
-            <ul className="citybox">
-              <li
-                className={code === "11" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("11")}
-              >
-                서울
-              </li>
-              <li
-                className={code === "26" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("26")}
-              >
-                부산
-              </li>
-              <li
-                className={code === "27" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("27")}
-              >
-                대구
-              </li>
-              <li
-                className={code === "28" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("28")}
-              >
-                인천
-              </li>
-              <li
-                className={code === "29" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("29")}
-              >
-                광주
-              </li>
-              <li
-                className={code === "30" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("30")}
-              >
-                대전
-              </li>
-              <li
-                className={code === "31" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("31")}
-              >
-                울산
-              </li>
-              <li
-                className={code === "36" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("36")}
-              >
-                세종
-              </li>
-              <li
-                className={code === "41" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("41")}
-              >
-                경기도
-              </li>
-              <li
-                className={code === "42" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("42")}
-              >
-                강원도
-              </li>
-              <li
-                className={code === "43" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("43")}
-              >
-                충청북도
-              </li>
-              <li
-                className={code === "44" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("44")}
-              >
-                충청남도
-              </li>
-              <li
-                className={code === "45" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("45")}
-              >
-                전라북도
-              </li>
-              <li
-                className={code === "46" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("46")}
-              >
-                전라남도
-              </li>
-              <li
-                className={code === "47" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("47")}
-              >
-                경상북도
-              </li>
-              <li
-                className={code === "48" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("48")}
-              >
-                경상남도
-              </li>
-              <li
-                className={code === "50" ? "select" : ""}
-                onClick={() => DisplayAreaHandler("50")}
-              >
-                제주도
-              </li>
-            </ul>
+      <div className="contents-container maincon">
+        <div className="maintitle">
+          <SimpleSlider />
+        </div>
+        <div className="tourboxbackground">
+          <div className="tourbox">
+            <span>전국의 관광지를 확인해보세요</span>
+            <div className="sidosliderbox">
+              <FontAwesomeIcon
+                icon={faCaretLeft}
+                className="imgicon"
+                onClick={MoveToLeftHandler}
+              />
+              <div ref={horizontalScrollRef} className="selbox">
+                <ul className="citybox">
+                  <li
+                    className={code === "11" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("11");
+                    }}
+                  >
+                    서울
+                  </li>
+                  <li
+                    className={code === "26" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("26");
+                    }}
+                  >
+                    부산
+                  </li>
+                  <li
+                    className={code === "27" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("27");
+                    }}
+                  >
+                    대구
+                  </li>
+                  <li
+                    className={code === "28" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("28");
+                    }}
+                  >
+                    인천
+                  </li>
+                  <li
+                    className={code === "29" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("29");
+                    }}
+                  >
+                    광주
+                  </li>
+                  <li
+                    className={code === "30" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("30");
+                    }}
+                  >
+                    대전
+                  </li>
+                  <li
+                    className={code === "31" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("31");
+                    }}
+                  >
+                    울산
+                  </li>
+                  <li
+                    className={code === "36" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("36");
+                    }}
+                  >
+                    세종
+                  </li>
+                  <li
+                    className={code === "41" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("41");
+                    }}
+                  >
+                    경기도
+                  </li>
+                  <li
+                    className={code === "42" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("42");
+                    }}
+                  >
+                    강원도
+                  </li>
+                  <li
+                    className={code === "43" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("43");
+                    }}
+                  >
+                    충청북도
+                  </li>
+                  <li
+                    className={code === "44" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("44");
+                    }}
+                  >
+                    충청남도
+                  </li>
+                  <li
+                    className={code === "45" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("45");
+                    }}
+                  >
+                    전라북도
+                  </li>
+                  <li
+                    className={code === "46" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("46");
+                    }}
+                  >
+                    전라남도
+                  </li>
+                  <li
+                    className={code === "47" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("47");
+                    }}
+                  >
+                    경상북도
+                  </li>
+                  <li
+                    className={code === "48" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("48");
+                    }}
+                  >
+                    경상남도
+                  </li>
+                  <li
+                    className={code === "50" ? "select" : ""}
+                    onClick={() => {
+                      if (!loading) setCode("50");
+                    }}
+                  >
+                    제주도
+                  </li>
+                </ul>
+              </div>
+              <FontAwesomeIcon
+                icon={faCaretRight}
+                className="imgicon"
+                onClick={MoveToRightHandler}
+              />
+            </div>
+            <div className="loadingbox">
+              {loading ? <APILoading /> : null}
+              <div id="map" className="mainkakomap"></div>
+              <div className="tourlistbox">
+                {loading ? <APILoading /> : null}
+                <span>장소 검색 결과</span>
+                <ul className="listbox">
+                  {tourlist.map((data, index) => (
+                    <li key={index}>
+                      <div>
+                        <span>{data.name}</span>
+                        <span>{data.category}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
-          <span onClick={MoveToRightHandler}>{">"}</span>
-          <div id="map" className="mainkakomap"></div>
-          <div>장소 검색 리스트</div>
-          <ul className="listbox">
-            {tourlist.map((data, index) => (
-              <li key={index} onClick={() => getTourResourceDetail(data)}>
-                <div>
-                  <span>{index}번째</span>
-                  <span>{data.name}</span>
-                  <span>
-                    주소:{data.sido} {data.gungu}
-                  </span>
-                  <span>분류:{data.category}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </>

@@ -98,7 +98,6 @@ function Join() {
       /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
 
     if ((!pw.value && !pw.revalue) || (!pw.value && pw.revalue)) {
-      // console.log("둘 다 비었음");
       setPw((prevState) => {
         return {
           ...prevState,
@@ -109,7 +108,6 @@ function Join() {
         };
       });
     } else if (pw.value && !pw.revalue) {
-      // console.log("확인 비었음");
       if (!passwordRegex.test(pw.value)) {
         // setEmsg2("숫자+영문자+특수문자 조합으로 8~20자리 입력해주세요.");
         setPw((prevState) => {
@@ -129,7 +127,6 @@ function Join() {
         });
       }
     } else {
-      // console.log("둘다 입력된 상태");
       if (pw.value === pw.revalue) {
         setPw((prevState) => {
           return {
@@ -171,12 +168,10 @@ function Join() {
   useDidMountEffect(() => {
     const nameRegex = /^[가-힣]+$/;
     if (!name.value) {
-      // console.log("이름 비었음");
       setName((prevState) => {
         return { ...prevState, isvalid: false, msg: "" };
       });
     } else {
-      // console.log("이름 입력중");
       if (!nameRegex.test(name.value) || name.value.length < 2) {
         setName((prevState) => {
           return {
@@ -214,8 +209,6 @@ function Join() {
   };
 
   useDidMountEffect(() => {
-    // console.log(cloneData);
-
     if (birth.year && birth.month && birth.day) {
       setBirth((prevState) => {
         return { ...prevState, isvalid: true, msg: "" };
@@ -353,7 +346,6 @@ function Join() {
     }
 
     if (id.dupisvalid) {
-      console.log("아이디 중복확인 완료");
       return;
     }
 
@@ -467,7 +459,6 @@ function Join() {
    */
   const VerifycodeHandler = async () => {
     if (disable) {
-      // console.log("비활성화");
       if (email.inputcode === "") {
         setEmail((prevState) => {
           return { ...prevState, msg: "인증번호전송을 눌러주세요." };
@@ -513,7 +504,6 @@ function Join() {
     }
 
     if (nickname.dupisvalid) {
-      console.log("닉네임 중복 확인 완료");
       return;
     }
 
@@ -542,7 +532,6 @@ function Join() {
    * 회원가입 값 유효성 검사
    */
   const joinHandler = async () => {
-    // console.log(id, pw, name, birth, email, gender, nickname, phone);
     //아이디
     if (!id.dupisvalid) {
       inputRef.current[0].focus();

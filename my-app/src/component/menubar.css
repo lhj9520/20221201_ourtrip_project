@@ -1,19 +1,17 @@
 .menubar-container {
   width: 100%;
-  height: 100%;
-}
-.menubar-container .fixheader {
-  /* border: solid 1px red; */
-  background-color: #ffff;
-  position: sticky;
-  width: 100%;
   height: 80px;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
-  /* box-shadow: 0 2px 2px 0 lightgrey; */
   align-items: center;
   z-index: 5;
+  background-color: #ffff;
+}
+.menubar-container .fixheader {
+  width: 100%;
+  height: 100%;
 }
 .menubar-container .fixheader .menu-container {
   height: 100%;

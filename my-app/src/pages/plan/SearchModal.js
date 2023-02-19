@@ -50,7 +50,6 @@ function SearchModal({ setModalOpen, day }) {
 
   const addHanlder = (props) => {
     //모달을 열고
-    // console.log(day, "번째날", idx + 1, "번째 데이터 추가");
     const tmp = [...tmptimeline.daylist];
     // let idx;
     let curdata;
@@ -84,7 +83,6 @@ function SearchModal({ setModalOpen, day }) {
       }
     });
 
-    // console.log(curdata);
     setTmptimeline((prevState) => {
       return {
         ...prevState,
@@ -104,10 +102,8 @@ function SearchModal({ setModalOpen, day }) {
   // 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
   const placesSearchCB = (data, status, pagination) => {
     if (status === kakao.maps.services.Status.OK) {
-      // console.log("검색결과", data);
       setResultlist([...data]);
     } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-      // alert("검색 결과가 존재하지 않습니다.");
       setResultlist("error");
       return;
     } else if (status === kakao.maps.services.Status.ERROR) {

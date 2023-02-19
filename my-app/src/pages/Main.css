@@ -1,22 +1,82 @@
-.contbox {
-  width: 60%;
+.maincon {
+  min-width: 800px;
+  width: 100%;
   height: 100%;
-  border: solid 1px red;
   margin: auto;
 }
 
-.maintitle {
-  width: 100%;
-  height: 250px;
-  margin: 20px 0;
-  border: solid 1px black;
-}
-.mainkakomap {
-  width: 100%;
-  height: 500px;
+.maincon .maintitle {
+  width: 60%;
+  height: calc(100vw * 0.6 / 2 / 1.1);
+  margin: auto;
+  margin-top: 2%;
+  margin-bottom: 5%;
 }
 
-.area {
+.maincon .tourboxbackground {
+  width: 70%;
+  margin: auto;
+  background-color: #eeeeee50;
+  /* box-shadow: 10px 5px 5px rgba(211, 211, 211, 0.5); */
+  border-radius: 20px;
+  padding-bottom: 3%;
+  margin-bottom: 3%;
+}
+.maincon .tourbox {
+  width: 85%;
+  height: 100%;
+  margin: auto;
+  text-align: center;
+}
+.maincon .tourbox > span {
+  display: inline-block;
+  font-size: 1.5rem;
+  padding-top: 3%;
+  margin-bottom: 3%;
+}
+.maincon .tourbox .sidosliderbox {
+  width: 50%;
+  margin: auto;
+  margin-bottom: 3%;
+  display: flex;
+  align-items: center;
+}
+.maincon .tourbox .sidosliderbox > .imgicon {
+  display: inline-block;
+  cursor: pointer;
+  font-size: 1.5rem;
+  margin: 0 15px;
+}
+.maincon .tourbox .sidosliderbox > .imgicon:hover {
+  color: #4a8522;
+}
+.maincon .tourbox .sidosliderbox .selbox {
+  display: inline-block;
+  width: 90%;
+  overflow-x: hidden;
+}
+.maincon .tourbox .sidosliderbox .citybox {
+  white-space: nowrap;
+}
+.maincon .tourbox .sidosliderbox .citybox > .select {
+  color: #4a8522;
+}
+.maincon .tourbox .sidosliderbox .citybox > li {
+  display: inline;
+  cursor: pointer;
+  padding: 0 5px;
+}
+.maincon .tourbox .sidosliderbox .citybox > li:hover {
+  background-color: #4a8522;
+  color: #fff;
+}
+
+.maincon .tourbox .loadingbox .mainkakomap {
+  width: 100%;
+  height: calc(100vw * 0.6 / 2 / 1.2);
+}
+
+.maincon .tourbox .loadingbox .mainkakomap .area {
   position: absolute;
   background: #fff;
   border: 1px solid #888;
@@ -26,48 +86,66 @@
   left: 15px;
   padding: 2px;
 }
-.info {
+.maincon .tourbox .loadingbox .mainkakomap .info {
   font-size: 12px;
   padding: 5px;
 }
 
-.selbox {
-  display: inline-block;
-  width: 50%;
-  margin: auto;
-  overflow-x: hidden;
+.maincon .tourbox .loadingbox {
+  position: relative;
+}
+.maincon .tourbox .loadingbox .tourlistbox {
+  /* border: solid 2px red; */
+}
+.maincon .tourbox .loadingbox .tourlistbox > span {
+  border-bottom: dashed 1px lightgray;
+  display: block;
+  padding: 10px 0;
 }
 
-.citybox {
-  /* border: solid 1px red; */
-  display: inline-block;
-  white-space: nowrap;
-}
-.citybox > .select {
-  border-radius: 20px;
-  background-color: #4a8522;
-  color: #fff;
-}
-.citybox > li {
-  /* border: solid 1px red; */
-  display: inline-block;
-  padding: 3px;
-  cursor: pointer;
-  margin: 0 2px;
-}
-.citybox > li:hover {
-  background-color: #4a8522;
-  color: #fff;
+.maincon .tourbox .loadingbox .tourlistbox .listbox {
+  width: 100%;
+  text-align: start;
 }
 
-.listbox {
-  margin-top: 5px;
+.maincon .tourbox .loadingbox .tourlistbox .listbox > li {
+  border-bottom: dashed 1px lightgray;
+  padding: 5px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.listbox > li {
-  border: solid 1px blue;
+.maincon .tourbox .loadingbox .tourlistbox .listbox > li > div {
+  display: inline-block;
   cursor: pointer;
+  font-size: 0.785rem;
+  margin-left: 20px;
 }
-.listbox > li:hover {
-  background-color: #4a8522;
-  color: #fff;
+
+.maincon
+  .tourbox
+  .loadingbox
+  .tourlistbox
+  .listbox
+  > li
+  > div
+  > span:first-child {
+  font-size: 1rem;
 }
+/* .maincon .tourbox .loadingbox .tourlistbox .listbox > li > div:hover {
+  color: #4a8522;
+  cursor: pointer;
+} */
+.maincon .tourbox .loadingbox .tourlistbox .listbox > li > div > span {
+  display: block;
+}
+.maincon .tourbox .loadingbox .tourlistbox .listbox > li > span {
+  display: inline-block;
+  margin-right: 20px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+/* .maincon .tourbox .loadingbox .tourlistbox .listbox > li > span:hover {
+  text-decoration: underline;
+  color: #4a8522;
+} */

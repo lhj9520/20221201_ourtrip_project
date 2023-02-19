@@ -117,7 +117,6 @@ function Inputbox(props) {
   };
 
   const IdFindHandler = async () => {
-    // console.log(sdata);
     if (idata.name === "") {
       alert("이름을 입력해주세요.");
       return;
@@ -143,12 +142,10 @@ function Inputbox(props) {
     }
 
     if (idcert) {
-      // console.log("비밀번호 바꾸자요");
       setRes2((prevState) => {
         return { ...prevState, open: true, mod: true };
       });
     } else {
-      // console.log("아이디 찾아줘");
       await axios({
         url: "http://localhost:5000/auth/findid",
         method: "POST",
@@ -156,14 +153,11 @@ function Inputbox(props) {
       })
         .then((res) => {
           const { code, id } = res.data;
-          // console.log(res.data);
           if (code === "success") {
-            // console.log(id + " " + message);
             setRes1((prevState) => {
               return { ...prevState, open: true, id: id };
             });
           } else {
-            // console.log(message);
             setRes1((prevState) => {
               return { ...prevState, open: true, id: null };
             });
@@ -519,8 +513,6 @@ function UserFind() {
   const navigation = useNavigate();
 
   const { state } = useLocation();
-  // console.log("userfind값", state);
-
   const [type, setType] = React.useState(state === null ? "id" : state);
   const [res1, setRes1] = React.useState({
     open: false,
@@ -536,7 +528,6 @@ function UserFind() {
   });
 
   React.useEffect(() => {
-    // console.log("이거 실행?");
     setRes1((prevState) => {
       return { ...prevState, open: false, id: "" };
     });

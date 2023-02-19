@@ -54,7 +54,6 @@ function NicknameValue() {
 
   const nicknamevalidcheck = async () => {
     if (nickname === "") {
-      // console.log("닉네임을 입력하세요");
       setEmsg("닉네임을 입력하세요.");
       inputFocus.current.focus();
       return;
@@ -155,8 +154,6 @@ function EmailValue() {
   };
 
   const emailchange = async () => {
-    console.log("인증번호 확인하고 비밀번호 바꿔");
-
     if (!disable && incode === "") {
       setEmsg2("인증번호를 입력하세요.");
       return;
@@ -168,8 +165,6 @@ function EmailValue() {
     }
 
     setEmsg2("");
-
-    console.log({ idx: loginUser.mem_idx, email: email });
 
     await axios({
       url: "http://localhost:5000/updateuser/email",
@@ -236,7 +231,6 @@ function EmailValue() {
       .then((res) => {
         const { code, useremail, vericode } = res.data;
         if (code === 200) {
-          // console.log("이메일 전송 완", useremail, vericode);
           setEmail(useremail);
           setServercode(vericode);
         }
@@ -580,7 +574,6 @@ function Pwdvalue() {
       .then((res) => {
         const { code, message } = res.data;
         if (code === "success") {
-          console.log(message);
           importsession();
           setInputset(false);
         }
@@ -591,10 +584,7 @@ function Pwdvalue() {
   };
 
   const pwdchange = () => {
-    // setInputset(false);
-    // console.log(curpwd);
     if (curpwd.length === 0) {
-      // console.log("비밀번호를 입력해주세요.");
       setEmsg1("비밀번호를 입력해주세요.");
       inputFocus.current[0].focus();
       return;

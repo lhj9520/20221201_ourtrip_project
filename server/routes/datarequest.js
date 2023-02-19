@@ -6,6 +6,7 @@ require("dotenv").config();
 
 router.get("/list", (req, res) => {
   const { sido, gungu } = req.query;
+
   const url =
     "http://openapi.tour.go.kr/openapi/service/TourismResourceService/getTourResourceList";
   let queryParams =
@@ -16,9 +17,6 @@ router.get("/list", (req, res) => {
     "&" + encodeURIComponent("SIDO") + "=" + encodeURIComponent(sido); /* */
   queryParams +=
     "&" + encodeURIComponent("GUNGU") + "=" + encodeURIComponent(gungu); /* */
-
-  console.log(url + queryParams);
-  console.log("open api 호출...");
 
   request(
     {
@@ -41,14 +39,13 @@ router.get("/list", (req, res) => {
       });
 
       res.send(results);
-
-      console.log("open api 데이터 완료");
     }
   );
 });
 
 router.get("/more", (req, res) => {
   const { sido, gungu, name } = req.query;
+  console.log(sido, gungu, name);
   const url =
     "http://openapi.tour.go.kr/openapi/service/TourismResourceService/getTourResourceDetail";
 
@@ -63,9 +60,6 @@ router.get("/more", (req, res) => {
   queryParams +=
     "&" + encodeURIComponent("RES_NM") + "=" + encodeURIComponent(name); /* */
 
-  console.log(url + queryParams);
-  console.log("open api 호출...");
-
   request(
     {
       url: url + queryParams,
@@ -73,8 +67,12 @@ router.get("/more", (req, res) => {
     },
     function (error, response, body) {
       const xmlToJson = converter.xml2json(body);
-      res.send(JSON.parse(xmlToJson));
-      console.log("open api 데이터 완료");
+      const tmpobj =
+        JSON.parse(xmlToJson).elements[0].elements[1].elements[0].elements[0]
+          .elements;
+      //좌표데이터만
+      const data = tmpobj.filter((it) => it.name === "LGpsCoordinate");
+      res.send(data[0]);
     }
   );
 });
