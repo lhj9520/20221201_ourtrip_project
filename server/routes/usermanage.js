@@ -56,10 +56,10 @@ router.post("/nickname", async (req, res) => {
     `SELECT seq,mate_idx FROM trip WHERE JSON_EXTRACT( mate_idx, '$."${idx}"' ) IS NOT NULL`
   );
 
-  Lookupquery.map((data, index) => {
+  Lookupquery.map(async (data, index) => {
     let mate = JSON.parse(data.mate_idx);
     mate[queryresult[0].mem_idx] = queryresult[0].mem_nickname;
-    const updatequery = DB.runDB(
+    const updatequery = await DB.runDB(
       `UPDATE trip SET mate_idx = '${JSON.stringify(mate)}' WHERE seq = ${
         data.seq
       }`
