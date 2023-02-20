@@ -13,7 +13,7 @@ function Menubar() {
   const { loginUser } = React.useContext(StoreContext);
 
   const [State, setState] = React.useState({
-    session: "",
+    session: "로그인",
   });
 
   React.useEffect(() => {
