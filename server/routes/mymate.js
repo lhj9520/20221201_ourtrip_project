@@ -12,7 +12,7 @@ router.post("/list", async (req, res) => {
   };
 
   const matequery = await DB.runDB(
-    `(SELECT res_idx AS mem_idx,mem_userid,mem_nickname FROM mate,USER WHERE req_idx = ${idx} AND matestate = TRUE AND res_idx = mem_idx) UNION (SELECT req_idx AS idx,mem_userid,mem_nickname FROM mate,USER WHERE res_idx = ${idx} AND matestate = TRUE AND req_idx = mem_idx);
+    `(SELECT res_idx AS mem_idx,mem_userid,mem_nickname FROM mate,user WHERE req_idx = ${idx} AND matestate = TRUE AND res_idx = mem_idx) UNION (SELECT req_idx AS idx,mem_userid,mem_nickname FROM mate,user WHERE res_idx = ${idx} AND matestate = TRUE AND req_idx = mem_idx);
     `
   );
   result.mate = matequery;
@@ -30,12 +30,12 @@ router.post("/reqlist", async (req, res) => {
   };
 
   const matequery = await DB.runDB(
-    `(SELECT res_idx AS idx,mem_userid,mem_nickname FROM mate,USER WHERE req_idx = ${idx} AND matestate = TRUE AND res_idx = mem_idx) UNION (SELECT req_idx AS idx,mem_userid,mem_nickname FROM mate,USER WHERE res_idx = ${idx} AND matestate = TRUE AND req_idx = mem_idx);
+    `(SELECT res_idx AS idx,mem_userid,mem_nickname FROM mate,user WHERE req_idx = ${idx} AND matestate = TRUE AND res_idx = mem_idx) UNION (SELECT req_idx AS idx,mem_userid,mem_nickname FROM mate,user WHERE res_idx = ${idx} AND matestate = TRUE AND req_idx = mem_idx);
     `
   );
   result.mate = matequery;
   const reqquery = await DB.runDB(
-    `SELECT mem_idx,mem_userid,mem_nickname FROM mate,USER WHERE reqstate = 'R' AND res_idx=${idx} AND req_idx=mem_idx`
+    `SELECT mem_idx,mem_userid,mem_nickname FROM mate,user WHERE reqstate = 'R' AND res_idx=${idx} AND req_idx=mem_idx`
   );
   result.req = reqquery;
 
@@ -85,7 +85,7 @@ router.post("/idfind", async (req, res) => {
   };
 
   const matecheck = await DB.runDB(
-    `SELECT * FROM USER WHERE mem_userid = '${mateid}'`
+    `SELECT * FROM user WHERE mem_userid = '${mateid}'`
   );
 
   //아이디 없음

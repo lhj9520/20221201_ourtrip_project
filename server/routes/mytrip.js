@@ -12,7 +12,7 @@ router.post("/triplist", async (req, res) => {
   };
 
   const queryresult = await DB.runDB(
-    `SELECT trip.*,mem_nickname AS host_nickname FROM trip,USER WHERE JSON_EXTRACT( mate_idx, '$.${idx}' ) IS NOT NULL AND mem_idx = host_idx`
+    `SELECT trip.*,mem_nickname AS host_nickname FROM trip,user WHERE JSON_EXTRACT( mate_idx, '$.${idx}' ) IS NOT NULL AND mem_idx = host_idx`
   );
 
   result.trip = queryresult.reverse();
@@ -32,7 +32,7 @@ router.post("/planlist", async (req, res) => {
   };
 
   const queryresult = await DB.runDB(
-    `SELECT trip.*,mem_nickname AS host_nickname FROM trip,USER WHERE JSON_EXTRACT( mate_idx, '$.${idx}' ) IS NOT NULL AND mem_idx = host_idx AND seq = ${seq}`
+    `SELECT trip.*,mem_nickname AS host_nickname FROM trip,user WHERE JSON_EXTRACT( mate_idx, '$.${idx}' ) IS NOT NULL AND mem_idx = host_idx AND seq = ${seq}`
   );
 
   if (queryresult.length === 0) {
@@ -45,7 +45,7 @@ router.post("/planlist", async (req, res) => {
   result.trip = queryresult[0];
 
   const timelinequeryresult = await DB.runDB(
-    `SELECT timeline.*,mem_nickname AS writer_nickname FROM timeline,USER WHERE trip_seq = ${seq} AND mem_idx = writer ORDER BY seq`
+    `SELECT timeline.*,mem_nickname AS writer_nickname FROM timeline,user WHERE trip_seq = ${seq} AND mem_idx = writer ORDER BY seq`
   );
 
   result.timeline = timelinequeryresult;

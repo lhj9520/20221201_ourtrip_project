@@ -13,7 +13,7 @@ router.post("/email", async (req, res) => {
   };
 
   const query = await DB.runDB(
-    `UPDATE USER SET mem_email="${email}" WHERE mem_idx = ${idx}`
+    `UPDATE user SET mem_email="${email}" WHERE mem_idx = ${idx}`
   );
 
   const queryresult = await DB.runDB(
@@ -38,7 +38,7 @@ router.post("/nickname", async (req, res) => {
   };
 
   const query = await DB.runDB(
-    `UPDATE USER SET mem_nickname="${nickname}" WHERE mem_idx = ${idx}`
+    `UPDATE user SET mem_nickname="${nickname}" WHERE mem_idx = ${idx}`
   );
 
   const queryresult = await DB.runDB(
@@ -77,7 +77,7 @@ router.post("/name", async (req, res) => {
   };
 
   const query = await DB.runDB(
-    `UPDATE USER SET mem_username="${username}" WHERE mem_idx = ${idx}`
+    `UPDATE user SET mem_username="${username}" WHERE mem_idx = ${idx}`
   );
 
   const queryresult = await DB.runDB(
@@ -102,7 +102,7 @@ router.post("/phone", async (req, res) => {
   };
 
   const query = await DB.runDB(
-    `UPDATE USER SET mem_phone="${phone}" WHERE mem_idx = ${idx}`
+    `UPDATE user SET mem_phone="${phone}" WHERE mem_idx = ${idx}`
   );
 
   const queryresult = await DB.runDB(
@@ -127,7 +127,7 @@ router.post("/email", async (req, res) => {
   };
 
   const query = await DB.runDB(
-    `UPDATE USER SET mem_email="${email}" WHERE mem_idx = ${idx}`
+    `UPDATE user SET mem_email="${email}" WHERE mem_idx = ${idx}`
   );
 
   const queryresult = await DB.runDB(

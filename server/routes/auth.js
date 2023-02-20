@@ -72,8 +72,8 @@ router.post("/join", async (req, res) => {
 
   let queryresult = "";
   phone === ""
-    ? (queryresult = `INSERT INTO USER(mem_userid,mem_password,mem_username,mem_email,mem_nickname,mem_phone,mem_regtime) VALUES ('${id}','${hashpw}','${name}','${email}','${nickname}','',NOW())`)
-    : (queryresult = `INSERT INTO USER(mem_userid,mem_password,mem_username,mem_email,mem_nickname,mem_phone,mem_regtime) VALUES ('${id}','${hashpw}','${name}','${email}','${nickname}','${phone}',NOW())`);
+    ? (queryresult = `INSERT INTO user(mem_userid,mem_password,mem_username,mem_email,mem_nickname,mem_phone,mem_regtime) VALUES ('${id}','${hashpw}','${name}','${email}','${nickname}','',NOW())`)
+    : (queryresult = `INSERT INTO user(mem_userid,mem_password,mem_username,mem_email,mem_nickname,mem_phone,mem_regtime) VALUES ('${id}','${hashpw}','${name}','${email}','${nickname}','${phone}',NOW())`);
   await DB.runDB(queryresult);
 
   res.send(result);
@@ -109,11 +109,11 @@ router.post("/findid", async (req, res) => {
 
   if (type === "email") {
     queryresult = await DB.runDB(
-      `SELECT mem_userid FROM USER WHERE mem_username = '${name}' AND mem_email = '${ind}' AND mem_status = 'Y'`
+      `SELECT mem_userid FROM user WHERE mem_username = '${name}' AND mem_email = '${ind}' AND mem_status = 'Y'`
     );
   } else if (type === "phone") {
     queryresult = await DB.runDB(
-      `SELECT mem_userid FROM USER WHERE mem_username = '${name}' AND mem_phone = '${ind}' AND mem_status = 'Y'`
+      `SELECT mem_userid FROM user WHERE mem_username = '${name}' AND mem_phone = '${ind}' AND mem_status = 'Y'`
     );
   }
 
@@ -138,7 +138,7 @@ router.post("/findpw", async (req, res) => {
   };
 
   const queryresult = await DB.runDB(
-    `SELECT mem_userid, mem_email FROM USER WHERE mem_userid = '${id}' AND mem_status = 'Y'`
+    `SELECT mem_userid, mem_email FROM user WHERE mem_userid = '${id}' AND mem_status = 'Y'`
   );
 
   if (queryresult.length === 0) {
@@ -196,7 +196,7 @@ router.post("/pwdchange", async (req, res) => {
 
   if (id) {
     const query = await DB.runDB(
-      `UPDATE USER SET mem_password="${hashmodpw}" WHERE mem_userid = '${id}'`
+      `UPDATE user SET mem_password="${hashmodpw}" WHERE mem_userid = '${id}'`
     );
 
     res.send(result);
@@ -204,7 +204,7 @@ router.post("/pwdchange", async (req, res) => {
   }
 
   const query = await DB.runDB(
-    `UPDATE USER SET mem_password="${hashmodpw}" WHERE mem_idx = ${idx}`
+    `UPDATE user SET mem_password="${hashmodpw}" WHERE mem_idx = ${idx}`
   );
 
   const queryresult = await DB.runDB(
