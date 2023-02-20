@@ -12,7 +12,7 @@ router.post("/triplist", async (req, res) => {
   };
 
   const queryresult = await DB.runDB(
-    `SELECT trip.*,mem_nickname AS host_nickname FROM trip,user WHERE JSON_EXTRACT( mate_idx, '$.${idx}' ) IS NOT NULL AND mem_idx = host_idx`
+    `SELECT trip.*,mem_nickname AS host_nickname FROM trip,user WHERE JSON_EXTRACT( mate_idx, '$."${idx}"' ) IS NOT NULL AND mem_idx = host_idx`
   );
 
   result.trip = queryresult.reverse();
@@ -32,7 +32,7 @@ router.post("/planlist", async (req, res) => {
   };
 
   const queryresult = await DB.runDB(
-    `SELECT trip.*,mem_nickname AS host_nickname FROM trip,user WHERE JSON_EXTRACT( mate_idx, '$.${idx}' ) IS NOT NULL AND mem_idx = host_idx AND seq = ${seq}`
+    `SELECT trip.*,mem_nickname AS host_nickname FROM trip,user WHERE JSON_EXTRACT( mate_idx, '$."${idx}"' ) IS NOT NULL AND mem_idx = host_idx AND seq = ${seq}`
   );
 
   if (queryresult.length === 0) {

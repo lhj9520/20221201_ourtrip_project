@@ -53,7 +53,7 @@ router.post("/nickname", async (req, res) => {
   res.send(result);
 
   const Lookupquery = await DB.runDB(
-    `SELECT seq,mate_idx FROM trip WHERE JSON_EXTRACT( mate_idx, '$.${idx}' ) IS NOT NULL`
+    `SELECT seq,mate_idx FROM trip WHERE JSON_EXTRACT( mate_idx, '"$."${idx}"' ) IS NOT NULL`
   );
 
   Lookupquery.map((data, index) => {
