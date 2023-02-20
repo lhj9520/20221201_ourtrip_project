@@ -10,6 +10,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUnlockKeyhole } from "@fortawesome/free-solid-svg-icons";
 import { faSistrix } from "@fortawesome/free-brands-svg-icons";
+import { BASE_URL } from "../../config";
 
 function Inputbox(props) {
   const navigation = useNavigate();
@@ -93,7 +94,7 @@ function Inputbox(props) {
     setDisable(false);
 
     await axios({
-      url: "http://localhost:5000/auth/mail",
+      url: `${BASE_URL}/auth/mail`,
       method: "POST",
       data: {
         yourname: idata.name,
@@ -147,7 +148,7 @@ function Inputbox(props) {
       });
     } else {
       await axios({
-        url: "http://localhost:5000/auth/findid",
+        url: `${BASE_URL}/auth/findid`,
         method: "POST",
         data: sdata,
       })
@@ -247,7 +248,7 @@ function Inputbox2() {
     }
 
     await axios({
-      url: "http://localhost:5000/auth/findpw",
+      url: `${BASE_URL}/auth/findpw`,
       method: "POST",
       data: sdata,
     })
@@ -432,7 +433,7 @@ function PwModify() {
     }
 
     await axios({
-      url: "http://localhost:5000/auth/pwdchange",
+      url: `${BASE_URL}/auth/pwdchange`,
       method: "POST",
       data: { id: res2.id, modpwd: password.pwd },
     })

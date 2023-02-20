@@ -9,6 +9,7 @@ import useDidMountEffect from "../useDidMountEffect";
 import Loading from "../../component/Loading";
 import { StoreContext } from "../../App";
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../../config";
 
 function TripAddModal() {
   const { setDispatchType } = React.useContext(StoreContextDis);
@@ -57,7 +58,7 @@ function TripAddModal() {
     trip_data.mate_idx = mate;
 
     await axios({
-      url: "http://localhost:5000/mytrip/tripadd",
+      url: `${BASE_URL}/mytrip/tripadd`,
       method: "POST",
       data: trip_data,
     })
@@ -295,7 +296,7 @@ function TripModModal(props) {
     });
 
     await axios({
-      url: "http://localhost:5000/mytrip/tripupdate",
+      url: `${BASE_URL}/mytrip/tripupdate`,
       method: "POST",
       data: trip_data,
     })
@@ -482,7 +483,7 @@ function TripUpdateModal() {
 
   const tripdelete = async (seq) => {
     await axios({
-      url: "http://localhost:5000/mytrip/tripdelete",
+      url: `${BASE_URL}/mytrip/tripdelete`,
       method: "POST",
       data: {
         seq: seq,
@@ -501,7 +502,7 @@ function TripUpdateModal() {
 
   const tripexcept = async (seq) => {
     await axios({
-      url: "http://localhost:5000/mytrip/tripexcept",
+      url: `${BASE_URL}/mytrip/tripexcept`,
       method: "POST",
       data: {
         seq: seq,
@@ -878,7 +879,7 @@ function Mytrip() {
   const MyTripListHandler = async () => {
     setLoading(true);
     await axios({
-      url: "http://localhost:5000/mytrip/triplist",
+      url: `${BASE_URL}/mytrip/triplist`,
       method: "POST",
       data: { idx: loginUser.mem_idx },
     })
@@ -901,7 +902,7 @@ function Mytrip() {
   const MyMateListHandler = async () => {
     setLoading(true);
     await axios({
-      url: "http://localhost:5000/mymate/list",
+      url: `${BASE_URL}/mymate/list`,
       method: "POST",
       data: { idx: loginUser.mem_idx },
     })

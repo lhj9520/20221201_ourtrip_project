@@ -4,6 +4,7 @@ import "./Login.css";
 import logoimg from "../img/logo_oco.png";
 import { useNavigate } from "react-router-dom";
 import { importsession } from "../App";
+import { BASE_URL } from "../config";
 
 function Login() {
   const navigation = useNavigate();
@@ -57,7 +58,7 @@ function Login() {
     }
 
     await axios({
-      url: "http://localhost:5000/auth/login",
+      url: `${BASE_URL}/auth/login`,
       method: "POST",
       data: {
         id: userlogin.id,

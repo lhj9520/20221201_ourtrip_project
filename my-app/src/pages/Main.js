@@ -13,7 +13,7 @@ import "./SimpleSlider.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretRight } from "@fortawesome/free-solid-svg-icons";
 import { faCaretLeft } from "@fortawesome/free-solid-svg-icons";
-
+import { BASE_URL } from "../config";
 const { kakao } = window;
 
 function Main() {
@@ -55,7 +55,7 @@ function Main() {
     //로딩 시작
     setLoading(true);
     await axios({
-      url: "http://localhost:5000/datareq/list",
+      url: `${BASE_URL}/datareq/list`,
       method: "GET",
       params: {
         sido: sido,
@@ -78,7 +78,7 @@ function Main() {
     //로딩 시작
     setLoading(true);
     await axios({
-      url: "http://localhost:5000/datareq/more",
+      url: `${BASE_URL}/datareq/more`,
       method: "GET",
       params: {
         sido: props.sido,

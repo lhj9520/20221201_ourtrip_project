@@ -7,6 +7,7 @@ import logoimg from "../img/logo_oco.png";
 import useDidMountEffect from "./useDidMountEffect.js";
 
 import { useNavigate } from "react-router-dom";
+import { BASE_URL } from "../config";
 
 function Join() {
   const navigation = useNavigate();
@@ -282,7 +283,7 @@ function Join() {
     }
 
     await axios({
-      url: "http://localhost:5000/dupcheck/id",
+      url: `${BASE_URL}/dupcheck/id`,
       method: "POST",
       data: { id: id.value },
     })
@@ -328,7 +329,7 @@ function Join() {
     }
 
     await axios({
-      url: "http://localhost:5000/dupcheck/email",
+      url: `${BASE_URL}/dupcheck/email`,
       method: "POST",
       data: { email: email.value },
     })
@@ -367,7 +368,7 @@ function Join() {
     setDisable(false);
 
     await axios({
-      url: "http://localhost:5000/auth/mail",
+      url: `${BASE_URL}/auth/mail`,
       method: "POST",
       data: {
         yourname: "join",
@@ -435,7 +436,7 @@ function Join() {
     }
 
     await axios({
-      url: "http://localhost:5000/dupcheck/nickname",
+      url: `${BASE_URL}/dupcheck/nickname`,
       method: "POST",
       data: { nickname: nickname.value },
     })
@@ -498,7 +499,7 @@ function Join() {
     }
 
     await axios({
-      url: "http://localhost:5000/auth/join",
+      url: `${BASE_URL}/auth/join`,
       method: "POST",
       data: {
         id: id.value,

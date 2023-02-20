@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { faEye } from "@fortawesome/free-regular-svg-icons";
+import { BASE_URL } from "../../config";
 
 function NicknameValue() {
   const { loginUser } = React.useContext(StoreContext);
@@ -35,7 +36,7 @@ function NicknameValue() {
 
   const nicknamechange = async () => {
     await axios({
-      url: "http://localhost:5000/updateuser/nickname",
+      url: `${BASE_URL}/updateuser/nickname`,
       method: "POST",
       data: { idx: loginUser.mem_idx, nickname: nickname },
     })
@@ -65,7 +66,7 @@ function NicknameValue() {
       return;
     }
     await axios({
-      url: "http://localhost:5000/dupcheck/nickname",
+      url: `${BASE_URL}/dupcheck/nickname`,
       method: "POST",
       data: { nickname: nickname },
     })
@@ -167,7 +168,7 @@ function EmailValue() {
     setEmsg2("");
 
     await axios({
-      url: "http://localhost:5000/updateuser/email",
+      url: `${BASE_URL}/updateuser/email`,
       method: "POST",
       data: { idx: loginUser.mem_idx, email: email },
     })
@@ -203,7 +204,7 @@ function EmailValue() {
     }
 
     await axios({
-      url: "http://localhost:5000/dupcheck/email",
+      url: `${BASE_URL}/dupcheck/email`,
       method: "POST",
       data: { email: inemail },
     })
@@ -224,7 +225,7 @@ function EmailValue() {
 
   const emailcodeHandler = async () => {
     await axios({
-      url: "http://localhost:5000/auth/mail",
+      url: `${BASE_URL}/auth/mail`,
       method: "POST",
       data: { youremail: inemail },
     })
@@ -358,7 +359,7 @@ function NameValue() {
       return;
     }
     await axios({
-      url: "http://localhost:5000/updateuser/name",
+      url: `${BASE_URL}/updateuser/name`,
       method: "POST",
       data: { idx: loginUser.mem_idx, username: username },
     })
@@ -454,7 +455,7 @@ function PhoneValue() {
       return;
     }
     await axios({
-      url: "http://localhost:5000/updateuser/phone",
+      url: `${BASE_URL}/updateuser/phone`,
       method: "POST",
       data: { idx: loginUser.mem_idx, phone: phone },
     })
@@ -539,7 +540,7 @@ function Pwdvalue() {
 
   const pwdcheck = async () => {
     await axios({
-      url: "http://localhost:5000/updateuser/pwdcheck",
+      url: `${BASE_URL}/updateuser/pwdcheck`,
       method: "POST",
       data: { idx: loginUser.mem_idx, curpwd: curpwd },
     })
@@ -567,7 +568,7 @@ function Pwdvalue() {
 
   const pwdvalchange = async () => {
     await axios({
-      url: "http://localhost:5000/auth/pwdchange",
+      url: `${BASE_URL}/auth/pwdchange`,
       method: "POST",
       data: { idx: loginUser.mem_idx, modpwd: modpwd },
     })
@@ -780,7 +781,7 @@ function My() {
 
   const withdrawalreq = async () => {
     await axios({
-      url: "http://localhost:5000/auth/withdrawalreq",
+      url: `${BASE_URL}/auth/withdrawalreq`,
       method: "POST",
       data: { idx: loginUser.mem_idx },
     })

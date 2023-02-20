@@ -14,6 +14,7 @@ import Mytrip from "./pages/my/Mytrip";
 import My from "./pages/my/My";
 import Plan from "./pages/plan/Plan";
 import Kakao from "./pages/KakaoLogin";
+import { BASE_URL } from "./config";
 
 axios.defaults.withCredentials = true;
 
@@ -30,7 +31,7 @@ function App() {
 
   importsession = async () => {
     await axios({
-      url: "http://localhost:5000/auth/user",
+      url: `${BASE_URL}/auth/user`,
     }).then((res) => {
       setLoginUser(res.data);
       if (res.data) {
@@ -41,7 +42,7 @@ function App() {
 
   deletesession = async () => {
     await axios({
-      url: "http://localhost:5000/auth/logout",
+      url: `${BASE_URL}/auth/logout`,
     }).then((res) => {
       if (res.data) {
         setLoginUser(res.data);

@@ -12,6 +12,7 @@ import { StoreContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquareCaretUp } from "@fortawesome/free-regular-svg-icons";
+import { BASE_URL } from "../../config";
 
 function MateReq() {
   const { loginUser } = React.useContext(StoreContext);
@@ -20,7 +21,7 @@ function MateReq() {
 
   const MateAcceptHanlder = async (idx) => {
     await axios({
-      url: "http://localhost:5000/mymate/accept",
+      url: `${BASE_URL}/mymate/accept`,
       method: "POST",
       data: {
         idx: loginUser.mem_idx,
@@ -40,7 +41,7 @@ function MateReq() {
 
   const MateDeclineHandler = async (idx) => {
     await axios({
-      url: "http://localhost:5000/mymate/decline",
+      url: `${BASE_URL}/mymate/decline`,
       method: "POST",
       data: {
         idx: loginUser.mem_idx,
@@ -113,7 +114,7 @@ function MateAddModal() {
 
   const MateFindHandler = async () => {
     await axios({
-      url: "http://localhost:5000/mymate/idfind",
+      url: `${BASE_URL}/mymate/idfind`,
       method: "POST",
       data: {
         idx: loginUser.mem_idx,
@@ -135,7 +136,7 @@ function MateAddModal() {
 
   const MateReqHandler = async () => {
     await axios({
-      url: "http://localhost:5000/mymate/req",
+      url: `${BASE_URL}/mymate/req`,
       method: "POST",
       data: {
         idx: loginUser.mem_idx,
@@ -189,7 +190,7 @@ function MateDelModal() {
 
   const MateDeleteHandler = async (idx) => {
     await axios({
-      url: "http://localhost:5000/mymate/delete",
+      url: `${BASE_URL}/mymate/delete`,
       method: "POST",
       data: {
         idx: loginUser.mem_idx,
@@ -340,7 +341,7 @@ function Mymate() {
   const MyMateListHandler = async () => {
     setLoading(true);
     await axios({
-      url: "http://localhost:5000/mymate/reqlist",
+      url: `${BASE_URL}/mymate/reqlist`,
       method: "POST",
       data: { idx: loginUser.mem_idx },
     })

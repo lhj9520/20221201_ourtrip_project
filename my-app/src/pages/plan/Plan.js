@@ -22,6 +22,7 @@ import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarDay } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { BASE_URL } from "../../config";
 
 const { kakao } = window;
 
@@ -62,7 +63,7 @@ function Htitle() {
     }
 
     await axios({
-      url: "http://localhost:5000/mytrip/triptitlechange",
+      url: `${BASE_URL}/mytrip/triptitlechange`,
       method: "POST",
       data: { seq: tripdata.trip.seq, title: title.value },
     })
@@ -663,7 +664,7 @@ function TimelineInputForm() {
     }
 
     await axios({
-      url: "http://localhost:5000/mytrip/timelineadd",
+      url: `${BASE_URL}/mytrip/timelineadd`,
       method: "POST",
       data: {
         tripseq: tripdata.trip.seq,
@@ -906,7 +907,7 @@ function TimelineUpdateForm() {
     }
 
     await axios({
-      url: "http://localhost:5000/mytrip/timelineupdate",
+      url: `${BASE_URL}/mytrip/timelineupdate`,
       method: "POST",
       data: {
         seq: tripdata.timeline[mode.index].seq,
@@ -1148,7 +1149,7 @@ function TimelineViewForm() {
 
   const TimelineDelHandler = async () => {
     await axios({
-      url: "http://localhost:5000/mytrip/timelinedelete",
+      url: `${BASE_URL}/mytrip/timelinedelete`,
       method: "POST",
       data: {
         seq: tripdata.timeline[mode.index].seq,
@@ -1358,7 +1359,7 @@ function Plan() {
   const TripLoadHandler = async () => {
     setLoading(true);
     await axios({
-      url: "http://localhost:5000/mytrip/planlist",
+      url: `${BASE_URL}/mytrip/planlist`,
       method: "POST",
       data: { seq: seq, idx: loginUser.mem_idx },
     })
