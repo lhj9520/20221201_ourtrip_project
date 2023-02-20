@@ -47,14 +47,6 @@ function Join() {
     msg: "",
   });
 
-  const [birth, setBirth] = React.useState({
-    year: "",
-    month: 0,
-    day: 0,
-    isvalid: false,
-    msg: "",
-  });
-
   const [email, setEmail] = React.useState({
     value: "",
     dupisvalid: false,
@@ -62,11 +54,6 @@ function Join() {
     inputcode: "",
     servercode: "",
     isvalid: false,
-  });
-
-  const [gender, setGender] = React.useState({
-    value: "",
-    msg: "",
   });
 
   const [nickname, setNickname] = React.useState({
@@ -109,7 +96,6 @@ function Join() {
       });
     } else if (pw.value && !pw.revalue) {
       if (!passwordRegex.test(pw.value)) {
-        // setEmsg2("숫자+영문자+특수문자 조합으로 8~20자리 입력해주세요.");
         setPw((prevState) => {
           return {
             ...prevState,
@@ -197,47 +183,6 @@ function Join() {
     }
   };
 
-  const yearvaluechange = (event) => {
-    const codeRegex = /^[0-9]{0,4}$/;
-
-    const data = event.target.value;
-    if (data.length <= 4 && codeRegex.test(data)) {
-      setBirth((prevState) => {
-        return { ...prevState, year: data };
-      });
-    }
-  };
-
-  useDidMountEffect(() => {
-    if (birth.year && birth.month && birth.day) {
-      setBirth((prevState) => {
-        return { ...prevState, isvalid: true, msg: "" };
-      });
-    } else {
-      setBirth((prevState) => {
-        return { ...prevState, isvalid: false, msg: "필수입니다." };
-      });
-    }
-  }, [birth.year, birth.month, birth.day]);
-
-  const birthvaluechange = (event) => {
-    const target = $(event.target);
-    const name = target.closest("select").attr("id");
-    const vbrith = event.target.value;
-
-    if (vbrith == 2) {
-      setDayArrtmp(dayArr1);
-    } else if (vbrith == 4 || vbrith == 6 || vbrith == 9 || vbrith == 11) {
-      setDayArrtmp(dayArr2);
-    } else {
-      setDayArrtmp(dayArr3);
-    }
-
-    const cloneData = { ...birth };
-    cloneData[name] = vbrith;
-    setBirth(cloneData);
-  };
-
   const emailvaluechange = (event) => {
     const data = event.target.value;
     if (data.length <= 320) {
@@ -262,19 +207,6 @@ function Join() {
     if (data.length <= 6 && codeRegex.test(data)) {
       setEmail((prevState) => {
         return { ...prevState, inputcode: data };
-      });
-    }
-  };
-
-  const gendervaluechange = (event) => {
-    const data = event.target.value;
-    if (data === "") {
-      setGender((prevState) => {
-        return { ...prevState, isvalid: false, msg: "필수입니다." };
-      });
-    } else {
-      setGender((prevState) => {
-        return { ...prevState, value: data, msg: "" };
       });
     }
   };
@@ -484,11 +416,6 @@ function Join() {
         });
         setDisable(true);
       }
-
-      // setEmail((prevState) => {
-      //   return { ...prevState, isvalid: true, msg: "인증되었습니다." };
-      // });
-      // setDisable(true);
     }
   };
 
@@ -552,20 +479,13 @@ function Join() {
       inputRef.current[3].focus();
       return;
     }
-    //생년월일 확인
-    if (!birth.isvalid) {
-      inputRef.current[4].focus();
-      return;
-    }
+
     //이메일 인증확인
     if (!email.dupisvalid || !email.isvalid) {
       inputRef.current[5].focus();
       return;
     }
-    //성별 확인
-    if (!gender.value) {
-      return;
-    }
+
     //닉네임 확인
     if (!nickname.dupisvalid) {
       inputRef.current[6].focus();
@@ -584,9 +504,7 @@ function Join() {
         id: id.value,
         pw: pw.value,
         name: name.value,
-        birth: birth,
         email: email.value,
-        gender: gender.value,
         nickname: nickname.value,
         phone: phone.value,
       },
@@ -703,7 +621,7 @@ function Join() {
               <span className="msg">{name.msg}</span>
             </section>
           </div>
-          <div className="birthcontainer">
+          {/* <div className="birthcontainer">
             <section className="title">
               <span>생년월일</span>
               <span className="essential">*</span>
@@ -748,7 +666,7 @@ function Join() {
                 <span className="msg">{birth.msg}</span>
               </section>
             </div>
-          </div>
+          </div> */}
           <div className="emailcontainer">
             <section className="title">
               <span>이메일</span>
@@ -784,7 +702,7 @@ function Join() {
               <span className="msg">{email.msg}</span>
             </section>
           </div>
-          <div className="gendercontainer">
+          {/* <div className="gendercontainer">
             <section className="title">
               <span>성별</span>
               <span className="essential">*</span>
@@ -802,7 +720,7 @@ function Join() {
             <section className="msgtitle">
               <span className="msg">{gender.msg}</span>
             </section>
-          </div>
+          </div> */}
           <div className="nicknamecontainer">
             <section className="title">
               <span>닉네임</span>

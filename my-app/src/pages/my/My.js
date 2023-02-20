@@ -821,16 +821,6 @@ function My() {
                 <span className="title">본인 확인 정보</span>
                 <NameValue />
                 <EmailModModal />
-                <div className="item">
-                  <span>생년월일</span>
-                  <div className="info-box">
-                    <span>
-                      {moment
-                        .tz(loginUser.mem_birth, "Asia/Seoul")
-                        .format("YYYY-MM-DD")}
-                    </span>
-                  </div>
-                </div>
                 <PhoneValue />
               </section>
               <section className="Withdrawal">

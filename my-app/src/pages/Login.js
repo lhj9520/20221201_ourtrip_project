@@ -2,12 +2,20 @@ import React from "react";
 import axios from "axios";
 import "./Login.css";
 import logoimg from "../img/logo_oco.png";
-
 import { useNavigate } from "react-router-dom";
 import { importsession } from "../App";
 
 function Login() {
   const navigation = useNavigate();
+  // const restapikey = process.env.REACT_APP_KAKAO_RESTAPI_KEY;
+  // const jskey = process.env.REACT_APP_KAKAOMAP_API_KEY;
+  // const redirect_uri = process.env.REACT_APP_KAKAO_REDIRECT_URI;
+
+  // const kakaosnsloginlink = `https://kauth.kakao.com/oauth/authorize?client_id=${restapikey}&redirect_uri=${redirect_uri}&response_type=code`;
+
+  // const kakaologinHandler = () => {
+  //   window.location.href = kakaosnsloginlink;
+  // };
 
   const [userlogin, setUserlogin] = React.useState({
     id: "",
@@ -112,6 +120,12 @@ function Login() {
             비밀번호 찾기
           </span>
         </div>
+        {/* <div className="hr-sect">SNS 간편 로그인</div>
+        <div className="snslogin">
+          <button type="button" onClick={kakaologinHandler}>
+            카카오로 로그인하기
+          </button>
+        </div> */}
       </div>
     </div>
   );

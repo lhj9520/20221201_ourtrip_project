@@ -13,6 +13,7 @@ import Mymate from "./pages/my/Mymate";
 import Mytrip from "./pages/my/Mytrip";
 import My from "./pages/my/My";
 import Plan from "./pages/plan/Plan";
+import Kakao from "./pages/KakaoLogin";
 
 axios.defaults.withCredentials = true;
 
@@ -62,6 +63,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={<Main />} />
         <Route exact path="/join" element={<Join />} />
+        <Route exact path="/oauth/callback/kakao" element={<Kakao />} />
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/userfind" element={<UserFind />} />
         <Route exact path="/howtouse" element={<Howtouse />} />

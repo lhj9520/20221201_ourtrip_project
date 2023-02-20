@@ -61,12 +61,9 @@ router.post("/join", async (req, res) => {
    *
    * DB에 id,nickname,pw insert
    */
-  const { id, pw, name, birth, email, gender, nickname, phone } = req.body;
+  const { id, pw, name, email, nickname, phone } = req.body;
 
   const hashpw = md5(pw);
-  const month = birth.month.length === 1 ? "0" + birth.month : birth.month;
-  const day = birth.day.length === 1 ? "0" + birth.day : birth.day;
-  const bdate = `${birth.year}-${month}-${day}`;
 
   const result = {
     code: "success",
@@ -75,8 +72,8 @@ router.post("/join", async (req, res) => {
 
   let queryresult = "";
   phone === ""
-    ? (queryresult = `INSERT INTO USER(mem_userid,mem_password,mem_username,mem_birth,mem_email,mem_gender,mem_nickname,mem_phone,mem_regtime) VALUES ('${id}','${hashpw}','${name}','${bdate}','${email}','${gender}','${nickname}','',NOW())`)
-    : (queryresult = `INSERT INTO USER(mem_userid,mem_password,mem_username,mem_birth,mem_email,mem_gender,mem_nickname,mem_phone,mem_regtime) VALUES ('${id}','${hashpw}','${name}','${bdate}','${email}','${gender}','${nickname}','${phone}',NOW())`);
+    ? (queryresult = `INSERT INTO USER(mem_userid,mem_password,mem_username,mem_email,mem_nickname,mem_phone,mem_regtime) VALUES ('${id}','${hashpw}','${name}','${email}','${nickname}','',NOW())`)
+    : (queryresult = `INSERT INTO USER(mem_userid,mem_password,mem_username,mem_email,mem_nickname,mem_phone,mem_regtime) VALUES ('${id}','${hashpw}','${name}','${email}','${nickname}','${phone}',NOW())`);
   await DB.runDB(queryresult);
 
   res.send(result);
