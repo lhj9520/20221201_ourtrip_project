@@ -4,7 +4,7 @@
 친구와 함께 여행 계획을 세우고 공유할 수 있는 커뮤니티입니다.
 ## 개발 기간
 2022.12~2023.02(약 2개월반 동안 진행)
-## 개발 환경
+## 🛠개발 환경
 - front-end
   - Javascript
   - ReactJS
@@ -17,7 +17,7 @@
 ```
 npm install
 ```
-## 주요 기능
+## 📌주요 기능
 [개발 일지 velog 정리](https://velog.io/@lhj9520/series/Portfolio)
 #### 메인
 - 전국의 관광지 정보 검색(kakaomap api, 공공데이터포털 open api 사용)
