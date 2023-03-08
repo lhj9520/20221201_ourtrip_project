@@ -13,6 +13,10 @@
   - Nodejs
   - Express
   - Database : MySQL
+## module install
+```
+npm install
+```
 ## 주요 기능
 [개발 일지 velog 정리](https://velog.io/@lhj9520/series/Portfolio)
 #### 메인
