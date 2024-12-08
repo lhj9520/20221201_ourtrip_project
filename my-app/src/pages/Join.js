@@ -1,31 +1,21 @@
-import React, { useRef } from "react";
-import axios from "axios";
-import $ from "jquery";
+import React, { useRef, useContext } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import classnames from "classnames";
+// import css
 import "./Join.css";
+// import src
 import logoimg from "../img/logo_oco.png";
-import useDidMountEffect from "./useDidMountEffect.js";
-
-import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../config";
+// import hook
+import useDidMountEffect from "../utils/useDidMountEffect.js";
+// import context
+import { SessionContext } from "../App";
+// import api
+import { getDuplicateID, getDuplicateEmail, getEmailcode, getDuplicateNickname, getJoin } from "../api/Auth";
 
 function Join() {
-  const navigation = useNavigate();
+  const { loginSession, setLoginSession } = useContext(SessionContext);
 
-  const monthArr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-  const dayArr1 = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-    22, 23, 24, 25, 26, 27, 28, 29,
-  ];
-  const dayArr2 = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-    22, 23, 24, 25, 26, 27, 28, 29, 30,
-  ];
-  const dayArr3 = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
-    22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-  ];
-  const [dayArrtmp, setDayArrtmp] = React.useState(dayArr3);
+  const navigation = useNavigate();
 
   const [id, setId] = React.useState({
     value: "",
@@ -82,8 +72,7 @@ function Join() {
   };
 
   useDidMountEffect(() => {
-    const passwordRegex =
-      /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
 
     if ((!pw.value && !pw.revalue) || (!pw.value && pw.revalue)) {
       setPw((prevState) => {
@@ -282,26 +271,17 @@ function Join() {
       return;
     }
 
-    await axios({
-      url: `${BASE_URL}/dupcheck/id`,
-      method: "POST",
-      data: { id: id.value },
-    })
-      .then((res) => {
-        const { code, message } = res.data;
-        if (code === "success") {
-          setId((prevState) => {
-            return { ...prevState, dupisvalid: true, msg: message };
-          });
-        } else {
-          setId((prevState) => {
-            return { ...prevState, dupisvalid: false, msg: message };
-          });
-        }
-      })
-      .catch((e) => {
-        console.log("아이디 중복체크 오류!", e);
+    const { code, message } = await getDuplicateID(id.value);
+
+    if (code === "success") {
+      setId((prevState) => {
+        return { ...prevState, dupisvalid: true, msg: message };
       });
+    } else {
+      setId((prevState) => {
+        return { ...prevState, dupisvalid: false, msg: message };
+      });
+    }
   };
 
   /**
@@ -328,65 +308,46 @@ function Join() {
       return;
     }
 
-    await axios({
-      url: `${BASE_URL}/dupcheck/email`,
-      method: "POST",
-      data: { email: email.value },
-    })
-      .then((res) => {
-        const { code, message } = res.data;
-        if (code === "success") {
-          setEmail((prevState) => {
-            return {
-              ...prevState,
-              dupisvalid: true,
-              isvalid: false,
-              inputcode: "",
-              servercode: "",
-              msg: "",
-            };
-          });
-          emailcodeHandler();
-        } else {
-          setEmail((prevState) => {
-            return { ...prevState, dupisvalid: false, msg: message };
-          });
-        }
-      })
-      .catch((e) => {
-        console.log("이메일 중복체크 오류!", e);
+    const { code, message } = await getDuplicateEmail(email.value);
+
+    if (code === "success") {
+      setEmail((prevState) => {
+        return {
+          ...prevState,
+          dupisvalid: true,
+          isvalid: false,
+          inputcode: "",
+          servercode: "",
+          msg: "",
+        };
       });
+      emailcodeHandler();
+    } else {
+      setEmail((prevState) => {
+        return { ...prevState, dupisvalid: false, msg: message };
+      });
+    }
   };
 
   /**
    * 이메일 인증코드 전송
    */
   const emailcodeHandler = async () => {
-    alert(
-      "인증번호를 발송했습니다.\n인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요."
-    );
+    alert("인증번호를 발송했습니다.\n인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요.");
     setDisable(false);
 
-    await axios({
-      url: `${BASE_URL}/auth/mail`,
-      method: "POST",
-      data: {
-        yourname: "join",
-        youremail: email.value,
-      },
-    })
-      .then((res) => {
-        const { code, vericode } = res.data;
-        if (code === 200) {
-          setEmail((prevState) => {
-            return { ...prevState, servercode: vericode };
-          });
-        }
-      })
-      .catch((e) => {
-        console.log("이메일 인증 코드 발송 오류!", e);
+    const { code, vericode } = await getEmailcode({
+      yourname: "join",
+      youremail: email.value,
+    });
+
+    if (code === 200) {
+      setEmail((prevState) => {
+        return { ...prevState, servercode: vericode };
       });
+    }
   };
+
   /**
    * 이메일 인증코드 검사
    */
@@ -435,31 +396,25 @@ function Join() {
       return;
     }
 
-    await axios({
-      url: `${BASE_URL}/dupcheck/nickname`,
-      method: "POST",
-      data: { nickname: nickname.value },
-    })
-      .then((res) => {
-        const { code, message } = res.data;
-        if (code === "success") {
-          setNickname((prevState) => {
-            return { ...prevState, dupisvalid: true, msg: message };
-          });
-        } else {
-          setNickname((prevState) => {
-            return { ...prevState, dupisvalid: false, msg: message };
-          });
-        }
-      })
-      .catch((e) => {
-        console.log("닉네임 중복체크 오류!", e);
+    const { code, message } = await getDuplicateNickname(nickname.value);
+
+    if (code === "success") {
+      setNickname((prevState) => {
+        return { ...prevState, dupisvalid: true, msg: message };
       });
+    } else {
+      setNickname((prevState) => {
+        return { ...prevState, dupisvalid: false, msg: message };
+      });
+    }
   };
+
   /**
    * 회원가입 값 유효성 검사
    */
-  const joinHandler = async () => {
+  const onSubmit = async (event) => {
+    event.preventDefault();
+
     //아이디
     if (!id.dupisvalid) {
       inputRef.current[0].focus();
@@ -498,281 +453,211 @@ function Join() {
       return;
     }
 
-    await axios({
-      url: `${BASE_URL}/auth/join`,
-      method: "POST",
-      data: {
-        id: id.value,
-        pw: pw.value,
-        name: name.value,
-        email: email.value,
-        nickname: nickname.value,
-        phone: phone.value,
-      },
-    })
-      .then((res) => {
-        const { code, message } = res.data;
-        if (code === "error") {
-          alert(message);
-          return;
-        }
-        navigation("/login");
-      })
-      .catch((e) => {
-        console.log("회원가입 오류!", e);
-      });
+    const { code, message } = await getJoin({
+      id: id.value,
+      pw: pw.value,
+      name: name.value,
+      email: email.value,
+      nickname: nickname.value,
+      phone: phone.value,
+    });
+
+    if (code === "error") {
+      alert(message);
+      return;
+    }
+
+    alert("회원가입이 완료 되었습니다!");
+
+    // 회원가입 후 로그인 페이지로 이동
+    navigation("/login");
   };
 
   return (
-    <div className="join-container">
-      <div className="centerfix">
-        <div className="first">
-          <img
-            src={logoimg}
-            alt="logo이미지"
-            onClick={() => {
-              navigation("/");
-            }}
-          />
-          <span className="title">회원가입</span>
-        </div>
-        <div className="userinfo">
-          <div className="idcontainer">
-            <section className="title">
-              <span>아이디</span>
-              <span className="essential">*</span>
-            </section>
-            <input
-              ref={(el) => (inputRef.current[0] = el)}
-              type="text"
-              name="id"
-              maxLength={12}
-              value={id.value}
-              placeholder="아이디"
-              className="item overlap"
-              onChange={idvaluechange}
-            />
-            <button
-              className={classnames("overlapbtn", { over: id.dupisvalid })}
-              onClick={duplicateIdCheck}
-            >
-              중복확인
-            </button>
-            <section className="msgtitle">
-              <span className="msg">{id.msg}</span>
-            </section>
-          </div>
-          <div className="pwcontainer">
-            <section className="title">
-              <span>비밀번호</span>
-              <span className="essential">*</span>
-            </section>
-            <input
-              ref={(el) => (inputRef.current[1] = el)}
-              type="password"
-              name="pw"
-              maxLength={20}
-              value={pw.value}
-              placeholder="비밀번호"
-              className="item"
-              onChange={pwvaluechange}
-            />
-            <span>
-              8~20자까지 영문,숫자,특수문자(_!@#$%^&*)모두 조합하여 입력
-            </span>
-            <section className="msgtitle">
-              <span className="msg">{pw.msg1}</span>
-            </section>
-          </div>
-          <div className="repwcontainer">
-            <section className="title">
-              <span>비밀번호 재입력</span>
-              <span className="essential">*</span>
-            </section>
-            <input
-              ref={(el) => (inputRef.current[2] = el)}
-              type="password"
-              name="repw"
-              maxLength={20}
-              value={pw.revalue}
-              placeholder="비밀번호 재입력"
-              className="item"
-              onChange={repwvaluechange}
-            />
-            <section className="msgtitle">
-              <span className="msg">{pw.msg2}</span>
-            </section>
-          </div>
-          <div className="namecontainer">
-            <section className="title">
-              <span>이름</span>
-              <span className="essential">*</span>
-            </section>
-            <input
-              ref={(el) => (inputRef.current[3] = el)}
-              type="text"
-              name="name"
-              maxLength={5}
-              value={name.value}
-              placeholder="이름"
-              className="item"
-              onChange={namevaluechange}
-            />
-            <section className="msgtitle">
-              <span className="msg">{name.msg}</span>
-            </section>
-          </div>
-          {/* <div className="birthcontainer">
-            <section className="title">
-              <span>생년월일</span>
-              <span className="essential">*</span>
-            </section>
-            <input
-              ref={(el) => (inputRef.current[4] = el)}
-              type="text"
-              maxLength={4}
-              value={birth.year}
-              placeholder="년(4자)"
-              className="item small"
-              onChange={yearvaluechange}
-            />
-            <select
-              className="b-box second"
-              id="month"
-              required
-              onChange={birthvaluechange}
-            >
-              <option value="">월</option>
-              {monthArr.map((month, index) => (
-                <option key={index} value={month}>
-                  {month}
-                </option>
-              ))}
-            </select>
-            <select
-              className="b-box"
-              id="day"
-              required
-              onChange={birthvaluechange}
-            >
-              <option value="">일</option>
-              {dayArrtmp.map((day, index) => (
-                <option key={index} value={day}>
-                  {day}
-                </option>
-              ))}
-            </select>
-            <div className="line">
-              <section className="msgtitle">
-                <span className="msg">{birth.msg}</span>
-              </section>
+    <>
+      {loginSession === false && (
+        <div className="join-container">
+          <div className="centerfix">
+            <div className="first">
+              <Link to="/">
+                <img src={logoimg} alt="logo이미지" />
+              </Link>
+              <span className="title">회원가입</span>
             </div>
-          </div> */}
-          <div className="emailcontainer">
-            <section className="title">
-              <span>이메일</span>
-              <span className="essential">*</span>
-            </section>
-            <input
-              ref={(el) => (inputRef.current[5] = el)}
-              type="text"
-              name="email"
-              maxLength={320}
-              value={email.value}
-              placeholder="geenee@gmail.com"
-              className="item overlap"
-              onChange={emailvaluechange}
-            />
-            <button className="overlapbtn" onClick={duplicateEmailCheck}>
-              인증번호전송
-            </button>
-            <div className="emailcode">
-              <span>인증 번호</span>
-              <input
-                type="text"
-                value={email.inputcode}
-                onChange={valuechange}
-                placeholder="인증번호 6자리 숫자 입력"
-                disabled={disable}
-              />
-              <button className="overlapbtn" onClick={VerifycodeHandler}>
-                확인
+            <form onSubmit={onSubmit} className="userinfo">
+              <div className="idcontainer">
+                <section className="title">
+                  <span>아이디</span>
+                  <span className="essential">*</span>
+                </section>
+                <input
+                  ref={(el) => (inputRef.current[0] = el)}
+                  type="text"
+                  name="id"
+                  maxLength={12}
+                  value={id.value}
+                  placeholder="아이디"
+                  className="item overlap"
+                  onChange={idvaluechange}
+                />
+                <button
+                  type="button"
+                  className={classnames("overlapbtn", { over: id.dupisvalid })}
+                  onClick={duplicateIdCheck}
+                >
+                  중복확인
+                </button>
+                <section className="msgtitle">
+                  <span className="msg">{id.msg}</span>
+                </section>
+              </div>
+              <div className="pwcontainer">
+                <section className="title">
+                  <span>비밀번호</span>
+                  <span className="essential">*</span>
+                </section>
+                <input
+                  ref={(el) => (inputRef.current[1] = el)}
+                  type="password"
+                  name="pw"
+                  maxLength={20}
+                  value={pw.value}
+                  placeholder="비밀번호"
+                  className="item"
+                  onChange={pwvaluechange}
+                />
+                <span>8~20자까지 영문,숫자,특수문자(_!@#$%^&*)모두 조합하여 입력</span>
+                <section className="msgtitle">
+                  <span className="msg">{pw.msg1}</span>
+                </section>
+              </div>
+              <div className="repwcontainer">
+                <section className="title">
+                  <span>비밀번호 재입력</span>
+                  <span className="essential">*</span>
+                </section>
+                <input
+                  ref={(el) => (inputRef.current[2] = el)}
+                  type="password"
+                  name="repw"
+                  maxLength={20}
+                  value={pw.revalue}
+                  placeholder="비밀번호 재입력"
+                  className="item"
+                  onChange={repwvaluechange}
+                />
+                <section className="msgtitle">
+                  <span className="msg">{pw.msg2}</span>
+                </section>
+              </div>
+              <div className="namecontainer">
+                <section className="title">
+                  <span>이름</span>
+                  <span className="essential">*</span>
+                </section>
+                <input
+                  ref={(el) => (inputRef.current[3] = el)}
+                  type="text"
+                  name="name"
+                  maxLength={5}
+                  value={name.value}
+                  placeholder="이름"
+                  className="item"
+                  onChange={namevaluechange}
+                />
+                <section className="msgtitle">
+                  <span className="msg">{name.msg}</span>
+                </section>
+              </div>
+              <div className="emailcontainer">
+                <section className="title">
+                  <span>이메일</span>
+                  <span className="essential">*</span>
+                </section>
+                <input
+                  ref={(el) => (inputRef.current[5] = el)}
+                  type="text"
+                  name="email"
+                  maxLength={320}
+                  value={email.value}
+                  placeholder="geenee@gmail.com"
+                  className="item overlap"
+                  onChange={emailvaluechange}
+                />
+                <button type="button" className="overlapbtn" onClick={duplicateEmailCheck}>
+                  인증번호전송
+                </button>
+                <div className="emailcode">
+                  <span>인증 번호</span>
+                  <input
+                    type="text"
+                    value={email.inputcode}
+                    onChange={valuechange}
+                    placeholder="인증번호 6자리 숫자 입력"
+                    disabled={disable}
+                  />
+                  <button type="button" className="overlapbtn" onClick={VerifycodeHandler}>
+                    확인
+                  </button>
+                </div>
+                <section className="msgtitle">
+                  <span className="msg">{email.msg}</span>
+                </section>
+              </div>
+              <div className="nicknamecontainer">
+                <section className="title">
+                  <span>닉네임</span>
+                  <span className="essential">*</span>
+                </section>
+                <input
+                  ref={(el) => (inputRef.current[6] = el)}
+                  type="text"
+                  name="nickname"
+                  maxLength={12}
+                  value={nickname.value}
+                  placeholder="닉네임"
+                  className="item overlap"
+                  onChange={nicknamevaluechange}
+                />
+                <button
+                  type="button"
+                  className={classnames("overlapbtn", {
+                    over: nickname.dupisvalid,
+                  })}
+                  onClick={duplicatenickCheck}
+                >
+                  중복확인
+                </button>
+                <section className="msgtitle">
+                  <span className="msg">{nickname.msg}</span>
+                </section>
+              </div>
+              <div className="phonecontainer">
+                <section className="title">
+                  <span>휴대폰 번호</span>
+                </section>
+                <input
+                  ref={(el) => (inputRef.current[7] = el)}
+                  type="text"
+                  name="phone"
+                  maxLength={13}
+                  value={phone.value}
+                  placeholder="010-1234-1234"
+                  className="item"
+                  onChange={phonevaluechange}
+                />
+                <section className="msgtitle">
+                  <span className="msg">{phone.msg}</span>
+                </section>
+              </div>
+              <button className="joinbtn" type="submit">
+                회원가입
               </button>
-            </div>
-            <section className="msgtitle">
-              <span className="msg">{email.msg}</span>
-            </section>
+            </form>
           </div>
-          {/* <div className="gendercontainer">
-            <section className="title">
-              <span>성별</span>
-              <span className="essential">*</span>
-            </section>
-            <select
-              className="g-box full"
-              id="gender-list"
-              required
-              onChange={gendervaluechange}
-            >
-              <option value="">성별</option>
-              <option value="M">남성</option>
-              <option value="F">여성</option>
-            </select>
-            <section className="msgtitle">
-              <span className="msg">{gender.msg}</span>
-            </section>
-          </div> */}
-          <div className="nicknamecontainer">
-            <section className="title">
-              <span>닉네임</span>
-              <span className="essential">*</span>
-            </section>
-            <input
-              ref={(el) => (inputRef.current[6] = el)}
-              type="text"
-              name="nickname"
-              maxLength={12}
-              value={nickname.value}
-              placeholder="닉네임"
-              className="item overlap"
-              onChange={nicknamevaluechange}
-            />
-            <button
-              className={classnames("overlapbtn", {
-                over: nickname.dupisvalid,
-              })}
-              onClick={duplicatenickCheck}
-            >
-              중복확인
-            </button>
-            <section className="msgtitle">
-              <span className="msg">{nickname.msg}</span>
-            </section>
-          </div>
-          <div className="phonecontainer">
-            <section className="title">
-              <span>휴대폰 번호</span>
-            </section>
-            <input
-              ref={(el) => (inputRef.current[7] = el)}
-              type="text"
-              name="phone"
-              maxLength={13}
-              value={phone.value}
-              placeholder="010-1234-1234"
-              className="item"
-              onChange={phonevaluechange}
-            />
-            <section className="msgtitle">
-              <span className="msg">{phone.msg}</span>
-            </section>
-          </div>
-          <button className="joinbtn" onClick={joinHandler}>
-            회원가입
-          </button>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }
 

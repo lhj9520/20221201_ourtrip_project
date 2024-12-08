@@ -18,17 +18,18 @@
   min-width: 545px;
   margin: 0 20%;
   display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.menubar-container .fixheader .menu-container .img-box-link {
+  display: flex;
 }
 .menubar-container .fixheader .menu-container img {
   width: 142px;
   object-fit: contain;
 }
-.menubar-container .fixheader .menu-container .item {
-  cursor: pointer;
-}
 .menubar-container .fixheader .menu-container .menu {
   width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -48,12 +49,11 @@
   padding: 10px;
   font-size: 1.063rem; /*17px*/
 }
-.menubar-container .fixheader .menu-container .menu ul .item:hover {
+.menubar-container .fixheader .menu-container .menu ul .item a:hover {
   color: #4a8522;
   font-weight: bold;
   border-bottom: solid 2px #4a8522;
 }
-
 .menubar-container .fixheader .menu-container .menu .loginbtn {
   background-color: #ffffff;
   border-radius: 20px;
@@ -61,7 +61,6 @@
   padding: 8px 0;
   font-size: 1.063rem; /*17px*/
 }
-
 .menubar-container .fixheader .menu-container .menu .loginbtn:hover {
   background-color: #4a8522;
   color: #ffffff;

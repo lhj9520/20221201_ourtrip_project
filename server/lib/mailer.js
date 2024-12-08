@@ -1,7 +1,7 @@
 const nodeMailer = require("nodemailer");
 
 module.exports = async (email, vericode) => {
-  const transporter = await nodeMailer.createTransport({
+  const transporter = nodeMailer.createTransport({
     service: "gmail",
     host: "smtp.gmail.com", // gmail server
     port: 587,
@@ -25,7 +25,7 @@ module.exports = async (email, vericode) => {
   };
 
   try {
-    await transporter.sendMail(mailOption);
+    transporter.sendMail(mailOption);
     return "success";
   } catch (error) {
     return error;

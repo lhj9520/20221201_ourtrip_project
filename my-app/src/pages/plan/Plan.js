@@ -5,11 +5,11 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./Calendar.css";
 import "./Plan.css";
-import useDidMountEffect from "../useDidMountEffect";
+import useDidMountEffect from "../../utils/useDidMountEffect";
 import SearchModal from "./SearchModal";
 import marking from "../../img/map_mark.png";
 import Loading from "../../component/Loading";
-import { StoreContext } from "../../App";
+import { SessionContext } from "../../App";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
@@ -115,11 +115,7 @@ function Htitle() {
   return (
     <div className="headerbox">
       <div className="pagemovebox">
-        <FontAwesomeIcon
-          icon={faHouse}
-          className="imgicon"
-          onClick={() => navigation("/", { replace: true })}
-        />
+        <FontAwesomeIcon icon={faHouse} className="imgicon" onClick={() => navigation("/", { replace: true })} />
         <span className="icontext">홈</span>
       </div>
       <div className="pagemovebox">
@@ -133,32 +129,14 @@ function Htitle() {
       <div className="titlebox">
         {title.state ? (
           <div className="editmode">
-            <input
-              type="text"
-              name="title"
-              maxLength={20}
-              value={title.value}
-              onChange={valuechange}
-            />
-            <FontAwesomeIcon
-              icon={faCircleCheck}
-              className="imgicon"
-              onClick={titlemodHandler}
-            />
-            <FontAwesomeIcon
-              icon={faCircleXmark}
-              className="imgicon"
-              onClick={titlemodcloseHandler}
-            />
+            <input type="text" name="title" maxLength={20} value={title.value} onChange={valuechange} />
+            <FontAwesomeIcon icon={faCircleCheck} className="imgicon" onClick={titlemodHandler} />
+            <FontAwesomeIcon icon={faCircleXmark} className="imgicon" onClick={titlemodcloseHandler} />
           </div>
         ) : (
           <div className="viewmode">
             <span>{tripdata.trip && tripdata.trip.title}</span>
-            <FontAwesomeIcon
-              icon={faPen}
-              className="imgicon"
-              onClick={titlemodopenHandler}
-            />
+            <FontAwesomeIcon icon={faPen} className="imgicon" onClick={titlemodopenHandler} />
           </div>
         )}
       </div>
@@ -184,9 +162,7 @@ function Matebar() {
       <ul className="scrollnone">
         {participants.map((data, index) => (
           <li key={index} className="item">
-            {data[0] == tripdata.trip.host_idx && (
-              <FontAwesomeIcon icon={faStar} />
-            )}
+            {data[0] == tripdata.trip.host_idx && <FontAwesomeIcon icon={faStar} />}
             {data[1]}
           </li>
         ))}
@@ -238,13 +214,7 @@ function Timelinebar() {
     <div className="listbox timelinelist">
       <span className="listtitle">
         타임 라인
-        {status && (
-          <FontAwesomeIcon
-            icon={faPlus}
-            className="imgicon"
-            onClick={FormOpenHanlder}
-          />
-        )}
+        {status && <FontAwesomeIcon icon={faPlus} className="imgicon" onClick={FormOpenHanlder} />}
       </span>
       <ul className="type scrollnone">
         {timelinelist.map((data, index) => (
@@ -272,10 +242,7 @@ function ReactCalender(props) {
     end: "",
   });
 
-  const [value, onChange] = React.useState([
-    new Date(),
-    new Date(new Date().setDate(new Date().getDate() + 1)),
-  ]);
+  const [value, onChange] = React.useState([new Date(), new Date(new Date().setDate(new Date().getDate() + 1))]);
 
   const [cstatus, setCstatus] = React.useState(false);
 
@@ -326,10 +293,7 @@ function ReactCalender(props) {
   };
 
   useDidMountEffect(() => {
-    if (
-      (reset && ((start && end) || (!start && !end))) ||
-      (!reset && !start && !end)
-    ) {
+    if ((reset && ((start && end) || (!start && !end))) || (!reset && !start && !end)) {
       calcday();
     } else if (!reset && start && end) {
       //일수 계산
@@ -375,18 +339,12 @@ function ReactCalender(props) {
         <span>
           {selectday.start} ~ {selectday.end}
         </span>
-        <FontAwesomeIcon
-          icon={faCalendarDay}
-          className="imgicon"
-          onClick={CalendarHandler}
-        />
+        <FontAwesomeIcon icon={faCalendarDay} className="imgicon" onClick={CalendarHandler} />
       </p>
       {cstatus && (
         <Calendar
           onChange={datechange}
-          formatDay={(locale, date) =>
-            date.toLocaleString("en", { day: "numeric" })
-          } //요일 숫자로
+          formatDay={(locale, date) => date.toLocaleString("en", { day: "numeric" })} //요일 숫자로
           next2Label={null} //다음 연도
           prev2Label={null} //이전 연도
           minDetail="decade" //선택할수있는 최소 항목
@@ -536,17 +494,11 @@ function DayListInput(props) {
     <ul>
       {value.list.map((data, index) => (
         <li key={index} className="item">
-          <div className="itemindex">
-            {index < 9 ? <>&nbsp;{index + 1}&nbsp;</> : <>{index + 1}</>}
-          </div>
+          <div className="itemindex">{index < 9 ? <>&nbsp;{index + 1}&nbsp;</> : <>{index + 1}</>}</div>
           <div className="itemtext">
             <span>{data.place_name}</span>
           </div>
-          <FontAwesomeIcon
-            icon={faTrashCan}
-            className="imgicon"
-            onClick={() => delHanlder(index)}
-          />
+          <FontAwesomeIcon icon={faTrashCan} className="imgicon" onClick={() => delHanlder(index)} />
         </li>
       ))}
       <button className="placeaddbtn" onClick={opensearchModalHandler}>
@@ -560,7 +512,7 @@ const StoreContextModal = React.createContext([]);
 
 // 타임라인 작성 폼
 function TimelineInputForm() {
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser } = React.useContext(SessionContext);
   const { setMode } = React.useContext(StoreContextM);
   const { setDispatchType } = React.useContext(StoreContextDis);
   const { tripdata } = React.useContext(StoreContextTrip);
@@ -711,9 +663,7 @@ function TimelineInputForm() {
   const MoveToLeftHandler = () => {
     if (!horizontalScrollRef.current) return;
     horizontalScrollRef.current.scrollTo({
-      left:
-        horizontalScrollRef.current.scrollLeft -
-        horizontalScrollRef.current.offsetWidth / 5,
+      left: horizontalScrollRef.current.scrollLeft - horizontalScrollRef.current.offsetWidth / 5,
       behavior: "smooth",
     });
   };
@@ -721,9 +671,7 @@ function TimelineInputForm() {
   const MoveToRightHandler = () => {
     if (!horizontalScrollRef.current) return;
     horizontalScrollRef.current.scrollTo({
-      left:
-        horizontalScrollRef.current.scrollLeft +
-        horizontalScrollRef.current.offsetWidth / 5,
+      left: horizontalScrollRef.current.scrollLeft + horizontalScrollRef.current.offsetWidth / 5,
       behavior: "smooth",
     });
   };
@@ -731,16 +679,9 @@ function TimelineInputForm() {
   return (
     <StoreContextModal.Provider value={{ modalOpen, setModalOpen }}>
       <div className="form">
-        {modalOpen.code && (
-          <SearchModal setModalOpen={setModalOpen} day={modalOpen.day} />
-        )}
+        {modalOpen.code && <SearchModal setModalOpen={setModalOpen} day={modalOpen.day} />}
         <p className="titletext">
-          <input
-            maxLength={20}
-            value={title}
-            placeholder="제목 입력"
-            onChange={valuechange}
-          />
+          <input maxLength={20} value={title} placeholder="제목 입력" onChange={valuechange} />
           <button onClick={TimelineAddHandler}>작성</button>
           <button onClick={FormColseHanlder}>취소</button>
         </p>
@@ -756,10 +697,7 @@ function TimelineInputForm() {
             <ul ref={horizontalScrollRef}>
               {tmptimeline.daylist.map((data, index) => (
                 <li key={index} className="item scrollnone">
-                  <div
-                    className="lidaytext"
-                    onClick={() => onMarkerHandler(data.day)}
-                  >
+                  <div className="lidaytext" onClick={() => onMarkerHandler(data.day)}>
                     Day{data.day}
                   </div>
                   <DayListInput data={data} />
@@ -778,7 +716,7 @@ function TimelineInputForm() {
 
 // 타임라인 수정 폼
 function TimelineUpdateForm() {
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser } = React.useContext(SessionContext);
   const { mode, setMode } = React.useContext(StoreContextM);
   const { setDispatchType } = React.useContext(StoreContextDis);
   const { tripdata } = React.useContext(StoreContextTrip);
@@ -955,9 +893,7 @@ function TimelineUpdateForm() {
   const MoveToLeftHandler = () => {
     if (!horizontalScrollRef.current) return;
     horizontalScrollRef.current.scrollTo({
-      left:
-        horizontalScrollRef.current.scrollLeft -
-        horizontalScrollRef.current.offsetWidth / 5,
+      left: horizontalScrollRef.current.scrollLeft - horizontalScrollRef.current.offsetWidth / 5,
       behavior: "smooth",
     });
   };
@@ -965,9 +901,7 @@ function TimelineUpdateForm() {
   const MoveToRightHandler = () => {
     if (!horizontalScrollRef.current) return;
     horizontalScrollRef.current.scrollTo({
-      left:
-        horizontalScrollRef.current.scrollLeft +
-        horizontalScrollRef.current.offsetWidth / 5,
+      left: horizontalScrollRef.current.scrollLeft + horizontalScrollRef.current.offsetWidth / 5,
       behavior: "smooth",
     });
   };
@@ -975,23 +909,13 @@ function TimelineUpdateForm() {
   return (
     <StoreContextModal.Provider value={{ modalOpen, setModalOpen }}>
       <div className="form">
-        {modalOpen.code && (
-          <SearchModal setModalOpen={setModalOpen} day={modalOpen.day} />
-        )}
+        {modalOpen.code && <SearchModal setModalOpen={setModalOpen} day={modalOpen.day} />}
         <p className="titletext">
-          <input
-            maxLength={20}
-            value={title}
-            placeholder="제목 입력"
-            onChange={valuechange}
-          />
+          <input maxLength={20} value={title} placeholder="제목 입력" onChange={valuechange} />
           <button onClick={TimelineUpdateHandler}>완료</button>
           <button onClick={FormColseHanlder}>취소</button>
         </p>
-        <ReactCalender
-          start={tripdata.timeline[mode.index].start}
-          end={tripdata.timeline[mode.index].end}
-        />
+        <ReactCalender start={tripdata.timeline[mode.index].start} end={tripdata.timeline[mode.index].end} />
         <div className="mapdaybox">
           <div className="kakaomapbox">
             <KakaoMap />
@@ -1003,10 +927,7 @@ function TimelineUpdateForm() {
             <ul ref={horizontalScrollRef}>
               {tmptimeline.daylist.map((data, index) => (
                 <li key={index} className="item scrollnone">
-                  <div
-                    className="lidaytext"
-                    onClick={() => onMarkerHandler(data.day)}
-                  >
+                  <div className="lidaytext" onClick={() => onMarkerHandler(data.day)}>
                     Day{data.day}
                   </div>
                   <DayListInput data={data} />
@@ -1031,9 +952,7 @@ function DayListView(props) {
     <ul>
       {value.list.map((data, index) => (
         <li key={index} className="item">
-          <div className="itemindex">
-            {index < 9 ? <>&nbsp;{index + 1}&nbsp;</> : <>{index + 1}</>}
-          </div>
+          <div className="itemindex">{index < 9 ? <>&nbsp;{index + 1}&nbsp;</> : <>{index + 1}</>}</div>
           <div className="itemtext">
             <span>{data.place_name}</span>
           </div>
@@ -1045,7 +964,7 @@ function DayListView(props) {
 
 // 타임라인 뷰 폼
 function TimelineViewForm() {
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser } = React.useContext(SessionContext);
   const { setDispatchType } = React.useContext(StoreContextDis);
   const { mode, setMode } = React.useContext(StoreContextM);
   const { tripdata } = React.useContext(StoreContextTrip);
@@ -1182,9 +1101,7 @@ function TimelineViewForm() {
   const MoveToLeftHandler = () => {
     if (!horizontalScrollRef.current) return;
     horizontalScrollRef.current.scrollTo({
-      left:
-        horizontalScrollRef.current.scrollLeft -
-        horizontalScrollRef.current.offsetWidth / 5,
+      left: horizontalScrollRef.current.scrollLeft - horizontalScrollRef.current.offsetWidth / 5,
       behavior: "smooth",
     });
   };
@@ -1192,9 +1109,7 @@ function TimelineViewForm() {
   const MoveToRightHandler = () => {
     if (!horizontalScrollRef.current) return;
     horizontalScrollRef.current.scrollTo({
-      left:
-        horizontalScrollRef.current.scrollLeft +
-        horizontalScrollRef.current.offsetWidth / 5,
+      left: horizontalScrollRef.current.scrollLeft + horizontalScrollRef.current.offsetWidth / 5,
       behavior: "smooth",
     });
   };
@@ -1208,12 +1123,9 @@ function TimelineViewForm() {
         <p className="daytext">
           <span className="text">{tripdata.timeline[mode.index].title}</span>
           <span>
-            {tripdata.timeline[mode.index].start} ~{" "}
-            {tripdata.timeline[mode.index].end}
+            {tripdata.timeline[mode.index].start} ~ {tripdata.timeline[mode.index].end}
           </span>
-          <span className="line">
-            {tripdata.timeline[mode.index].writer_nickname} 작성
-          </span>
+          <span className="line">{tripdata.timeline[mode.index].writer_nickname} 작성</span>
           {tripdata.timeline[mode.index].writer === loginUser.mem_idx && (
             <span className="line">
               {" "}
@@ -1234,10 +1146,7 @@ function TimelineViewForm() {
           <ul ref={horizontalScrollRef}>
             {data.map((data, index) => (
               <li key={index} className="item scrollnone">
-                <div
-                  className="lidaytext"
-                  onClick={() => onMarkerHandler(data.day)}
-                >
+                <div className="lidaytext" onClick={() => onMarkerHandler(data.day)}>
                   Day{data.day}
                 </div>
                 <DayListView data={data} />
@@ -1277,11 +1186,7 @@ function Content() {
     setTimelinelist(tripdata.timeline);
     if (tripdata.timeline && timelinelist) {
       //타임라인이 추가
-      if (
-        tripdata.timeline.length > 1 &&
-        tripdata.timeline.length > timelinelist.length &&
-        timelinelist.length !== 0
-      ) {
+      if (tripdata.timeline.length > 1 && tripdata.timeline.length > timelinelist.length && timelinelist.length !== 0) {
         setMode((prevState) => {
           return {
             ...prevState,
@@ -1333,7 +1238,7 @@ function Plan() {
   const navigation = useNavigate();
 
   let { seq } = useParams();
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser } = React.useContext(SessionContext);
   const [dispatch, setDispatchType] = React.useState({
     code: null,
     params: null,
@@ -1378,9 +1283,7 @@ function Plan() {
       {loading ? <Loading /> : null}
       {Object.keys(loginUser).length > 1 && (
         <>
-          {Object.keys(tripdata).length > 0 &&
-          tripdata.trip !== "none" &&
-          Object.keys(tripdata.trip).length > 1 ? (
+          {Object.keys(tripdata).length > 0 && tripdata.trip !== "none" && Object.keys(tripdata.trip).length > 1 ? (
             <StoreContextDis.Provider value={{ setDispatchType }}>
               <StoreContextTrip.Provider value={{ tripdata }}>
                 <div className="plancontainer">
@@ -1394,10 +1297,9 @@ function Plan() {
             </StoreContextDis.Provider>
           ) : (
             <>
-              {Object.keys(tripdata).length !== 0 &&
-                tripdata.trip === "none" && (
-                  <div>해당 여행계획 게시글에 권한이 없습니다.</div>
-                )}
+              {Object.keys(tripdata).length !== 0 && tripdata.trip === "none" && (
+                <div>해당 여행계획 게시글에 권한이 없습니다.</div>
+              )}
             </>
           )}
         </>

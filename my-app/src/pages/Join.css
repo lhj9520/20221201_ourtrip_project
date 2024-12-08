@@ -11,7 +11,6 @@
   flex-direction: column;
   align-items: center;
 }
-
 .join-container .centerfix .first {
   width: 100%;
   padding-top: 10%;
@@ -19,11 +18,16 @@
   flex-direction: column;
   align-items: center;
 }
-.join-container .centerfix .first img {
+.join-container .centerfix .first a {
   width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.join-container .centerfix .first img {
+  width: 100%;
   margin: auto;
   object-fit: contain;
-  cursor: pointer;
 }
 .join-container .centerfix .first .title {
   font-size: 1.75rem;
@@ -143,12 +147,7 @@ select::-ms-expand {
 .join-container .centerfix .userinfo div .small {
   width: auto;
 }
-.join-container
-  .centerfix
-  .userinfo
-  .birthcontainer
-  .line
-  > section:nth-child(2) {
+.join-container .centerfix .userinfo .birthcontainer .line > section:nth-child(2) {
   margin-left: 16px;
   margin-right: 16px;
 }

@@ -4,6 +4,21 @@ var path = process.cwd();
 const DB = require(path + "/lib/db");
 const mailer = require(path + "/lib/mailer");
 
+router.get("/authcheck", (req, res) => {
+  const sendData = { isLogin: "" };
+  if (req.session.is_logined) {
+    sendData.isLogin = true;
+  } else {
+    sendData.isLogin = false;
+  }
+  res.send(sendData);
+});
+
+router.get("/userinfo", async (req, res) => {
+  const queryresult = await DB.runDB(`SELECT * FROM user WHERE mem_idx = ${req.session.idx}`);
+  res.send(queryresult[0]);
+});
+
 router.post("/login", async (req, res) => {
   /**
    * 디비에서 아이디&비번 확인
@@ -33,27 +48,19 @@ router.post("/login", async (req, res) => {
   }
 
   /**
-   * 로그인 세션 회원정보 저장
+   * 로그인 세션 저장
    */
-  req.session.loginUser = queryresult[0];
-  req.session.save();
-  result.redirect = "/";
-  res.send(result);
-});
-
-router.get("/user", (req, res) => {
-  // console.log("로그인 세션 유저 정보 요청", req.session.loginUser);
-  if (req.session.loginUser) {
-    res.send(req.session.loginUser);
-  } else {
-    res.send({ session: "none" });
-  }
+  req.session.is_logined = true;
+  req.session.idx = queryresult[0].mem_idx;
+  req.session.save(() => {
+    result.redirect = "/";
+    res.send(result);
+  });
 });
 
 router.get("/logout", (req, res) => {
-  // console.log("로그인 세션 유저 정보 삭제");
   req.session.destroy();
-  res.send({ session: "none" });
+  res.send({ isLogin: false });
 });
 
 router.post("/join", async (req, res) => {
@@ -84,15 +91,11 @@ router.post("/withdrawalreq", async (req, res) => {
 
   const result = {
     code: "success",
-    message: "탈퇴 성공",
+    message: "회원 탈퇴가 완료되었습니다.",
   };
 
-  const matequeryresult = await DB.runDB(
-    `DELETE FROM mate WHERE req_idx = ${idx} OR res_idx=${idx}`
-  );
-  const userqueryresult = await DB.runDB(
-    `DELETE FROM user WHERE mem_idx = ${idx}`
-  );
+  const matequeryresult = await DB.runDB(`DELETE FROM mate WHERE req_idx = ${idx} OR res_idx=${idx}`);
+  const userqueryresult = await DB.runDB(`DELETE FROM user WHERE mem_idx = ${idx}`);
   res.send(result);
 });
 
@@ -195,21 +198,15 @@ router.post("/pwdchange", async (req, res) => {
   };
 
   if (id) {
-    const query = await DB.runDB(
-      `UPDATE user SET mem_password="${hashmodpw}" WHERE mem_userid = '${id}'`
-    );
+    const query = await DB.runDB(`UPDATE user SET mem_password="${hashmodpw}" WHERE mem_userid = '${id}'`);
 
     res.send(result);
     return;
   }
 
-  const query = await DB.runDB(
-    `UPDATE user SET mem_password="${hashmodpw}" WHERE mem_idx = ${idx}`
-  );
+  const query = await DB.runDB(`UPDATE user SET mem_password="${hashmodpw}" WHERE mem_idx = ${idx}`);
 
-  const queryresult = await DB.runDB(
-    `SELECT * FROM user WHERE mem_idx = ${idx}`
-  );
+  const queryresult = await DB.runDB(`SELECT * FROM user WHERE mem_idx = ${idx}`);
 
   /**
    * 로그인 세션 회원정보 다시 저장

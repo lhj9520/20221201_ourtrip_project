@@ -1,26 +1,38 @@
-import React, { useRef } from "react";
-import axios from "axios";
-import moment from "moment-timezone";
-import "./My.css";
-import "./MyModal.css";
-import Menubar from "../../component/menubar";
-import Modal from "../../component/modal";
-
-import { StoreContext, importsession, deletesession } from "../../App";
+import React, { useRef, useEffect, useState, useContext, createContext } from "react";
 import { useNavigate } from "react-router-dom";
+// import src
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { faEye } from "@fortawesome/free-regular-svg-icons";
-import { BASE_URL } from "../../config";
+// import css
+import "./My.css";
+import "./MyModal.css";
+//import component
+import Menubar from "../../component/menubar";
+import Modal from "../../component/modal";
+// import api
+import { getLogout, getWithdrawal, getEmailcode, getDuplicateEmail, getDuplicateNickname } from "../../api/Auth";
+import {
+  getUserInfo,
+  getUpdateNickname,
+  getUpdateEmail,
+  getUpdateName,
+  getUpdatePhone,
+  getCheckPassword,
+  getUpdatePassword,
+} from "../../api/My";
+// import context
+import { SessionContext } from "../../App";
+const userInfoContext = createContext(null);
 
 function NicknameValue() {
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser, setLoginUser } = useContext(userInfoContext);
   const inputFocus = useRef(null);
-  const [inputstate, setInputstate] = React.useState(true);
-  const [nickname, setNickname] = React.useState("");
-  const [emsg, setEmsg] = React.useState("");
+  const [inputstate, setInputstate] = useState(true);
+  const [nickname, setNickname] = useState("");
+  const [emsg, setEmsg] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!inputstate) {
       inputFocus.current.focus();
       return;
@@ -35,22 +47,15 @@ function NicknameValue() {
   };
 
   const nicknamechange = async () => {
-    await axios({
-      url: `${BASE_URL}/updateuser/nickname`,
-      method: "POST",
-      data: { idx: loginUser.mem_idx, nickname: nickname },
-    })
-      .then((res) => {
-        const { code } = res.data;
-        if (code === "success") {
-          importsession();
-          setEmsg("");
-          setInputstate(!inputstate);
-        }
-      })
-      .catch((e) => {
-        console.log("닉네임 변경 오류!", e);
-      });
+    // 닉네임 변경
+    const { code } = await getUpdateNickname(loginUser.mem_idx, nickname);
+
+    if (code === "success") {
+      // userInfo Update
+      setLoginUser(await getUserInfo());
+      setEmsg("");
+      setInputstate(!inputstate);
+    }
   };
 
   const nicknamevalidcheck = async () => {
@@ -65,22 +70,14 @@ function NicknameValue() {
       setInputstate(!inputstate);
       return;
     }
-    await axios({
-      url: `${BASE_URL}/dupcheck/nickname`,
-      method: "POST",
-      data: { nickname: nickname },
-    })
-      .then((res) => {
-        const { code, message } = res.data;
-        if (code === "error") {
-          setEmsg(message);
-        } else {
-          nicknamechange();
-        }
-      })
-      .catch((e) => {
-        console.log("닉네임 중복체크 오류!", e);
-      });
+
+    const { code, message } = await getDuplicateNickname(nickname);
+
+    if (code === "error") {
+      setEmsg(message);
+    } else {
+      nicknamechange();
+    }
   };
 
   return (
@@ -88,15 +85,7 @@ function NicknameValue() {
       <span>닉네임</span>
       <div className="info-box">
         {inputstate && <span>{loginUser && loginUser.mem_nickname}</span>}
-        {!inputstate && (
-          <input
-            ref={inputFocus}
-            type="text"
-            maxLength={12}
-            value={nickname}
-            onChange={valuechange}
-          />
-        )}
+        {!inputstate && <input ref={inputFocus} type="text" maxLength={12} value={nickname} onChange={valuechange} />}
         {inputstate && (
           <button
             onClick={() => {
@@ -125,20 +114,21 @@ function NicknameValue() {
     </div>
   );
 }
+
 function EmailValue() {
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser, setLoginUser } = useContext(userInfoContext);
 
   const inputFocus = useRef(null);
 
-  const [state, setState] = React.useState(false);
-  const [disable, setDibable] = React.useState(true);
-  const [inemail, setInemail] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [emsg1, setEmsg1] = React.useState("");
+  const [state, setState] = useState(false);
+  const [disable, setDibable] = useState(true);
+  const [inemail, setInemail] = useState("");
+  const [email, setEmail] = useState("");
+  const [emsg1, setEmsg1] = useState("");
 
-  const [incode, setIncode] = React.useState("");
-  const [servercode, setServercode] = React.useState("");
-  const [emsg2, setEmsg2] = React.useState("");
+  const [incode, setIncode] = useState("");
+  const [servercode, setServercode] = useState("");
+  const [emsg2, setEmsg2] = useState("");
 
   const valuechange = (event) => {
     const data = event.target.value;
@@ -154,6 +144,15 @@ function EmailValue() {
     }
   };
 
+  const emailcodeHandler = async () => {
+    const { code, useremail, vericode } = await getEmailcode({ youremail: inemail });
+
+    if (code === 200) {
+      setEmail(useremail);
+      setServercode(vericode);
+    }
+  };
+
   const emailchange = async () => {
     if (!disable && incode === "") {
       setEmsg2("인증번호를 입력하세요.");
@@ -166,22 +165,14 @@ function EmailValue() {
     }
 
     setEmsg2("");
+    // 이메일 변경
+    const { code } = await getUpdateEmail(loginUser.mem_idx, email);
 
-    await axios({
-      url: `${BASE_URL}/updateuser/email`,
-      method: "POST",
-      data: { idx: loginUser.mem_idx, email: email },
-    })
-      .then((res) => {
-        const { code } = res.data;
-        if (code === "success") {
-          setState(true);
-          importsession();
-        }
-      })
-      .catch((e) => {
-        console.log("이메일 변경 오류!", e);
-      });
+    if (code === "success") {
+      // userInfo Update
+      setLoginUser(await getUserInfo());
+      setState(true);
+    }
   };
 
   const emailvalidcheck = async () => {
@@ -203,42 +194,15 @@ function EmailValue() {
       return;
     }
 
-    await axios({
-      url: `${BASE_URL}/dupcheck/email`,
-      method: "POST",
-      data: { email: inemail },
-    })
-      .then((res) => {
-        const { code, message } = res.data;
-        if (code === "error") {
-          setEmsg1(message);
-        } else {
-          // emailcodeHandler();
-          setEmsg1("인증번호를 전송하였습니다.");
-          setDibable(false);
-        }
-      })
-      .catch((e) => {
-        console.log("이메일 중복체크 오류!", e);
-      });
-  };
+    const { code, message } = await getDuplicateEmail(inemail);
 
-  const emailcodeHandler = async () => {
-    await axios({
-      url: `${BASE_URL}/auth/mail`,
-      method: "POST",
-      data: { youremail: inemail },
-    })
-      .then((res) => {
-        const { code, useremail, vericode } = res.data;
-        if (code === 200) {
-          setEmail(useremail);
-          setServercode(vericode);
-        }
-      })
-      .catch((e) => {
-        console.log("이메일 인증 코드 발송 오류!", e);
-      });
+    if (code === "error") {
+      setEmsg1(message);
+    } else {
+      emailcodeHandler();
+      setEmsg1("인증번호를 전송하였습니다.");
+      setDibable(false);
+    }
   };
 
   return (
@@ -251,13 +215,7 @@ function EmailValue() {
           </div>
           <div>
             <span>변경 이메일</span>
-            <input
-              ref={inputFocus}
-              type="text"
-              maxLength={320}
-              value={inemail}
-              onChange={valuechange}
-            />
+            <input ref={inputFocus} type="text" maxLength={320} value={inemail} onChange={valuechange} />
             <button onClick={emailvalidcheck}>인증번호 받기</button>
             <span className="msg">{emsg1}</span>
           </div>
@@ -286,10 +244,11 @@ function EmailValue() {
     </div>
   );
 }
-function EmailModModal() {
-  const { loginUser } = React.useContext(StoreContext);
 
-  const [modalOpen, setModalOpen] = React.useState(false);
+function EmailModModal() {
+  const { loginUser, setLoginUser } = useContext(userInfoContext);
+
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <div className="item">
@@ -317,16 +276,17 @@ function EmailModModal() {
     </div>
   );
 }
+
 function NameValue() {
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser, setLoginUser } = useContext(userInfoContext);
 
   const inputFocus = useRef(null);
 
-  const [inputstate, setInputstate] = React.useState(true);
-  const [username, setUserame] = React.useState("");
-  const [emsg, setEmsg] = React.useState("");
+  const [inputstate, setInputstate] = useState(true);
+  const [username, setUserame] = useState("");
+  const [emsg, setEmsg] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!inputstate) {
       inputFocus.current.focus();
       return;
@@ -358,22 +318,15 @@ function NameValue() {
       setInputstate(!inputstate);
       return;
     }
-    await axios({
-      url: `${BASE_URL}/updateuser/name`,
-      method: "POST",
-      data: { idx: loginUser.mem_idx, username: username },
-    })
-      .then((res) => {
-        const { code } = res.data;
-        if (code === "success") {
-          importsession();
-          setEmsg("");
-          setInputstate(!inputstate);
-        }
-      })
-      .catch((e) => {
-        console.log("이름 변경 오류!", e);
-      });
+
+    const { code } = await getUpdateName(loginUser.mem_idx, username);
+
+    if (code === "success") {
+      // userInfo Update
+      setLoginUser(await getUserInfo());
+      setEmsg("");
+      setInputstate(!inputstate);
+    }
   };
 
   return (
@@ -381,15 +334,7 @@ function NameValue() {
       <span>이름</span>
       <div className="info-box">
         {inputstate && <span>{loginUser && loginUser.mem_username}</span>}
-        {!inputstate && (
-          <input
-            ref={inputFocus}
-            type="text"
-            maxLength={5}
-            value={username}
-            onChange={valuechange}
-          />
-        )}
+        {!inputstate && <input ref={inputFocus} type="text" maxLength={5} value={username} onChange={valuechange} />}
         {inputstate && (
           <button
             onClick={() => {
@@ -418,16 +363,17 @@ function NameValue() {
     </div>
   );
 }
+
 function PhoneValue() {
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser, setLoginUser } = useContext(userInfoContext);
 
   const inputFocus = useRef(null);
 
-  const [inputstate, setInputstate] = React.useState(true);
-  const [phone, setPhone] = React.useState("");
-  const [emsg, setEmsg] = React.useState("");
+  const [inputstate, setInputstate] = useState(true);
+  const [phone, setPhone] = useState("");
+  const [emsg, setEmsg] = useState("");
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!inputstate) {
       inputFocus.current.focus();
       return;
@@ -449,27 +395,20 @@ function PhoneValue() {
       inputFocus.current.focus();
       return;
     }
+
     if (phone === loginUser.mem_phone) {
       setEmsg("");
       setInputstate(!inputstate);
       return;
     }
-    await axios({
-      url: `${BASE_URL}/updateuser/phone`,
-      method: "POST",
-      data: { idx: loginUser.mem_idx, phone: phone },
-    })
-      .then((res) => {
-        const { code } = res.data;
-        if (code === "success") {
-          importsession();
-          setEmsg("");
-          setInputstate(!inputstate);
-        }
-      })
-      .catch((e) => {
-        console.log("전화번호 변경 오류!", e);
-      });
+
+    const { code } = await getUpdatePhone(loginUser.mem_idx, phone);
+
+    if (code === "success") {
+      setLoginUser(await getUserInfo());
+      setEmsg("");
+      setInputstate(!inputstate);
+    }
   };
 
   return (
@@ -477,15 +416,7 @@ function PhoneValue() {
       <span>휴대폰 전화번호</span>
       <div className="info-box">
         {inputstate && <span>{loginUser && loginUser.mem_phone}</span>}
-        {!inputstate && (
-          <input
-            ref={inputFocus}
-            type="text"
-            maxLength={13}
-            value={phone}
-            onChange={valuechange}
-          />
-        )}
+        {!inputstate && <input ref={inputFocus} type="text" maxLength={13} value={phone} onChange={valuechange} />}
         {inputstate && (
           <button
             onClick={() => {
@@ -514,74 +445,58 @@ function PhoneValue() {
     </div>
   );
 }
+
 function Pwdvalue() {
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser, setLoginUser } = useContext(userInfoContext);
 
   const inputFocus = useRef([]);
 
-  const [passwordType1, setPasswordType1] = React.useState("password");
-  const [passwordType2, setPasswordType2] = React.useState("password");
-  const [passwordType3, setPasswordType3] = React.useState("password");
-  const [icontype1, setIcontype1] = React.useState(true);
-  const [icontype2, setIcontype2] = React.useState(true);
-  const [icontype3, setIcontype3] = React.useState(true);
+  const [passwordType1, setPasswordType1] = useState("password");
+  const [passwordType2, setPasswordType2] = useState("password");
+  const [passwordType3, setPasswordType3] = useState("password");
+  const [icontype1, setIcontype1] = useState(true);
+  const [icontype2, setIcontype2] = useState(true);
+  const [icontype3, setIcontype3] = useState(true);
 
-  const [curpwd, setCurpwd] = React.useState("");
-  const [modpwd, setModpwd] = React.useState("");
-  const [repwd, setRepwd] = React.useState("");
-  const [pwisvalid, setPwisvalid] = React.useState(false);
-  const [samepwisvalid, setSamepwisvalid] = React.useState(false);
+  const [curpwd, setCurpwd] = useState("");
+  const [modpwd, setModpwd] = useState("");
+  const [repwd, setRepwd] = useState("");
+  const [pwisvalid, setPwisvalid] = useState(false);
+  const [samepwisvalid, setSamepwisvalid] = useState(false);
 
-  const [emsg1, setEmsg1] = React.useState("");
-  const [emsg2, setEmsg2] = React.useState("");
-  const [emsg3, setEmsg3] = React.useState("");
+  const [emsg1, setEmsg1] = useState("");
+  const [emsg2, setEmsg2] = useState("");
+  const [emsg3, setEmsg3] = useState("");
 
-  const [inputset, setInputset] = React.useState(true);
-
-  const pwdcheck = async () => {
-    await axios({
-      url: `${BASE_URL}/updateuser/pwdcheck`,
-      method: "POST",
-      data: { idx: loginUser.mem_idx, curpwd: curpwd },
-    })
-      .then((res) => {
-        const { code, message } = res.data;
-        if (code === "error") {
-          setEmsg1(message);
-          inputFocus.current[0].focus();
-        } else {
-          if (!pwisvalid) {
-            inputFocus.current[1].focus();
-            return;
-          }
-          if (!samepwisvalid) {
-            inputFocus.current[2].focus();
-            return;
-          }
-          pwdvalchange();
-        }
-      })
-      .catch((e) => {
-        console.log("비밀번호 확인 오류!", e);
-      });
-  };
+  const [inputset, setInputset] = useState(true);
 
   const pwdvalchange = async () => {
-    await axios({
-      url: `${BASE_URL}/auth/pwdchange`,
-      method: "POST",
-      data: { idx: loginUser.mem_idx, modpwd: modpwd },
-    })
-      .then((res) => {
-        const { code, message } = res.data;
-        if (code === "success") {
-          importsession();
-          setInputset(false);
-        }
-      })
-      .catch((e) => {
-        console.log("비밀번호 변경 오류!", e);
-      });
+    const { code, message } = await getUpdatePassword(loginUser.mem_idx, modpwd);
+
+    if (code === "success") {
+      // userInfo Update
+      setLoginUser(await getUserInfo());
+      setInputset(false);
+    }
+  };
+
+  const pwdcheck = async () => {
+    const { code, message } = await getCheckPassword(loginUser.mem_idx, curpwd);
+
+    if (code === "error") {
+      setEmsg1(message);
+      inputFocus.current[0].focus();
+    } else {
+      if (!pwisvalid) {
+        inputFocus.current[1].focus();
+        return;
+      }
+      if (!samepwisvalid) {
+        inputFocus.current[2].focus();
+        return;
+      }
+      pwdvalchange();
+    }
   };
 
   const pwdchange = () => {
@@ -605,8 +520,7 @@ function Pwdvalue() {
   };
 
   const valuechange2 = (event) => {
-    const passwordRegex =
-      /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
     const data = event.target.value;
     setModpwd(data);
     //비밀번호 예외처리
@@ -740,8 +654,9 @@ function Pwdvalue() {
     </div>
   );
 }
+
 function PwdModModal() {
-  const [modalOpen, setModalOpen] = React.useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <div className="item">
@@ -769,38 +684,37 @@ function PwdModModal() {
 
 function My() {
   const navigation = useNavigate();
+  const { loginSession, setLoginSession } = useContext(SessionContext);
 
-  const { loginUser } = React.useContext(StoreContext);
-  const [modalOpen, setModalOpen] = React.useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [loginUser, setLoginUser] = useState(null);
 
-  React.useEffect(() => {
-    if (loginUser.session === "none") {
-      navigation("/login", { replace: true });
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      setLoginUser(await getUserInfo());
+    };
+
+    if (loginSession) {
+      fetchUserInfo();
     }
-  }, [loginUser]);
+  }, [loginSession]);
 
   const withdrawalreq = async () => {
-    await axios({
-      url: `${BASE_URL}/auth/withdrawalreq`,
-      method: "POST",
-      data: { idx: loginUser.mem_idx },
-    })
-      .then((res) => {
-        const { code } = res.data;
-        if (code === "success") {
-          deletesession();
-          navigation("/", { replace: true });
-        }
-      })
-      .catch((e) => {
-        console.log("닉네임 변경 오류!", e);
-      });
+    const { code, message } = await getWithdrawal(loginUser.mem_idx);
+
+    if (code === "success") {
+      alert(message);
+      // 회원 탈퇴 성공 로그아웃
+      setLoginSession(await getLogout());
+      // 페이지 새로고침
+      navigation(0);
+    }
   };
 
   return (
     <>
-      {Object.keys(loginUser).length > 1 && (
-        <>
+      {loginSession && loginUser && (
+        <userInfoContext.Provider value={{ loginUser, setLoginUser }}>
           <Menubar />
           <div className="contents-container mycon">
             <div className="title my">
@@ -826,16 +740,10 @@ function My() {
               </section>
               <section className="Withdrawal">
                 <span onClick={() => setModalOpen(true)}>회원탈퇴하기</span>
-                <Modal
-                  open={modalOpen}
-                  close={() => setModalOpen(false)}
-                  header="회원 탈퇴"
-                >
+                <Modal open={modalOpen} close={() => setModalOpen(false)} header="회원 탈퇴">
                   <div className="Withdrawal-box">
                     <span>정말로 탈퇴하시겠습니까?</span>
-                    <span className="small">
-                      작성한 글은 자동으로 삭제되지 않습니다.
-                    </span>
+                    <span className="small">작성한 글은 자동으로 삭제되지 않습니다.</span>
                     <div>
                       <button className="withdrawalbtn" onClick={withdrawalreq}>
                         확인
@@ -847,7 +755,7 @@ function My() {
               </section>
             </div>
           </div>
-        </>
+        </userInfoContext.Provider>
       )}
     </>
   );

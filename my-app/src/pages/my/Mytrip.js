@@ -5,15 +5,15 @@ import "./Mytrip.css";
 import "./MytripModal.css";
 import Menubar from "../../component/menubar";
 import Modal from "../../component/modal";
-import useDidMountEffect from "../useDidMountEffect";
+import useDidMountEffect from "../../utils/useDidMountEffect";
 import Loading from "../../component/Loading";
-import { StoreContext } from "../../App";
+import { SessionContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../config";
 
 function TripAddModal() {
   const { setDispatchType } = React.useContext(StoreContextDis);
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser } = React.useContext(SessionContext);
   const { mytrip } = React.useContext(StoreContextTrip);
 
   const [adddata, setAdddata] = React.useState({
@@ -47,9 +47,7 @@ function TripAddModal() {
 
     //여행 데이터 만들기
     if (adddata.title === "") {
-      const newDate = moment
-        .tz(new Date(), "Asia/Seoul")
-        .format("YY-MM-DD HH:mm 작성");
+      const newDate = moment.tz(new Date(), "Asia/Seoul").format("YY-MM-DD HH:mm 작성");
       trip_data.title = newDate;
     } else {
       trip_data.title = adddata.title;
@@ -127,13 +125,7 @@ function TripAddModal() {
   return (
     <div className="tripadd">
       <div className="triptitle">
-        <input
-          type="text"
-          placeholder="여행 타이틀"
-          maxLength={20}
-          value={adddata.title}
-          onChange={valuechange}
-        />
+        <input type="text" placeholder="여행 타이틀" maxLength={20} value={adddata.title} onChange={valuechange} />
         <span>({adddata.inputcnt}/20자)</span>
       </div>
       <span>여행 메이트 선택</span>
@@ -146,17 +138,12 @@ function TripAddModal() {
               mytrip.mate.map((data, index) => (
                 <li
                   key={index}
-                  className={`item ${
-                    adddata.isSelectedname === index ? "true" : "false"
-                  }`}
+                  className={`item ${adddata.isSelectedname === index ? "true" : "false"}`}
                   onClick={(e) => {
                     setAdddata((prevState) => {
                       return { ...prevState, isSelectedname: index };
                     });
-                    if (
-                      adddata.isSelectedname === index &&
-                      e.currentTarget.className === "item true"
-                    ) {
+                    if (adddata.isSelectedname === index && e.currentTarget.className === "item true") {
                       setAdddata((prevState) => {
                         return { ...prevState, isSelectedname: "" };
                       });
@@ -175,11 +162,9 @@ function TripAddModal() {
                         };
                       });
                     } else if (adddata.selectlist.length > 0) {
-                      const result = adddata.selectlist.filter(
-                        (data, index) => {
-                          return data[0] === mateidx;
-                        }
-                      );
+                      const result = adddata.selectlist.filter((data, index) => {
+                        return data[0] === mateidx;
+                      });
                       if (result.length === 0) {
                         //목록 추가
                         setAdddata((prevState) => {
@@ -190,11 +175,9 @@ function TripAddModal() {
                         });
                       } else {
                         //목록 삭제
-                        const result = adddata.selectlist.filter(
-                          (data, index) => {
-                            return data[0] !== mateidx;
-                          }
-                        );
+                        const result = adddata.selectlist.filter((data, index) => {
+                          return data[0] !== mateidx;
+                        });
                         setAdddata((prevState) => {
                           return { ...prevState, selectlist: result };
                         });
@@ -239,7 +222,7 @@ function TripAddModal() {
 function TripModModal(props) {
   const { setModstate } = React.useContext(StoreContextMod);
   const { setDispatchType } = React.useContext(StoreContextDis);
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser } = React.useContext(SessionContext);
   const { mytrip } = React.useContext(StoreContextTrip);
 
   const [adddata, setAdddata] = React.useState({
@@ -281,9 +264,7 @@ function TripModModal(props) {
 
     //여행 데이터 만들기
     if (adddata.title === "") {
-      const newDate = moment
-        .tz(new Date(), "Asia/Seoul")
-        .format("YY-MM-DD HH:mm 작성");
+      const newDate = moment.tz(new Date(), "Asia/Seoul").format("YY-MM-DD HH:mm 작성");
       trip_data.title = newDate;
     } else {
       trip_data.title = adddata.title;
@@ -358,13 +339,7 @@ function TripModModal(props) {
   return (
     <div className="tripadd">
       <div className="triptitle">
-        <input
-          type="text"
-          placeholder="여행 타이틀"
-          maxLength={20}
-          value={adddata.title}
-          onChange={valuechange}
-        />
+        <input type="text" placeholder="여행 타이틀" maxLength={20} value={adddata.title} onChange={valuechange} />
         <span>({adddata.inputcnt}/20자)</span>
       </div>
       <span>여행 메이트 선택</span>
@@ -377,17 +352,12 @@ function TripModModal(props) {
               mytrip.mate.map((data, index) => (
                 <li
                   key={index}
-                  className={`item ${
-                    adddata.isSelectedname === index ? "true" : "false"
-                  }`}
+                  className={`item ${adddata.isSelectedname === index ? "true" : "false"}`}
                   onClick={(e) => {
                     setAdddata((prevState) => {
                       return { ...prevState, isSelectedname: index };
                     });
-                    if (
-                      adddata.isSelectedname === index &&
-                      e.currentTarget.className === "item true"
-                    ) {
+                    if (adddata.isSelectedname === index && e.currentTarget.className === "item true") {
                       setAdddata((prevState) => {
                         return { ...prevState, isSelectedname: "" };
                       });
@@ -407,11 +377,9 @@ function TripModModal(props) {
                         };
                       });
                     } else if (adddata.selectlist.length > 0) {
-                      const result = adddata.selectlist.filter(
-                        (data, index) => {
-                          return data[0] == mateidx;
-                        }
-                      );
+                      const result = adddata.selectlist.filter((data, index) => {
+                        return data[0] == mateidx;
+                      });
                       if (result.length === 0) {
                         //목록 추가
                         setAdddata((prevState) => {
@@ -422,11 +390,9 @@ function TripModModal(props) {
                         });
                       } else {
                         //목록 삭제
-                        const result = adddata.selectlist.filter(
-                          (data, index) => {
-                            return data[0] != mateidx;
-                          }
-                        );
+                        const result = adddata.selectlist.filter((data, index) => {
+                          return data[0] != mateidx;
+                        });
                         setAdddata((prevState) => {
                           return { ...prevState, selectlist: result };
                         });
@@ -455,9 +421,7 @@ function TripModModal(props) {
             ) : (
               adddata.selectlist.map((data, index) => (
                 <li key={index} className="item">
-                  <span className="nickname">
-                    {data[1] !== loginUser.mem_nickname && data[1]}
-                  </span>
+                  <span className="nickname">{data[1] !== loginUser.mem_nickname && data[1]}</span>
                 </li>
               ))
             )}
@@ -477,7 +441,7 @@ function TripModModal(props) {
 }
 function TripUpdateModal() {
   const { setDispatchType } = React.useContext(StoreContextDis);
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser } = React.useContext(SessionContext);
   const { mytrip } = React.useContext(StoreContextTrip);
   const [modstate, setModstate] = React.useState({ code: false, data: {} });
 
@@ -543,10 +507,7 @@ function TripUpdateModal() {
                   <li key={data.seq} className="item">
                     <span className="triptitle">{data.title}</span>
                     <div>
-                      <button
-                        className="updatebtn"
-                        onClick={() => TripModopenHandler({ data: data })}
-                      >
+                      <button className="updatebtn" onClick={() => TripModopenHandler({ data: data })}>
                         수정
                       </button>
                       <button
@@ -686,9 +647,7 @@ function Contents() {
     if (mytrip.trip.length > 0) {
       const start = curpage * cnt - cnt;
       const end = curpage * cnt - 1;
-      const array = mytrip.trip.filter(
-        (data, index) => index >= start && index <= end
-      );
+      const array = mytrip.trip.filter((data, index) => index >= start && index <= end);
       setViewlist(array);
     }
   }, [curpage, mytrip.trip]);
@@ -755,34 +714,20 @@ function Contents() {
           <div className="triplistbox">
             <ul>
               {viewlist.map((data, index) => (
-                <li
-                  key={index}
-                  className="item mytrip"
-                  onClick={() => navigation(`/mytrip/${data.seq}`)}
-                >
-                  <span className="number">
-                    {index + cnt * (curpage - 1) + 1}
-                  </span>
+                <li key={index} className="item mytrip" onClick={() => navigation(`/mytrip/${data.seq}`)}>
+                  <span className="number">{index + cnt * (curpage - 1) + 1}</span>
                   <span className="triptitle">{data.title}</span>
                   <span className="host">{data.host_nickname}</span>
                   {Object.keys(JSON.parse(data.mate_idx)).length === 1 ? (
                     <span className="matecnt">1명</span>
                   ) : (
-                    <span className="matecnt">
-                      {Object.keys(JSON.parse(data.mate_idx)).length}명
-                    </span>
+                    <span className="matecnt">{Object.keys(JSON.parse(data.mate_idx)).length}명</span>
                   )}
-                  <span className="time1">
-                    {moment.tz(data.reg_time, "Asia/Seoul").format("YY-MM-DD")}
-                  </span>
+                  <span className="time1">{moment.tz(data.reg_time, "Asia/Seoul").format("YY-MM-DD")}</span>
                   {!data.update_time ? (
                     <span className="time2"></span>
                   ) : (
-                    <span className="time2">
-                      {moment
-                        .tz(data.update_time, "Asia/Seoul")
-                        .format("YY-MM-DD")}
-                    </span>
+                    <span className="time2">{moment.tz(data.update_time, "Asia/Seoul").format("YY-MM-DD")}</span>
                   )}
                 </li>
               ))}
@@ -845,7 +790,7 @@ const StoreContextMod = React.createContext({});
 
 function Mytrip() {
   const navigation = useNavigate();
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser } = React.useContext(SessionContext);
 
   const [mytrip, setMytrip] = React.useState({
     trip: null,

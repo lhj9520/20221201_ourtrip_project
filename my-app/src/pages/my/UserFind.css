@@ -10,6 +10,7 @@
   box-shadow: 0 2px 2px 0 lightgrey;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 .userfind-container > .type-header > div {
   width: 300px;
@@ -33,11 +34,13 @@
   font-weight: bold;
   cursor: pointer;
 }
-.userfind-container > .type-header > img {
+.userfind-container > .type-header > a {
+  margin-right: 22px;
+  display: flex;
+}
+.userfind-container > .type-header > a > img {
   width: 120px;
   object-fit: contain;
-  margin-right: 22px;
-  cursor: pointer;
 }
 .userfind-container > .content-container {
   width: 100%;

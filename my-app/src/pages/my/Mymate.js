@@ -1,62 +1,40 @@
-import React from "react";
-import axios from "axios";
-import "./Mymate.css";
-import "./MymateModal.css";
-import useDidMountEffect from "../useDidMountEffect";
+import React, { useContext, useState, useEffect, createContext } from "react";
+// import component
 import Menubar from "../../component/menubar";
 import Modal from "../../component/modal";
 import Loading from "../../component/Loading";
+// import src
 import greenpostit from "../../img/greenpostit.png";
 import userprofile from "../../img/userprofile.png";
-import { StoreContext } from "../../App";
-import { useNavigate } from "react-router-dom";
+import { SessionContext } from "../../App";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquareCaretUp } from "@fortawesome/free-regular-svg-icons";
-import { BASE_URL } from "../../config";
+// import css
+import "./Mymate.css";
+import "./MymateModal.css";
+// import api
+import { getUserInfo } from "../../api/My";
+import {
+  getMyMateList,
+  getMateID,
+  getMateRequest,
+  getMateAccept,
+  getMateDecline,
+  getMateDelete,
+} from "../../api/Mymate";
 
 function MateReq() {
-  const { loginUser } = React.useContext(StoreContext);
-  const { setDispatchType } = React.useContext(StoreContextDis);
-  const { mymate } = React.useContext(StoreContextM);
+  const { loginUser, setLoginUser } = useContext(userInfoContext);
+  const { mymate, fetchMateList } = useContext(MateContext);
 
   const MateAcceptHanlder = async (idx) => {
-    await axios({
-      url: `${BASE_URL}/mymate/accept`,
-      method: "POST",
-      data: {
-        idx: loginUser.mem_idx,
-        mateidx: idx,
-      },
-    })
-      .then((res) => {
-        const { code, message } = res.data;
-        if (code === "success") {
-          setDispatchType({ code: "refresh" });
-        }
-      })
-      .catch((e) => {
-        console.log("메이트 수락 오류!", e);
-      });
+    const { code, message } = await getMateAccept(loginUser.mem_idx, idx);
+    if (code === "success") fetchMateList();
   };
 
   const MateDeclineHandler = async (idx) => {
-    await axios({
-      url: `${BASE_URL}/mymate/decline`,
-      method: "POST",
-      data: {
-        idx: loginUser.mem_idx,
-        mateidx: idx,
-      },
-    })
-      .then((res) => {
-        const { code, message } = res.data;
-        if (code === "success") {
-          setDispatchType({ code: "refresh" });
-        }
-      })
-      .catch((e) => {
-        console.log("메이트 거절 오류!", e);
-      });
+    const { code, message } = await getMateDecline(loginUser.mem_idx, idx);
+    if (code === "success") fetchMateList();
   };
 
   return (
@@ -70,16 +48,10 @@ function MateReq() {
               <span className="nickname">{data.mem_nickname}</span>
               <span className="id">(@{data.mem_userid})</span>
               <div>
-                <button
-                  className="acceptbtn"
-                  onClick={() => MateAcceptHanlder(data.mem_idx)}
-                >
+                <button className="acceptbtn" onClick={() => MateAcceptHanlder(data.mem_idx)}>
                   수락
                 </button>
-                <button
-                  className="declinebtn"
-                  onClick={() => MateDeclineHandler(data.mem_idx)}
-                >
+                <button className="declinebtn" onClick={() => MateDeclineHandler(data.mem_idx)}>
                   거절
                 </button>
               </div>
@@ -91,15 +63,15 @@ function MateReq() {
   );
 }
 function MateAddModal() {
-  const { loginUser } = React.useContext(StoreContext);
+  const { loginUser, setLoginUser } = useContext(userInfoContext);
 
-  const [searchdata, setSearchdata] = React.useState("");
-  const [searchmsg, setSearchmsg] = React.useState({
+  const [searchdata, setSearchdata] = useState("");
+  const [searchmsg, setSearchmsg] = useState({
     code: "",
     msg: "",
   });
 
-  const [searchreq, setSearchreq] = React.useState({
+  const [searchreq, setSearchreq] = useState({
     idx: "",
     id: "",
     nickname: "",
@@ -112,59 +84,27 @@ function MateAddModal() {
     }
   };
 
-  const MateFindHandler = async () => {
-    await axios({
-      url: `${BASE_URL}/mymate/idfind`,
-      method: "POST",
-      data: {
-        idx: loginUser.mem_idx,
-        mateid: searchdata,
-      },
-    })
-      .then((res) => {
-        const { code, message, data } = res.data;
-        const tmp = { code: code, msg: message };
-        setSearchmsg(tmp);
-        if (code === "success") {
-          setSearchreq(data);
-        }
-      })
-      .catch((e) => {
-        console.log("메이트 조회 오류!", e);
-      });
+  const MateFindHandler = async (event) => {
+    event.preventDefault();
+
+    const { code, message, data } = await getMateID(loginUser.mem_idx, searchdata);
+    setSearchmsg({ code: code, msg: message });
+    if (code === "success") setSearchreq(data);
   };
 
   const MateReqHandler = async () => {
-    await axios({
-      url: `${BASE_URL}/mymate/req`,
-      method: "POST",
-      data: {
-        idx: loginUser.mem_idx,
-        mateidx: searchreq.idx,
-      },
-    })
-      .then((res) => {
-        const { code, message } = res.data;
-        const tmp = { code: code, msg: message };
-        setSearchmsg(tmp);
-      })
-      .catch((e) => {
-        console.log("메이트 신청 오류!", e);
-      });
+    const { code, message } = await getMateRequest(loginUser.mem_idx, searchreq.idx);
+    setSearchmsg({ code: code, msg: message });
   };
 
   return (
     <div className="mateadd">
-      <div className="findcontainer">
-        <input
-          type="text"
-          maxLength={12}
-          value={searchdata}
-          placeholder="아이디 입력"
-          onChange={valuechange}
-        />
-        <button onClick={MateFindHandler}>조회</button>
-      </div>
+      <form className="findcontainer" onSubmit={MateFindHandler}>
+        <input type="text" maxLength={12} value={searchdata} placeholder="아이디 입력" onChange={valuechange} />
+        <button onClick={MateFindHandler} type="submit">
+          조회
+        </button>
+      </form>
       {searchmsg.code === "success" ? (
         <div className="result">
           <span id="id">{searchreq.id}</span>
@@ -172,7 +112,7 @@ function MateAddModal() {
           {searchmsg.msg === "mate" && <></>}
           {searchmsg.msg === "requested" && <button>요청됨</button>}
           {searchmsg.msg === "true" && (
-            <button className="req" onClick={MateReqHandler}>
+            <button className="req" onClick={MateReqHandler} type="button">
               요청
             </button>
           )}
@@ -184,28 +124,12 @@ function MateAddModal() {
   );
 }
 function MateDelModal() {
-  const { loginUser } = React.useContext(StoreContext);
-  const { setDispatchType } = React.useContext(StoreContextDis);
-  const { mymate } = React.useContext(StoreContextM);
+  const { loginUser, setLoginUser } = useContext(userInfoContext);
+  const { mymate, fetchMateList } = useContext(MateContext);
 
   const MateDeleteHandler = async (idx) => {
-    await axios({
-      url: `${BASE_URL}/mymate/delete`,
-      method: "POST",
-      data: {
-        idx: loginUser.mem_idx,
-        mateidx: idx,
-      },
-    })
-      .then((res) => {
-        const { code, message } = res.data;
-        if (code === "success") {
-          setDispatchType({ code: "refresh" });
-        }
-      })
-      .catch((e) => {
-        console.log("메이트 삭제 오류!", e);
-      });
+    const { code, message } = await getMateDelete(loginUser.mem_idx, idx);
+    if (code === "success") fetchMateList();
   };
 
   return (
@@ -219,10 +143,7 @@ function MateDelModal() {
               <span className="nickname">{data.mem_nickname}</span>
               <span className="id">(@{data.mem_userid})</span>
               <div>
-                <button
-                  className="declinebtn"
-                  onClick={() => MateDeleteHandler(data.idx)}
-                >
+                <button className="declinebtn" onClick={() => MateDeleteHandler(data.idx)}>
                   삭제
                 </button>
               </div>
@@ -234,45 +155,34 @@ function MateDelModal() {
   );
 }
 function Modalcontainer() {
-  const { mymate } = React.useContext(StoreContextM);
+  const { mymate, setDispatchType } = useContext(MateContext);
+  const [modalList, setModalList] = useState([false, false, false]);
 
-  const [modalOpen1, setModalOpen1] = React.useState(false);
-  const [modalOpen2, setModalOpen2] = React.useState(false);
-  const [modalOpen3, setModalOpen3] = React.useState(false);
+  const modalHandler = (idx) => {
+    let newArr = [false, false, false];
+    newArr[idx] = !modalList[idx];
+    setModalList(newArr);
+  };
 
   return (
     <div>
-      <span onClick={() => setModalOpen1(true)}>
-        메이트 요청({mymate.req.length})
-      </span>
-      <Modal
-        open={modalOpen1}
-        close={() => setModalOpen1(false)}
-        header="메이트 요청"
-      >
+      <span onClick={() => modalHandler(0)}>메이트 요청({mymate.req.length})</span>
+      <Modal open={modalList[0]} close={() => modalHandler(0)} header="메이트 요청">
         <MateReq />
       </Modal>
-      <span onClick={() => setModalOpen2(true)}>메이트 추가</span>
-      <Modal
-        open={modalOpen2}
-        close={() => setModalOpen2(false)}
-        header="메이트 추가"
-      >
+      <span onClick={() => modalHandler(1)}>메이트 추가</span>
+      <Modal open={modalList[1]} close={() => modalHandler(1)} header="메이트 추가">
         <MateAddModal />
       </Modal>
-      <span onClick={() => setModalOpen3(true)}>메이트 관리</span>
-      <Modal
-        open={modalOpen3}
-        close={() => setModalOpen3(false)}
-        header="메이트 관리"
-      >
+      <span onClick={() => modalHandler(2)}>메이트 관리</span>
+      <Modal open={modalList[2]} close={() => modalHandler(2)} header="메이트 관리">
         <MateDelModal />
       </Modal>
     </div>
   );
 }
 function Contents() {
-  const { mymate } = React.useContext(StoreContextM);
+  const { mymate, setDispatchType } = useContext(MateContext);
 
   return (
     <div className="content-mymate">
@@ -285,11 +195,7 @@ function Contents() {
               <img src={greenpostit} alt="matelist" className="postit" />
               <div className="userinfo">
                 <div className="imgbox">
-                  <img
-                    src={userprofile}
-                    alt="userprofile"
-                    className="userprofile"
-                  />
+                  <img src={userprofile} alt="userprofile" className="userprofile" />
                 </div>
                 <div className="infobox">
                   <span className="nickname">{data.mem_nickname}</span>
@@ -303,64 +209,48 @@ function Contents() {
     </div>
   );
 }
-const StoreContextDis = React.createContext({});
-const StoreContextM = React.createContext({});
+const MateContext = createContext(null);
+const userInfoContext = createContext(null);
 
 function Mymate() {
-  const navigation = useNavigate();
+  //App에서 SessionContext 받아온 후 로그인세션 사용
+  const { loginSession, setLoginSession } = useContext(SessionContext);
 
-  //App에서 StoreContext 받아온 후 로그인세션 사용
-  const { loginUser } = React.useContext(StoreContext);
-
-  const [dispatch, setDispatchType] = React.useState({
-    code: null,
-    params: null,
-  });
-
-  const [mymate, setMymate] = React.useState({
+  const [loading, setLoading] = useState(null);
+  const [loginUser, setLoginUser] = useState(null);
+  const [mymate, setMymate] = useState({
     mate: null,
     req: null,
   });
 
-  const [loading, setLoading] = React.useState(null);
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      setLoginUser(await getUserInfo());
+    };
 
-  React.useEffect(() => {
-    if (loginUser.session === "none") {
-      navigation("/login", { replace: true });
-    } else if (Object.keys(loginUser).length > 1) {
-      MyMateListHandler();
-    }
+    if (loginSession) fetchUserInfo();
+  }, [loginSession]);
+
+  useEffect(() => {
+    if (loginUser) fetchMateList();
   }, [loginUser]);
 
-  useDidMountEffect(() => {
-    if (dispatch.code === "refresh") {
-      MyMateListHandler();
-    }
-  }, [dispatch]);
-
-  const MyMateListHandler = async () => {
+  const fetchMateList = async () => {
     setLoading(true);
-    await axios({
-      url: `${BASE_URL}/mymate/reqlist`,
-      method: "POST",
-      data: { idx: loginUser.mem_idx },
-    })
-      .then((res) => {
-        const { code, mate, req } = res.data;
-        if (code === "success") {
-          setMymate((prevState) => {
-            return {
-              ...prevState,
-              mate: mate,
-              req: req,
-            };
-          });
-        }
-        setLoading(false);
-      })
-      .catch((e) => {
-        console.log("메이트 목록 업데이트 오류!", e);
+
+    const { code, mate, req } = await getMyMateList(loginUser.mem_idx);
+
+    if (code === "success") {
+      setMymate((prevState) => {
+        return {
+          ...prevState,
+          mate: mate,
+          req: req,
+        };
       });
+    }
+
+    setLoading(false);
   };
 
   const ScrollTop = () => {
@@ -373,26 +263,24 @@ function Mymate() {
   return (
     <>
       {loading ? <Loading /> : null}
-      {Object.keys(loginUser).length > 1 && (
-        <StoreContextDis.Provider value={{ setDispatchType }}>
-          <StoreContextM.Provider value={{ mymate }}>
-            <Menubar />
-            {mymate.mate && mymate.req && (
-              <div className="contents-container mymatecon">
-                <div className="title mymate">
-                  <span>나의 여행 메이트</span>
-                  <Modalcontainer />
+      {loginSession && loginUser && (
+        <>
+          <Menubar />
+          <userInfoContext.Provider value={{ loginUser, setLoginUser }}>
+            <MateContext.Provider value={{ mymate, fetchMateList }}>
+              {mymate.mate && mymate.req && (
+                <div className="contents-container mymatecon">
+                  <div className="title mymate">
+                    <span>나의 여행 메이트</span>
+                    <Modalcontainer />
+                  </div>
+                  <Contents />
+                  <FontAwesomeIcon icon={faSquareCaretUp} className="imgicon topbtn" onClick={ScrollTop} />
                 </div>
-                <Contents />
-                <FontAwesomeIcon
-                  icon={faSquareCaretUp}
-                  className="imgicon topbtn"
-                  onClick={ScrollTop}
-                />
-              </div>
-            )}
-          </StoreContextM.Provider>
-        </StoreContextDis.Provider>
+              )}
+            </MateContext.Provider>
+          </userInfoContext.Provider>
+        </>
       )}
     </>
   );
