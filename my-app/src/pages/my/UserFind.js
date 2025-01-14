@@ -8,7 +8,12 @@ import logoimg from "../../img/logo_oco.png";
 import "./UserFind.css";
 
 import { SessionContext } from "../../App";
-import { getEmailcode, getFindID, getFindPW, getChangePW } from "../../api/Auth";
+import {
+  getEmailcode,
+  getFindID,
+  getFindPW,
+  getChangePW,
+} from "../../api/Auth";
 
 function InputboxID(props) {
   const { res1, setRes1 } = useContext(StoreContextRes1);
@@ -87,7 +92,9 @@ function InputboxID(props) {
       return;
     }
 
-    alert("인증번호를 발송했습니다.\n인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요.");
+    alert(
+      "인증번호를 발송했습니다.\n인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요."
+    );
     setDisable(false);
 
     const { code, username, useremail, vericode } = await getEmailcode({
@@ -165,13 +172,21 @@ function InputboxID(props) {
 
   return (
     <form onSubmit={onSubmit} className="findtextbox">
-      {idcert && <span className="large">본인확인 이메일로 인증({res2.email})</span>}
+      {idcert && (
+        <span className="large">본인확인 이메일로 인증({res2.email})</span>
+      )}
       <span>
-        회원정보에 등록한 {seltype + "와"} 입력한 {seltype + "가"} 같아야 인증번호를 받을 수 있습니다.
+        회원정보에 등록한 {seltype + "와"} 입력한 {seltype + "가"} 같아야
+        인증번호를 받을 수 있습니다.
       </span>
       <div>
         <span>이름</span>
-        <input type="text" maxLength={5} value={idata.name} onChange={valuechange1} />
+        <input
+          type="text"
+          maxLength={5}
+          value={idata.name}
+          onChange={valuechange1}
+        />
       </div>
       <div>
         <span>{seltype}</span>
@@ -199,7 +214,6 @@ function InputboxID(props) {
     </form>
   );
 }
-
 function InputboxPW() {
   const { res2, setRes2 } = useContext(StoreContextRes2);
 
@@ -251,14 +265,18 @@ function InputboxPW() {
         <span>비밀번호를 찾고자하는 아이디를 입력해주세요.</span>
         <div>
           <span>아이디</span>
-          <input type="text" maxLength={12} value={sdata.id} onChange={valuechange} />
+          <input
+            type="text"
+            maxLength={12}
+            value={sdata.id}
+            onChange={valuechange}
+          />
           <button type="submit">다음</button>
         </div>
       </div>
     </form>
   );
 }
-
 function Choicebox() {
   const { res1, setRes1 } = useContext(StoreContextRes1);
 
@@ -299,7 +317,6 @@ function Choicebox() {
     </div>
   );
 }
-
 function Result() {
   const { res1 } = useContext(StoreContextRes1);
 
@@ -317,7 +334,6 @@ function Result() {
     </div>
   );
 }
-
 function Resultpw() {
   const { res2 } = useContext(StoreContextRes2);
 
@@ -333,7 +349,11 @@ function Resultpw() {
                 <PwModify></PwModify>
               ) : (
                 <div className="pwcertpadding">
-                  <InputboxID className="pwcertpadding" seltype="이메일 주소" idcert={true}></InputboxID>
+                  <InputboxID
+                    className="pwcertpadding"
+                    seltype="이메일 주소"
+                    idcert={true}
+                  ></InputboxID>
                 </div>
               )}
             </div>
@@ -343,7 +363,6 @@ function Resultpw() {
     </div>
   );
 }
-
 function PwModify() {
   const { res2, setRes2 } = useContext(StoreContextRes2);
 
@@ -375,7 +394,8 @@ function PwModify() {
   const onSubmit = async (event) => {
     event.preventDefault();
 
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
 
     if (password.pwd === "" || password.repwd === "") {
       alert("비밀번호를 입력해주세요.");
@@ -392,7 +412,10 @@ function PwModify() {
       return;
     }
 
-    const { code, message } = await getChangePW({ id: res2.id, modpwd: password.pwd });
+    const { code, message } = await getChangePW({
+      id: res2.id,
+      modpwd: password.pwd,
+    });
     if (code === "success") {
       setRes2((prevState) => {
         return { ...prevState, open: true, modres: true };
@@ -436,7 +459,6 @@ function PwModify() {
     </div>
   );
 }
-
 function IdFind() {
   return (
     <div className="id-content">
@@ -447,7 +469,6 @@ function IdFind() {
     </div>
   );
 }
-
 function PwFind() {
   return (
     <div className="pw-content">
@@ -518,7 +539,9 @@ function UserFind() {
           <div className="content-container">
             <StoreContextRes1.Provider value={{ res1, setRes1 }}>
               <StoreContextRes2.Provider value={{ res2, setRes2 }}>
-                <div className="content-box">{type === "id" ? <IdFind></IdFind> : <PwFind></PwFind>}</div>
+                <div className="content-box">
+                  {type === "id" ? <IdFind></IdFind> : <PwFind></PwFind>}
+                </div>
               </StoreContextRes2.Provider>
             </StoreContextRes1.Provider>
           </div>

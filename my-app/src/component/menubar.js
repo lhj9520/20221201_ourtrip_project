@@ -15,7 +15,7 @@ function Menubar() {
   const location = useLocation();
 
   const [State, setState] = useState({
-    session: "",
+    session: "로그인",
   });
 
   useEffect(() => {

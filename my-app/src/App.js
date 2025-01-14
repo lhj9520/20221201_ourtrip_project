@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-
+// import css
 import "./App.css";
+// import component
 import Join from "./pages/Join";
 import Login from "./pages/Login";
 import UserFind from "./pages/my/UserFind";
@@ -11,11 +12,11 @@ import Mymate from "./pages/my/Mymate";
 import Mytrip from "./pages/my/Mytrip";
 import My from "./pages/my/My";
 import Plan from "./pages/plan/Plan";
-import Kakao from "./pages/KakaoLogin";
+// import Kakao from "./pages/KakaoLogin";
 import Empty from "./pages/Empty";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import PublicRoutes from "./utils/PublicRoutes";
-
+// import api
 import { getLoginSession } from "./api/Auth";
 
 export const SessionContext = React.createContext({});
@@ -24,6 +25,7 @@ function App() {
   const seq = "";
   const [loginSession, setLoginSession] = React.useState();
 
+  // 로그인 세션 정보 가져오기
   useEffect(() => {
     const fetchLoginSession = async () => {
       setLoginSession(await getLoginSession());

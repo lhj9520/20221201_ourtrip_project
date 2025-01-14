@@ -6,7 +6,6 @@ import Loading from "../../component/Loading";
 // import src
 import greenpostit from "../../img/greenpostit.png";
 import userprofile from "../../img/userprofile.png";
-import { SessionContext } from "../../App";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquareCaretUp } from "@fortawesome/free-regular-svg-icons";
 // import css
@@ -15,13 +14,15 @@ import "./MymateModal.css";
 // import api
 import { getUserInfo } from "../../api/My";
 import {
-  getMyMateList,
+  getMyMateReqList,
   getMateID,
   getMateRequest,
   getMateAccept,
   getMateDecline,
   getMateDelete,
 } from "../../api/Mymate";
+// import context
+import { SessionContext } from "../../App";
 
 function MateReq() {
   const { loginUser, setLoginUser } = useContext(userInfoContext);
@@ -48,10 +49,16 @@ function MateReq() {
               <span className="nickname">{data.mem_nickname}</span>
               <span className="id">(@{data.mem_userid})</span>
               <div>
-                <button className="acceptbtn" onClick={() => MateAcceptHanlder(data.mem_idx)}>
+                <button
+                  className="acceptbtn"
+                  onClick={() => MateAcceptHanlder(data.mem_idx)}
+                >
                   수락
                 </button>
-                <button className="declinebtn" onClick={() => MateDeclineHandler(data.mem_idx)}>
+                <button
+                  className="declinebtn"
+                  onClick={() => MateDeclineHandler(data.mem_idx)}
+                >
                   거절
                 </button>
               </div>
@@ -87,20 +94,32 @@ function MateAddModal() {
   const MateFindHandler = async (event) => {
     event.preventDefault();
 
-    const { code, message, data } = await getMateID(loginUser.mem_idx, searchdata);
+    const { code, message, data } = await getMateID(
+      loginUser.mem_idx,
+      searchdata
+    );
     setSearchmsg({ code: code, msg: message });
     if (code === "success") setSearchreq(data);
   };
 
   const MateReqHandler = async () => {
-    const { code, message } = await getMateRequest(loginUser.mem_idx, searchreq.idx);
+    const { code, message } = await getMateRequest(
+      loginUser.mem_idx,
+      searchreq.idx
+    );
     setSearchmsg({ code: code, msg: message });
   };
 
   return (
     <div className="mateadd">
       <form className="findcontainer" onSubmit={MateFindHandler}>
-        <input type="text" maxLength={12} value={searchdata} placeholder="아이디 입력" onChange={valuechange} />
+        <input
+          type="text"
+          maxLength={12}
+          value={searchdata}
+          placeholder="아이디 입력"
+          onChange={valuechange}
+        />
         <button onClick={MateFindHandler} type="submit">
           조회
         </button>
@@ -143,7 +162,10 @@ function MateDelModal() {
               <span className="nickname">{data.mem_nickname}</span>
               <span className="id">(@{data.mem_userid})</span>
               <div>
-                <button className="declinebtn" onClick={() => MateDeleteHandler(data.idx)}>
+                <button
+                  className="declinebtn"
+                  onClick={() => MateDeleteHandler(data.idx)}
+                >
                   삭제
                 </button>
               </div>
@@ -155,7 +177,7 @@ function MateDelModal() {
   );
 }
 function Modalcontainer() {
-  const { mymate, setDispatchType } = useContext(MateContext);
+  const { mymate, fetchMateList } = useContext(MateContext);
   const [modalList, setModalList] = useState([false, false, false]);
 
   const modalHandler = (idx) => {
@@ -166,23 +188,37 @@ function Modalcontainer() {
 
   return (
     <div>
-      <span onClick={() => modalHandler(0)}>메이트 요청({mymate.req.length})</span>
-      <Modal open={modalList[0]} close={() => modalHandler(0)} header="메이트 요청">
+      <span onClick={() => modalHandler(0)}>
+        메이트 요청({mymate.req.length})
+      </span>
+      <Modal
+        open={modalList[0]}
+        close={() => modalHandler(0)}
+        header="메이트 요청"
+      >
         <MateReq />
       </Modal>
       <span onClick={() => modalHandler(1)}>메이트 추가</span>
-      <Modal open={modalList[1]} close={() => modalHandler(1)} header="메이트 추가">
+      <Modal
+        open={modalList[1]}
+        close={() => modalHandler(1)}
+        header="메이트 추가"
+      >
         <MateAddModal />
       </Modal>
       <span onClick={() => modalHandler(2)}>메이트 관리</span>
-      <Modal open={modalList[2]} close={() => modalHandler(2)} header="메이트 관리">
+      <Modal
+        open={modalList[2]}
+        close={() => modalHandler(2)}
+        header="메이트 관리"
+      >
         <MateDelModal />
       </Modal>
     </div>
   );
 }
 function Contents() {
-  const { mymate, setDispatchType } = useContext(MateContext);
+  const { mymate, fetchMateList } = useContext(MateContext);
 
   return (
     <div className="content-mymate">
@@ -195,7 +231,11 @@ function Contents() {
               <img src={greenpostit} alt="matelist" className="postit" />
               <div className="userinfo">
                 <div className="imgbox">
-                  <img src={userprofile} alt="userprofile" className="userprofile" />
+                  <img
+                    src={userprofile}
+                    alt="userprofile"
+                    className="userprofile"
+                  />
                 </div>
                 <div className="infobox">
                   <span className="nickname">{data.mem_nickname}</span>
@@ -209,20 +249,21 @@ function Contents() {
     </div>
   );
 }
-const MateContext = createContext(null);
+
 const userInfoContext = createContext(null);
+const MateContext = createContext(null);
 
 function Mymate() {
+  const [loading, setLoading] = useState(null);
   //App에서 SessionContext 받아온 후 로그인세션 사용
   const { loginSession, setLoginSession } = useContext(SessionContext);
-
-  const [loading, setLoading] = useState(null);
   const [loginUser, setLoginUser] = useState(null);
   const [mymate, setMymate] = useState({
     mate: null,
     req: null,
   });
 
+  // 로그인 세션에 따른 사용자 정보 저장
   useEffect(() => {
     const fetchUserInfo = async () => {
       setLoginUser(await getUserInfo());
@@ -231,14 +272,16 @@ function Mymate() {
     if (loginSession) fetchUserInfo();
   }, [loginSession]);
 
+  // 로그인 정보에 따른 메이트 목록 요청
   useEffect(() => {
     if (loginUser) fetchMateList();
   }, [loginUser]);
 
+  // 메이트 목록 요청
   const fetchMateList = async () => {
     setLoading(true);
 
-    const { code, mate, req } = await getMyMateList(loginUser.mem_idx);
+    const { code, mate, req } = await getMyMateReqList(loginUser.mem_idx);
 
     if (code === "success") {
       setMymate((prevState) => {
@@ -275,7 +318,11 @@ function Mymate() {
                     <Modalcontainer />
                   </div>
                   <Contents />
-                  <FontAwesomeIcon icon={faSquareCaretUp} className="imgicon topbtn" onClick={ScrollTop} />
+                  <FontAwesomeIcon
+                    icon={faSquareCaretUp}
+                    className="imgicon topbtn"
+                    onClick={ScrollTop}
+                  />
                 </div>
               )}
             </MateContext.Provider>

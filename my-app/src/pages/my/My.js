@@ -1,4 +1,10 @@
-import React, { useRef, useEffect, useState, useContext, createContext } from "react";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useContext,
+  createContext,
+} from "react";
 import { useNavigate } from "react-router-dom";
 // import src
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,7 +17,13 @@ import "./MyModal.css";
 import Menubar from "../../component/menubar";
 import Modal from "../../component/modal";
 // import api
-import { getLogout, getWithdrawal, getEmailcode, getDuplicateEmail, getDuplicateNickname } from "../../api/Auth";
+import {
+  getLogout,
+  getWithdrawal,
+  getEmailcode,
+  getDuplicateEmail,
+  getDuplicateNickname,
+} from "../../api/Auth";
 import {
   getUserInfo,
   getUpdateNickname,
@@ -85,7 +97,15 @@ function NicknameValue() {
       <span>닉네임</span>
       <div className="info-box">
         {inputstate && <span>{loginUser && loginUser.mem_nickname}</span>}
-        {!inputstate && <input ref={inputFocus} type="text" maxLength={12} value={nickname} onChange={valuechange} />}
+        {!inputstate && (
+          <input
+            ref={inputFocus}
+            type="text"
+            maxLength={12}
+            value={nickname}
+            onChange={valuechange}
+          />
+        )}
         {inputstate && (
           <button
             onClick={() => {
@@ -114,7 +134,6 @@ function NicknameValue() {
     </div>
   );
 }
-
 function EmailValue() {
   const { loginUser, setLoginUser } = useContext(userInfoContext);
 
@@ -145,7 +164,9 @@ function EmailValue() {
   };
 
   const emailcodeHandler = async () => {
-    const { code, useremail, vericode } = await getEmailcode({ youremail: inemail });
+    const { code, useremail, vericode } = await getEmailcode({
+      youremail: inemail,
+    });
 
     if (code === 200) {
       setEmail(useremail);
@@ -215,7 +236,13 @@ function EmailValue() {
           </div>
           <div>
             <span>변경 이메일</span>
-            <input ref={inputFocus} type="text" maxLength={320} value={inemail} onChange={valuechange} />
+            <input
+              ref={inputFocus}
+              type="text"
+              maxLength={320}
+              value={inemail}
+              onChange={valuechange}
+            />
             <button onClick={emailvalidcheck}>인증번호 받기</button>
             <span className="msg">{emsg1}</span>
           </div>
@@ -244,7 +271,6 @@ function EmailValue() {
     </div>
   );
 }
-
 function EmailModModal() {
   const { loginUser, setLoginUser } = useContext(userInfoContext);
 
@@ -276,7 +302,6 @@ function EmailModModal() {
     </div>
   );
 }
-
 function NameValue() {
   const { loginUser, setLoginUser } = useContext(userInfoContext);
 
@@ -334,7 +359,15 @@ function NameValue() {
       <span>이름</span>
       <div className="info-box">
         {inputstate && <span>{loginUser && loginUser.mem_username}</span>}
-        {!inputstate && <input ref={inputFocus} type="text" maxLength={5} value={username} onChange={valuechange} />}
+        {!inputstate && (
+          <input
+            ref={inputFocus}
+            type="text"
+            maxLength={5}
+            value={username}
+            onChange={valuechange}
+          />
+        )}
         {inputstate && (
           <button
             onClick={() => {
@@ -363,7 +396,6 @@ function NameValue() {
     </div>
   );
 }
-
 function PhoneValue() {
   const { loginUser, setLoginUser } = useContext(userInfoContext);
 
@@ -416,7 +448,15 @@ function PhoneValue() {
       <span>휴대폰 전화번호</span>
       <div className="info-box">
         {inputstate && <span>{loginUser && loginUser.mem_phone}</span>}
-        {!inputstate && <input ref={inputFocus} type="text" maxLength={13} value={phone} onChange={valuechange} />}
+        {!inputstate && (
+          <input
+            ref={inputFocus}
+            type="text"
+            maxLength={13}
+            value={phone}
+            onChange={valuechange}
+          />
+        )}
         {inputstate && (
           <button
             onClick={() => {
@@ -445,7 +485,6 @@ function PhoneValue() {
     </div>
   );
 }
-
 function Pwdvalue() {
   const { loginUser, setLoginUser } = useContext(userInfoContext);
 
@@ -471,7 +510,10 @@ function Pwdvalue() {
   const [inputset, setInputset] = useState(true);
 
   const pwdvalchange = async () => {
-    const { code, message } = await getUpdatePassword(loginUser.mem_idx, modpwd);
+    const { code, message } = await getUpdatePassword(
+      loginUser.mem_idx,
+      modpwd
+    );
 
     if (code === "success") {
       // userInfo Update
@@ -520,7 +562,8 @@ function Pwdvalue() {
   };
 
   const valuechange2 = (event) => {
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
     const data = event.target.value;
     setModpwd(data);
     //비밀번호 예외처리
@@ -654,7 +697,6 @@ function Pwdvalue() {
     </div>
   );
 }
-
 function PwdModModal() {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -689,17 +731,17 @@ function My() {
   const [modalOpen, setModalOpen] = useState(false);
   const [loginUser, setLoginUser] = useState(null);
 
+  // 로그인 세션에 따른 사용자 정보 저장
   useEffect(() => {
     const fetchUserInfo = async () => {
       setLoginUser(await getUserInfo());
     };
 
-    if (loginSession) {
-      fetchUserInfo();
-    }
+    if (loginSession) fetchUserInfo();
   }, [loginSession]);
 
-  const withdrawalreq = async () => {
+  // 회원 탈퇴 요청
+  const withdrawalHandler = async () => {
     const { code, message } = await getWithdrawal(loginUser.mem_idx);
 
     if (code === "success") {
@@ -740,12 +782,21 @@ function My() {
               </section>
               <section className="Withdrawal">
                 <span onClick={() => setModalOpen(true)}>회원탈퇴하기</span>
-                <Modal open={modalOpen} close={() => setModalOpen(false)} header="회원 탈퇴">
+                <Modal
+                  open={modalOpen}
+                  close={() => setModalOpen(false)}
+                  header="회원 탈퇴"
+                >
                   <div className="Withdrawal-box">
                     <span>정말로 탈퇴하시겠습니까?</span>
-                    <span className="small">작성한 글은 자동으로 삭제되지 않습니다.</span>
+                    <span className="small">
+                      작성한 글은 자동으로 삭제되지 않습니다.
+                    </span>
                     <div>
-                      <button className="withdrawalbtn" onClick={withdrawalreq}>
+                      <button
+                        className="withdrawalbtn"
+                        onClick={withdrawalHandler}
+                      >
                         확인
                       </button>
                       <button onClick={() => setModalOpen(false)}>취소</button>

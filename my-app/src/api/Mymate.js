@@ -7,6 +7,23 @@ axios.defaults.withCredentials = true;
 export const getMyMateList = async (useridx) => {
   try {
     const response = await axios({
+      url: `${BASE_URL}/mymate/list`,
+      method: "POST",
+      data: { idx: useridx },
+    });
+
+    console.log("메이트 목록 조회 : ", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("메이트 목록 조회 실패 :", error);
+    return { code: "error", message: "axios error", redirect: "" };
+  }
+};
+
+// 메이트 목록 조회(요청 정보 포함)
+export const getMyMateReqList = async (useridx) => {
+  try {
+    const response = await axios({
       url: `${BASE_URL}/mymate/reqlist`,
       method: "POST",
       data: { idx: useridx },
