@@ -18,12 +18,12 @@ export const getUserInfo = async () => {
 };
 
 // 유저 닉네임 변경
-export const getUpdateNickname = async (useridx, nickname) => {
+export const getUpdateNickname = async (user_idx, user_nextnickname) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/updateuser/nickname`,
       method: "POST",
-      data: { idx: useridx, nickname: nickname },
+      data: { idx: user_idx, nickname: user_nextnickname },
     });
 
     console.log("닉네임 변경 : ", response.data);
@@ -36,12 +36,12 @@ export const getUpdateNickname = async (useridx, nickname) => {
 };
 
 // 유저 이메일 변경
-export const getUpdateEmail = async (useridx, nextemail) => {
+export const getUpdateEmail = async (user_idx, user_nextemail) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/updateuser/email`,
       method: "POST",
-      data: { idx: useridx, email: nextemail },
+      data: { idx: user_idx, email: user_nextemail },
     });
 
     console.log("이메일 변경 : ", response.data);
@@ -54,12 +54,12 @@ export const getUpdateEmail = async (useridx, nextemail) => {
 };
 
 // 유저 이름 변경
-export const getUpdateName = async (useridx, nextname) => {
+export const getUpdateName = async (user_idx, user_nextname) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/updateuser/name`,
       method: "POST",
-      data: { idx: useridx, username: nextname },
+      data: { idx: user_idx, username: user_nextname },
     });
 
     console.log("이름 변경 : ", response.data);
@@ -72,12 +72,12 @@ export const getUpdateName = async (useridx, nextname) => {
 };
 
 // 유저 핸드폰 번호 변경
-export const getUpdatePhone = async (useridx, nextphone) => {
+export const getUpdatePhone = async (user_idx, user_nextphone) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/updateuser/phone`,
       method: "POST",
-      data: { idx: useridx, phone: nextphone },
+      data: { idx: user_idx, phone: user_nextphone },
     });
 
     console.log("전화번호 변경 : ", response.data);
@@ -90,12 +90,12 @@ export const getUpdatePhone = async (useridx, nextphone) => {
 };
 
 // 유저 비밀번호 확인
-export const getCheckPassword = async (useridx, currentpassword) => {
+export const getCheckPassword = async (user_idx, user_currentpw) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/updateuser/pwdcheck`,
       method: "POST",
-      data: { idx: useridx, curpwd: currentpassword },
+      data: { idx: user_idx, curpwd: user_currentpw },
     });
 
     console.log("비밀번호 변경 확인 : ", response.data);
@@ -108,12 +108,12 @@ export const getCheckPassword = async (useridx, currentpassword) => {
 };
 
 // 유저 비밀번호 변경
-export const getUpdatePassword = async (useridx, nextpassword) => {
+export const getUpdatePassword = async (user_idx, user_nextpw) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/auth/pwdchange`,
       method: "POST",
-      data: { idx: useridx, modpwd: nextpassword },
+      data: { idx: user_idx, modpwd: user_nextpw },
     });
 
     console.log("비밀번호 변경 : ", response.data);

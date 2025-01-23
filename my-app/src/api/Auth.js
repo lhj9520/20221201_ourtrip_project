@@ -8,14 +8,14 @@ axios.defaults.withCredentials = true;
  */
 
 // 로그인 요청
-export const getLogin = async (userid, userpw) => {
+export const getLogin = async (user_id, user_pw) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/auth/login`,
       method: "POST",
       data: {
-        id: userid,
-        pw: userpw,
+        id: user_id,
+        pw: user_pw,
       },
     });
 
@@ -53,12 +53,12 @@ export const getLogout = async () => {
 };
 
 // 회원 탈퇴 요청
-export const getWithdrawal = async (useridx) => {
+export const getWithdrawal = async (user_idx) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/auth/withdrawalreq`,
       method: "POST",
-      data: { idx: useridx },
+      data: { idx: user_idx },
     });
     console.log("회원 탈퇴 세션 : ", response.data);
     return response.data;
@@ -91,12 +91,12 @@ export const getEmailcode = async (params) => {
 };
 
 // 유저 아이디 중복검사
-export const getDuplicateID = async (joinID) => {
+export const getDuplicateID = async (join_id) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/dupcheck/id`,
       method: "POST",
-      data: { id: joinID },
+      data: { id: join_id },
     });
 
     console.log("아이디 중복검사 : ", response.data);
@@ -109,12 +109,12 @@ export const getDuplicateID = async (joinID) => {
 };
 
 // 유저 닉네임 중복검사
-export const getDuplicateNickname = async (nickname) => {
+export const getDuplicateNickname = async (join_nickname) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/dupcheck/nickname`,
       method: "POST",
-      data: { nickname: nickname },
+      data: { nickname: join_nickname },
     });
 
     console.log("닉네임 중복검사 : ", response.data);
@@ -127,12 +127,12 @@ export const getDuplicateNickname = async (nickname) => {
 };
 
 // 유저 이메일 중복검사
-export const getDuplicateEmail = async (Email) => {
+export const getDuplicateEmail = async (join_email) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/dupcheck/email`,
       method: "POST",
-      data: { email: Email },
+      data: { email: join_email },
     });
 
     console.log("이메일 중복검사 : ", response.data);

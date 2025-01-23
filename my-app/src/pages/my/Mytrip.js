@@ -18,11 +18,11 @@ import {
   getMyTripExit,
   getMyTripUpdate,
 } from "../../api/Mytrip";
-//import context
+// import context
 import { SessionContext } from "../../App";
 
 function TripAddModal() {
-  const { loginUser, setLoginUser } = useContext(userInfoContext);
+  const { loginUser } = useContext(userInfoContext);
   const { mytrip, fetchTripList } = useContext(TripContext);
 
   const [adddata, setAdddata] = useState({
@@ -241,7 +241,7 @@ function TripAddModal() {
   );
 }
 function TripUpdateModal() {
-  const { loginUser, setLoginUser } = useContext(userInfoContext);
+  const { loginUser } = useContext(userInfoContext);
   const { mytrip, fetchTripList } = useContext(TripContext);
   const [modstate, setModstate] = useState({ code: false, data: {} });
 
@@ -550,7 +550,6 @@ function TripUpdateModal() {
 function Modalcontainer() {
   const [modalOpen1, setModalOpen1] = useState(false);
   const [modalOpen2, setModalOpen2] = useState(false);
-  const { mytrip, fetchTripList } = useContext(TripContext);
 
   return (
     <div>
@@ -865,7 +864,7 @@ function Mytrip() {
       {loginSession && loginUser && (
         <>
           <Menubar />
-          <userInfoContext.Provider value={{ loginUser, setLoginUser }}>
+          <userInfoContext.Provider value={{ loginUser }}>
             <TripContext.Provider value={{ mytrip, fetchTripList }}>
               {mytrip.trip && mytrip.mate && (
                 <div className="contents-container mytripcon">

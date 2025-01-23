@@ -4,12 +4,12 @@ import { BASE_URL } from "../config";
 axios.defaults.withCredentials = true;
 
 // 메이트 목록 조회
-export const getMyMateList = async (useridx) => {
+export const getMyMateList = async (user_idx) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/mymate/list`,
       method: "POST",
-      data: { idx: useridx },
+      data: { idx: user_idx },
     });
 
     console.log("메이트 목록 조회 : ", response.data);
@@ -21,12 +21,12 @@ export const getMyMateList = async (useridx) => {
 };
 
 // 메이트 목록 조회(요청 정보 포함)
-export const getMyMateReqList = async (useridx) => {
+export const getMyMateReqList = async (user_idx) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/mymate/reqlist`,
       method: "POST",
-      data: { idx: useridx },
+      data: { idx: user_idx },
     });
 
     console.log("메이트 목록 조회 : ", response.data);
@@ -38,14 +38,14 @@ export const getMyMateReqList = async (useridx) => {
 };
 
 // 메이트 아이디 조회
-export const getMateID = async (useridx, mateid) => {
+export const getMateID = async (user_idx, mate_id) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/mymate/idfind`,
       method: "POST",
       data: {
-        idx: useridx,
-        mateid: mateid,
+        idx: user_idx,
+        mateid: mate_id,
       },
     });
 
@@ -58,14 +58,14 @@ export const getMateID = async (useridx, mateid) => {
 };
 
 // 메이트 신청
-export const getMateRequest = async (useridx, mateidx) => {
+export const getMateRequest = async (user_idx, mate_idx) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/mymate/req`,
       method: "POST",
       data: {
-        idx: useridx,
-        mateidx: mateidx,
+        idx: user_idx,
+        mateidx: mate_idx,
       },
     });
 
@@ -78,14 +78,14 @@ export const getMateRequest = async (useridx, mateidx) => {
 };
 
 // 메이트 수락
-export const getMateAccept = async (useridx, mateidx) => {
+export const getMateAccept = async (user_idx, mate_idx) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/mymate/accept`,
       method: "POST",
       data: {
-        idx: useridx,
-        mateidx: mateidx,
+        idx: user_idx,
+        mateidx: mate_idx,
       },
     });
 
@@ -98,14 +98,14 @@ export const getMateAccept = async (useridx, mateidx) => {
 };
 
 // 메이트 거절
-export const getMateDecline = async (useridx, mateidx) => {
+export const getMateDecline = async (user_idx, mate_idx) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/mymate/decline`,
       method: "POST",
       data: {
-        idx: useridx,
-        mateidx: mateidx,
+        idx: user_idx,
+        mateidx: mate_idx,
       },
     });
 
@@ -118,14 +118,14 @@ export const getMateDecline = async (useridx, mateidx) => {
 };
 
 // 메이트 삭제
-export const getMateDelete = async (useridx, mateidx) => {
+export const getMateDelete = async (user_idx, mate_idx) => {
   try {
     const response = await axios({
       url: `${BASE_URL}/mymate/delete`,
       method: "POST",
       data: {
-        idx: useridx,
-        mateidx: mateidx,
+        idx: user_idx,
+        mateidx: mate_idx,
       },
     });
 

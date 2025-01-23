@@ -27,8 +27,8 @@ router.post("/planlist", async (req, res) => {
   const result = {
     code: "success",
     message: seq + "번째 여행",
-    trip: "none",
-    timeline: "",
+    trip: null,
+    timeline: null,
   };
 
   const queryresult = await DB.runDB(
