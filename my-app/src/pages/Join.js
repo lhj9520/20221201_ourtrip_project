@@ -10,10 +10,16 @@ import useDidMountEffect from "../utils/useDidMountEffect.js";
 // import context
 import { SessionContext } from "../App";
 // import api
-import { getDuplicateID, getDuplicateEmail, getEmailcode, getDuplicateNickname, getJoin } from "../api/Auth";
+import {
+  getDuplicateID,
+  getDuplicateEmail,
+  getEmailcode,
+  getDuplicateNickname,
+  getJoin,
+} from "../api/Auth";
 
 function Join() {
-  const { loginSession, setLoginSession } = useContext(SessionContext);
+  const { loginSession } = useContext(SessionContext);
 
   const navigation = useNavigate();
 
@@ -72,7 +78,8 @@ function Join() {
   };
 
   useDidMountEffect(() => {
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
+    const passwordRegex =
+      /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
 
     if ((!pw.value && !pw.revalue) || (!pw.value && pw.revalue)) {
       setPw((prevState) => {
@@ -333,7 +340,9 @@ function Join() {
    * 이메일 인증코드 전송
    */
   const emailcodeHandler = async () => {
-    alert("인증번호를 발송했습니다.\n인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요.");
+    alert(
+      "인증번호를 발송했습니다.\n인증번호가 오지 않으면 입력하신 정보가 회원정보와 일치하는지 확인해 주세요."
+    );
     setDisable(false);
 
     const { code, vericode } = await getEmailcode({
@@ -526,7 +535,9 @@ function Join() {
                   className="item"
                   onChange={pwvaluechange}
                 />
-                <span>8~20자까지 영문,숫자,특수문자(_!@#$%^&*)모두 조합하여 입력</span>
+                <span>
+                  8~20자까지 영문,숫자,특수문자(_!@#$%^&*)모두 조합하여 입력
+                </span>
                 <section className="msgtitle">
                   <span className="msg">{pw.msg1}</span>
                 </section>
@@ -584,7 +595,11 @@ function Join() {
                   className="item overlap"
                   onChange={emailvaluechange}
                 />
-                <button type="button" className="overlapbtn" onClick={duplicateEmailCheck}>
+                <button
+                  type="button"
+                  className="overlapbtn"
+                  onClick={duplicateEmailCheck}
+                >
                   인증번호전송
                 </button>
                 <div className="emailcode">
@@ -596,7 +611,11 @@ function Join() {
                     placeholder="인증번호 6자리 숫자 입력"
                     disabled={disable}
                   />
-                  <button type="button" className="overlapbtn" onClick={VerifycodeHandler}>
+                  <button
+                    type="button"
+                    className="overlapbtn"
+                    onClick={VerifycodeHandler}
+                  >
                     확인
                   </button>
                 </div>

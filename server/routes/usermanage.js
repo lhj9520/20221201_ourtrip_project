@@ -26,7 +26,6 @@ router.post("/email", async (req, res) => {
 router.post("/nickname", async (req, res) => {
   const idx = req.body.idx;
   const nickname = req.body.nickname;
-  // console.log("닉네임 변경", idx, nickname);
 
   const result = {
     code: "success",

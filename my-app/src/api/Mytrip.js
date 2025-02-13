@@ -16,7 +16,6 @@ export const getMyTripList = async (user_idx) => {
       data: { idx: user_idx },
     });
 
-    console.log("여행 목록 조회 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("여행 목록 조회 실패 :", error);
@@ -33,7 +32,6 @@ export const getMyTripAdd = async (trip_data) => {
       data: trip_data,
     });
 
-    console.log("여행 추가 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("여행 추가 실패 :", error);
@@ -52,7 +50,6 @@ export const getMyTripDelete = async (trip_seq) => {
       },
     });
 
-    console.log("여행 삭제 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("여행 삭제 실패 :", error);
@@ -72,7 +69,6 @@ export const getMyTripExit = async (trip_seq, user_idx) => {
       },
     });
 
-    console.log("여행 나가기 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("여행 나가기 실패 :", error);
@@ -89,7 +85,6 @@ export const getMyTripUpdate = async (trip_data) => {
       data: trip_data,
     });
 
-    console.log("여행 수정 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("여행 수정 실패 :", error);
@@ -110,7 +105,6 @@ export const getMyTripInfo = async (trip_seq, user_idx) => {
       data: { seq: trip_seq, idx: user_idx },
     });
 
-    console.log("여행 상세 정보 조회 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("여행 상세 정보 조회 실패 :", error);
@@ -127,7 +121,6 @@ export const getMyTripTitleUpdate = async (trip_seq, trip_title) => {
       data: { seq: trip_seq, title: trip_title },
     });
 
-    console.log("여행 타이틀 수정 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("여행 타이틀 수정 실패 :", error);
@@ -144,7 +137,6 @@ export const getMyTimeLineAdd = async (timeline_data) => {
       data: timeline_data,
     });
 
-    console.log("타임라인 추가 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("타임라인 추가 실패 :", error);
@@ -161,7 +153,6 @@ export const getMyTimeLineUpdate = async (timeline_data) => {
       data: timeline_data,
     });
 
-    console.log("타임라인 수정 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("타임라인 수정 실패 :", error);
@@ -180,7 +171,6 @@ export const getMyTimeLineDelete = async (timeline_seq) => {
       },
     });
 
-    console.log("타임라인 삭제 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("타임라인 삭제 실패 :", error);

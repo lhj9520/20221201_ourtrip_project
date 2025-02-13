@@ -12,7 +12,6 @@ import Mymate from "./pages/my/Mymate";
 import Mytrip from "./pages/my/Mytrip";
 import My from "./pages/my/My";
 import Plan from "./pages/plan/Plan";
-// import Kakao from "./pages/KakaoLogin";
 import Empty from "./pages/Empty";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import PublicRoutes from "./utils/PublicRoutes";
@@ -24,13 +23,16 @@ export const SessionContext = React.createContext({});
 function App() {
   const seq = "";
   const [loginSession, setLoginSession] = React.useState();
+  const [loginType, setLoginType] = React.useState();
+
+  const fetchLoginSession = async () => {
+    const { isLogin, type } = await getLoginSession();
+    setLoginSession(isLogin);
+    setLoginType(type);
+  };
 
   // 로그인 세션 정보 가져오기
   useEffect(() => {
-    const fetchLoginSession = async () => {
-      setLoginSession(await getLoginSession());
-    };
-
     fetchLoginSession();
   }, []);
 
@@ -38,7 +40,8 @@ function App() {
     <SessionContext.Provider
       value={{
         loginSession,
-        setLoginSession,
+        loginType,
+        fetchLoginSession,
       }}
     >
       {loginSession !== undefined && (
@@ -48,7 +51,6 @@ function App() {
 
           <Route element={<PublicRoutes />}>
             <Route exact path="/join" element={<Join />} />
-            {/* <Route exact path="/oauth/callback/kakao" element={<Kakao />} /> */}
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/userfind" element={<UserFind />} />
           </Route>

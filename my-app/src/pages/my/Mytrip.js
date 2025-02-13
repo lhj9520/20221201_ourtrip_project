@@ -808,7 +808,7 @@ const TripContext = createContext(null);
 function Mytrip() {
   const [loading, setLoading] = useState(null);
   //App에서 SessionContext 받아온 후 로그인세션 사용
-  const { loginSession, setLoginSession } = useContext(SessionContext);
+  const { loginSession } = useContext(SessionContext);
   const [loginUser, setLoginUser] = useState(null);
   const [mytrip, setMytrip] = useState({
     trip: null,

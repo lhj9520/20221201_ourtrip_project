@@ -45,7 +45,7 @@ router.get("/list", (req, res) => {
 
 router.get("/more", (req, res) => {
   const { sido, gungu, name } = req.query;
-  console.log(sido, gungu, name);
+
   const url =
     "http://openapi.tour.go.kr/openapi/service/TourismResourceService/getTourResourceDetail";
 

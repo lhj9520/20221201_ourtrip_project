@@ -1280,7 +1280,7 @@ function Plan() {
   // 게시글 번호
   let { seq } = useParams();
   //App에서 SessionContext 받아온 후 로그인세션 사용
-  const { loginSession, setLoginSession } = useContext(SessionContext);
+  const { loginSession } = useContext(SessionContext);
   const [loginUser, setLoginUser] = useState(null);
   const [tripdata, setTripdata] = useState(null);
 

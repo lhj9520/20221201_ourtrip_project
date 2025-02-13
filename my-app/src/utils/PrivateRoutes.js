@@ -4,9 +4,9 @@ import { SessionContext } from "../App";
 import { Outlet, Navigate } from "react-router-dom";
 
 const PrivateRoutes = () => {
-  const { loginSession, setLoginSession } = useContext(SessionContext);
+  const { loginSession } = useContext(SessionContext);
 
-  return loginSession ? <Outlet /> : <Navigate to="/" />;
+  return loginSession ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default PrivateRoutes;

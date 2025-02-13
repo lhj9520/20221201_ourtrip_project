@@ -8,8 +8,6 @@ export const getUserInfo = async () => {
   try {
     const response = await axios(`${BASE_URL}/auth/userinfo`);
 
-    console.log("유저 정보 세션 : ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("사용자 정보 오류 :", error);
@@ -25,8 +23,6 @@ export const getUpdateNickname = async (user_idx, user_nextnickname) => {
       method: "POST",
       data: { idx: user_idx, nickname: user_nextnickname },
     });
-
-    console.log("닉네임 변경 : ", response.data);
 
     return response.data;
   } catch (error) {
@@ -44,8 +40,6 @@ export const getUpdateEmail = async (user_idx, user_nextemail) => {
       data: { idx: user_idx, email: user_nextemail },
     });
 
-    console.log("이메일 변경 : ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("이메일 변경 오류 :", error);
@@ -61,8 +55,6 @@ export const getUpdateName = async (user_idx, user_nextname) => {
       method: "POST",
       data: { idx: user_idx, username: user_nextname },
     });
-
-    console.log("이름 변경 : ", response.data);
 
     return response.data;
   } catch (error) {
@@ -80,8 +72,6 @@ export const getUpdatePhone = async (user_idx, user_nextphone) => {
       data: { idx: user_idx, phone: user_nextphone },
     });
 
-    console.log("전화번호 변경 : ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("전화번호 변경 오류 :", error);
@@ -98,8 +88,6 @@ export const getCheckPassword = async (user_idx, user_currentpw) => {
       data: { idx: user_idx, curpwd: user_currentpw },
     });
 
-    console.log("비밀번호 변경 확인 : ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("비밀번호 변경 확인 오류 :", error);
@@ -115,8 +103,6 @@ export const getUpdatePassword = async (user_idx, user_nextpw) => {
       method: "POST",
       data: { idx: user_idx, modpwd: user_nextpw },
     });
-
-    console.log("비밀번호 변경 : ", response.data);
 
     return response.data;
   } catch (error) {

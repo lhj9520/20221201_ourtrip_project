@@ -19,7 +19,6 @@ export const getLogin = async (user_id, user_pw) => {
       },
     });
 
-    console.log("로그인 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("로그인 실패:", error);
@@ -31,9 +30,8 @@ export const getLogin = async (user_id, user_pw) => {
 export const getLoginSession = async () => {
   try {
     const response = await axios(`${BASE_URL}/auth/authcheck`);
-    console.log("로그인 세션 : ", response.data.isLogin);
 
-    return response.data.isLogin;
+    return response.data;
   } catch (error) {
     console.error("로그인 세션 가져오기 실패:", error);
     return false;
@@ -44,7 +42,7 @@ export const getLoginSession = async () => {
 export const getLogout = async () => {
   try {
     const response = await axios(`${BASE_URL}/auth/logout`);
-    console.log("로그아웃 세션 : ", response.data.isLogin);
+
     return response.data.isLogin;
   } catch (error) {
     console.error("로그아웃 실패 :", error);
@@ -60,7 +58,7 @@ export const getWithdrawal = async (user_idx) => {
       method: "POST",
       data: { idx: user_idx },
     });
-    console.log("회원 탈퇴 세션 : ", response.data);
+
     return response.data;
   } catch (error) {
     console.error("회원 탈퇴 실패 :", error);
@@ -81,8 +79,6 @@ export const getEmailcode = async (params) => {
       data: params,
     });
 
-    console.log("이메일 인증코드 전송 : ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("이메일 인증코드 전송 오류 :", error);
@@ -98,8 +94,6 @@ export const getDuplicateID = async (join_id) => {
       method: "POST",
       data: { id: join_id },
     });
-
-    console.log("아이디 중복검사 : ", response.data);
 
     return response.data;
   } catch (error) {
@@ -117,8 +111,6 @@ export const getDuplicateNickname = async (join_nickname) => {
       data: { nickname: join_nickname },
     });
 
-    console.log("닉네임 중복검사 : ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("닉네임 중복체크 오류 :", error);
@@ -135,8 +127,6 @@ export const getDuplicateEmail = async (join_email) => {
       data: { email: join_email },
     });
 
-    console.log("이메일 중복검사 : ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("이메일 중복검사 오류 :", error);
@@ -152,8 +142,6 @@ export const getJoin = async (params) => {
       method: "POST",
       data: params,
     });
-
-    console.log("회원가입 : ", response.data);
 
     return response.data;
   } catch (error) {
@@ -175,8 +163,6 @@ export const getFindID = async (params) => {
       data: params,
     });
 
-    console.log("유저 아이디 찾기 : ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("유저 아이디 찾기 오류 :", error);
@@ -193,8 +179,6 @@ export const getFindPW = async (params) => {
       data: params,
     });
 
-    console.log("유저 비밀번호 찾기 : ", response.data);
-
     return response.data;
   } catch (error) {
     console.error("유저 비밀번호 찾기 오류 :", error);
@@ -210,8 +194,6 @@ export const getChangePW = async (params) => {
       method: "POST",
       data: params,
     });
-
-    console.log("유저 비밀번호 찾기 : ", response.data);
 
     return response.data;
   } catch (error) {

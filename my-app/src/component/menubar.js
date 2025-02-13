@@ -9,7 +9,7 @@ import logoimg from "../img/logo_oco.png";
 
 function Menubar() {
   //App에서 StoreContext 받아온 후 로그인세션 사용
-  const { loginSession, setLoginSession } = useContext(SessionContext);
+  const { loginSession, fetchLoginSession } = useContext(SessionContext);
 
   const navigation = useNavigate();
   const location = useLocation();
@@ -36,7 +36,10 @@ function Menubar() {
     } else if (State.session === "마이페이지") {
       navigation("/my");
     } else if (State.session === "로그아웃") {
-      setLoginSession(await getLogout());
+      // 로그아웃
+      await getLogout();
+      // 로그인 세션 가져오기
+      await fetchLoginSession();
     }
   };
 

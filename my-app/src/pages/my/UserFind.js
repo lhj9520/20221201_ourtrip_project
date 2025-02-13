@@ -483,7 +483,7 @@ const StoreContextRes1 = createContext({});
 const StoreContextRes2 = createContext({});
 
 function UserFind() {
-  const { loginSession, setLoginSession } = useContext(SessionContext);
+  const { loginSession } = useContext(SessionContext);
 
   const { state } = useLocation();
   const [type, setType] = useState(state === null ? "id" : state);

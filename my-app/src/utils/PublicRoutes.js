@@ -4,7 +4,7 @@ import { SessionContext } from "../App";
 import { Outlet, Navigate } from "react-router-dom";
 
 const PublicRoutes = () => {
-  const { loginSession, setLoginSession } = useContext(SessionContext);
+  const { loginSession } = useContext(SessionContext);
 
   return loginSession ? <Navigate to="/" /> : <Outlet />;
 };

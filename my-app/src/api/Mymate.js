@@ -12,7 +12,6 @@ export const getMyMateList = async (user_idx) => {
       data: { idx: user_idx },
     });
 
-    console.log("메이트 목록 조회 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("메이트 목록 조회 실패 :", error);
@@ -29,7 +28,6 @@ export const getMyMateReqList = async (user_idx) => {
       data: { idx: user_idx },
     });
 
-    console.log("메이트 목록 조회 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("메이트 목록 조회 실패 :", error);
@@ -49,7 +47,6 @@ export const getMateID = async (user_idx, mate_id) => {
       },
     });
 
-    console.log("메이트 아이디 조회 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("메이트 아이디 조회 실패 :", error);
@@ -69,7 +66,6 @@ export const getMateRequest = async (user_idx, mate_idx) => {
       },
     });
 
-    console.log("메이트 신청 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("메이트 신청 실패 :", error);
@@ -89,7 +85,6 @@ export const getMateAccept = async (user_idx, mate_idx) => {
       },
     });
 
-    console.log("메이트 수락 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("메이트 수락 실패 :", error);
@@ -109,7 +104,6 @@ export const getMateDecline = async (user_idx, mate_idx) => {
       },
     });
 
-    console.log("메이트 거절 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("메이트 거절 실패 :", error);
@@ -129,7 +123,6 @@ export const getMateDelete = async (user_idx, mate_idx) => {
       },
     });
 
-    console.log("메이트 삭제 : ", response.data);
     return response.data;
   } catch (error) {
     console.error("메이트 삭제 실패 :", error);

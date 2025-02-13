@@ -10,18 +10,18 @@ import logoimg from "../img/logo_oco.png";
 import "./Login.css";
 
 function Login() {
-  const { loginSession, setLoginSession } = useContext(SessionContext);
+  const { loginSession, fetchLoginSession } = useContext(SessionContext);
 
   const navigation = useNavigate();
-  // const restapikey = process.env.REACT_APP_KAKAO_RESTAPI_KEY;
+  const restapikey = process.env.REACT_APP_KAKAO_RESTAPI_KEY;
+  const redirect_uri = process.env.REACT_APP_KAKAO_REDIRECT_URI;
   // const jskey = process.env.REACT_APP_KAKAOMAP_API_KEY;
-  // const redirect_uri = process.env.REACT_APP_KAKAO_REDIRECT_URI;
 
-  // const kakaosnsloginlink = `https://kauth.kakao.com/oauth/authorize?client_id=${restapikey}&redirect_uri=${redirect_uri}&response_type=code`;
+  const kakaosnsloginlink = `https://kauth.kakao.com/oauth/authorize?client_id=${restapikey}&redirect_uri=${redirect_uri}&response_type=code`;
 
-  // const kakaologinHandler = () => {
-  //   window.location.href = kakaosnsloginlink;
-  // };
+  const kakaologinHandler = () => {
+    window.location.href = kakaosnsloginlink;
+  };
 
   const [userlogin, setUserlogin] = useState({
     id: "",
@@ -65,14 +65,19 @@ function Login() {
       return;
     }
 
-    const { code, message, redirect } = await getLogin(userlogin.id, userlogin.pw);
+    const { code, message, redirect } = await getLogin(
+      userlogin.id,
+      userlogin.pw
+    );
 
     if (code === "error") {
       alert(message);
       return;
     }
 
-    setLoginSession(true);
+    // 로그인 세션 값 받아오기
+    await fetchLoginSession();
+    // 메인 페이지로 이동
     navigation(redirect);
   };
 
@@ -82,7 +87,11 @@ function Login() {
         <div className="login-container">
           <form onSubmit={onSubmit} className="loginbox">
             <div className="first">
-              <img src={logoimg} alt="logo이미지" onClick={() => navigation("/")} />
+              <img
+                src={logoimg}
+                alt="logo이미지"
+                onClick={() => navigation("/")}
+              />
               <span className="title">로그인</span>
             </div>
             <div className="inputbox">
@@ -112,15 +121,19 @@ function Login() {
             </div>
             <div className="more">
               <span onClick={() => navigation("/join")}>회원가입</span>
-              <span onClick={() => navigation("/userfind", { state: "id" })}>아이디 찾기</span>
-              <span onClick={() => navigation("/userfind", { state: "pw" })}>비밀번호 찾기</span>
+              <span onClick={() => navigation("/userfind", { state: "id" })}>
+                아이디 찾기
+              </span>
+              <span onClick={() => navigation("/userfind", { state: "pw" })}>
+                비밀번호 찾기
+              </span>
             </div>
-            {/* <div className="hr-sect">SNS 간편 로그인</div>
-        <div className="snslogin">
-          <button type="button" onClick={kakaologinHandler}>
-            카카오로 로그인하기
-          </button>
-        </div> */}
+            <div className="hr-sect">SNS 간편 로그인</div>
+            <div className="snslogin">
+              <button type="button" onClick={kakaologinHandler}>
+                카카오로 로그인하기
+              </button>
+            </div>
           </form>
         </div>
       )}

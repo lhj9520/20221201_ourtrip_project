@@ -165,7 +165,6 @@ function SearchModal({ setModalOpen, day }) {
               <span>검색 결과가 존재하지 않습니다.</span>
             ) : (
               <>
-                {" "}
                 {resultlist.map((data, index) => (
                   <li key={index} className="item">
                     <div className="first">

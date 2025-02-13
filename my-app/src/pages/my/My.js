@@ -5,7 +5,6 @@ import React, {
   useContext,
   createContext,
 } from "react";
-import { useNavigate } from "react-router-dom";
 // import src
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
@@ -272,7 +271,7 @@ function EmailValue() {
   );
 }
 function EmailModModal() {
-  const { loginUser, setLoginUser } = useContext(userInfoContext);
+  const { loginUser, setLoginUser, loginType } = useContext(userInfoContext);
 
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -280,15 +279,17 @@ function EmailModModal() {
     <div className="item">
       <span>이메일</span>
       <div className="info-box">
-        <span>{loginUser.mem_email}</span>{" "}
-        <button
-          className="pwdbtn"
-          onClick={() => {
-            setModalOpen(true);
-          }}
-        >
-          수정
-        </button>
+        <span>{loginUser.mem_email}</span>
+        {loginType === "local" && (
+          <button
+            className="pwdbtn"
+            onClick={() => {
+              setModalOpen(true);
+            }}
+          >
+            수정
+          </button>
+        )}
       </div>
       <Modal
         open={modalOpen}
@@ -725,8 +726,8 @@ function PwdModModal() {
 }
 
 function My() {
-  const navigation = useNavigate();
-  const { loginSession, setLoginSession } = useContext(SessionContext);
+  const { loginSession, loginType, fetchLoginSession } =
+    useContext(SessionContext);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [loginUser, setLoginUser] = useState(null);
@@ -746,16 +747,16 @@ function My() {
 
     if (code === "success") {
       alert(message);
-      // 회원 탈퇴 성공 로그아웃
-      setLoginSession(await getLogout());
-      // 페이지 새로고침
-      navigation(0);
+      // 로그아웃
+      await getLogout();
+      // 로그인 세션 가져오기
+      await fetchLoginSession();
     }
   };
 
   return (
     <>
-      {loginSession && loginUser && (
+      {loginSession && loginUser && loginType && (
         <userInfoContext.Provider value={{ loginUser, setLoginUser }}>
           <Menubar />
           <div className="contents-container mycon">
@@ -771,7 +772,7 @@ function My() {
                     <span>{loginUser.mem_userid}</span>
                   </div>
                 </div>
-                <PwdModModal />
+                {loginType === "local" && <PwdModModal />}
                 <NicknameValue />
               </section>
               <section className="user-info">
