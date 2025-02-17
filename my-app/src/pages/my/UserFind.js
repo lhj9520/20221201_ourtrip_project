@@ -1,13 +1,15 @@
 import React, { useContext, createContext, useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
-
+// import css
+import "./UserFind.css";
+// import src
+import logoimg from "../../img/logo_oco.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUnlockKeyhole } from "@fortawesome/free-solid-svg-icons";
 import { faSistrix } from "@fortawesome/free-brands-svg-icons";
-import logoimg from "../../img/logo_oco.png";
-import "./UserFind.css";
-
+// import context
 import { SessionContext } from "../../App";
+// import api
 import {
   getEmailcode,
   getFindID,
@@ -186,16 +188,21 @@ function InputboxID(props) {
           maxLength={5}
           value={idata.name}
           onChange={valuechange1}
+          disabled={type === "phone" && true}
         />
       </div>
       <div>
         <span>{seltype}</span>
-        <input type="text" value={idata.ind} onChange={valuechange2} />
+        <input
+          type="text"
+          value={idata.ind}
+          onChange={valuechange2}
+          disabled={type === "phone" && true}
+        />
         <button
           type="button"
-          onClick={() => {
-            if (type === "email") emailcodeHandler();
-          }}
+          onClick={() => emailcodeHandler()}
+          disabled={type === "phone" && true}
         >
           인증번호 받기
         </button>
@@ -209,7 +216,9 @@ function InputboxID(props) {
           placeholder="인증번호 6자리 숫자 입력"
           disabled={disable}
         />
-        <button type="submit">확인</button>
+        <button type="submit" disabled={type === "phone" && true}>
+          확인
+        </button>
       </div>
     </form>
   );

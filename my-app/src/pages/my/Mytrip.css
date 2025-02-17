@@ -6,8 +6,6 @@
   min-width: 725px;
   height: 100%;
   margin: auto;
-  border-left: solid 1px lightgray;
-  border-right: solid 1px lightgray;
   text-align: center;
   padding-top: 12px;
 }
@@ -46,7 +44,9 @@
   display: inline-block;
   padding: 16px 0;
 }
-
+.content-mytrip > .triplistbox {
+  height: 252px;
+}
 .content-mytrip > .triplistbox .item > span {
   font-family: var(--font-NotoSansKR-Regular) !important;
   display: inline-block;

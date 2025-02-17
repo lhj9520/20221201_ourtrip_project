@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import classnames from "classnames";
 // import css
@@ -23,13 +23,13 @@ function Join() {
 
   const navigation = useNavigate();
 
-  const [id, setId] = React.useState({
+  const [id, setId] = useState({
     value: "",
     dupisvalid: false,
     msg: "",
   });
 
-  const [pw, setPw] = React.useState({
+  const [pw, setPw] = useState({
     value: "",
     revalue: "",
     isvalid: false,
@@ -38,13 +38,13 @@ function Join() {
     msg2: "",
   });
 
-  const [name, setName] = React.useState({
+  const [name, setName] = useState({
     value: "",
     isvalid: false,
     msg: "",
   });
 
-  const [email, setEmail] = React.useState({
+  const [email, setEmail] = useState({
     value: "",
     dupisvalid: false,
     msg: "",
@@ -53,30 +53,22 @@ function Join() {
     isvalid: false,
   });
 
-  const [nickname, setNickname] = React.useState({
+  const [nickname, setNickname] = useState({
     value: "",
     dupisvalid: false,
     msg: "",
   });
 
-  const [phone, setPhone] = React.useState({
+  const [phone, setPhone] = useState({
     value: "",
     isvalid: true,
     msg: "",
   });
 
-  const [disable, setDisable] = React.useState(true);
+  const [disable, setDisable] = useState(true);
   const inputRef = useRef([]);
 
-  const idvaluechange = (event) => {
-    const data = event.target.value;
-    if (data.length <= 12) {
-      setId((prevState) => {
-        return { ...prevState, value: data, dupisvalid: false, msg: "" };
-      });
-    }
-  };
-
+  // 비밀번호
   useDidMountEffect(() => {
     const passwordRegex =
       /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
@@ -130,24 +122,7 @@ function Join() {
     }
   }, [pw.value, pw.revalue]);
 
-  const pwvaluechange = (event) => {
-    const data = event.target.value;
-    if (data.length <= 20) {
-      setPw((prevState) => {
-        return { ...prevState, value: data };
-      });
-    }
-  };
-
-  const repwvaluechange = (event) => {
-    const data = event.target.value;
-    if (data.length <= 20) {
-      setPw((prevState) => {
-        return { ...prevState, revalue: data };
-      });
-    }
-  };
-
+  // 이름
   useDidMountEffect(() => {
     const nameRegex = /^[가-힣]+$/;
     if (!name.value) {
@@ -170,6 +145,58 @@ function Join() {
       }
     }
   }, [name.value]);
+
+  // 휴대폰 번호
+  useDidMountEffect(() => {
+    const phoneRegex = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+
+    if (!phone.value) {
+      setPhone((prevState) => {
+        return { ...prevState, isvalid: true, msg: "" };
+      });
+    } else {
+      if (!phoneRegex.test(phone.value)) {
+        setPhone((prevState) => {
+          return {
+            ...prevState,
+            isvalid: false,
+            msg: "잘못된 번호입니다. 다시 확인해주세요.",
+          };
+        });
+      } else {
+        setPhone((prevState) => {
+          return { ...prevState, isvalid: true, msg: "" };
+        });
+      }
+    }
+  }, [phone.value]);
+
+  const idvaluechange = (event) => {
+    const data = event.target.value;
+    if (data.length <= 12) {
+      setId((prevState) => {
+        return { ...prevState, value: data, dupisvalid: false, msg: "" };
+      });
+    }
+  };
+
+  const pwvaluechange = (event) => {
+    const data = event.target.value;
+    if (data.length <= 20) {
+      setPw((prevState) => {
+        return { ...prevState, value: data };
+      });
+    }
+  };
+
+  const repwvaluechange = (event) => {
+    const data = event.target.value;
+    if (data.length <= 20) {
+      setPw((prevState) => {
+        return { ...prevState, revalue: data };
+      });
+    }
+  };
 
   const namevaluechange = (event) => {
     const data = event.target.value;
@@ -216,30 +243,6 @@ function Join() {
       });
     }
   };
-
-  useDidMountEffect(() => {
-    const phoneRegex = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
-
-    if (!phone.value) {
-      setPhone((prevState) => {
-        return { ...prevState, isvalid: true, msg: "" };
-      });
-    } else {
-      if (!phoneRegex.test(phone.value)) {
-        setPhone((prevState) => {
-          return {
-            ...prevState,
-            isvalid: false,
-            msg: "잘못된 번호입니다. 다시 확인해주세요.",
-          };
-        });
-      } else {
-        setPhone((prevState) => {
-          return { ...prevState, isvalid: true, msg: "" };
-        });
-      }
-    }
-  }, [phone.value]);
 
   const phonevaluechange = (event) => {
     const data = event.target.value;
@@ -491,7 +494,6 @@ function Join() {
               <Link to="/">
                 <img src={logoimg} alt="logo이미지" />
               </Link>
-              <span className="title">회원가입</span>
             </div>
             <form onSubmit={onSubmit} className="userinfo">
               <div className="idcontainer">

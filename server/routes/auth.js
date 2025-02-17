@@ -8,14 +8,66 @@ var path = process.cwd();
 const DB = require(path + "/lib/db");
 const mailer = require(path + "/lib/mailer");
 
-router.get("/authcheck", (req, res) => {
+router.get("/authcheck", async (req, res) => {
   const sendData = { isLogin: false, type: "" };
 
   if (req.session.is_logined) {
     sendData.isLogin = true;
     sendData.type = req.session.type;
   }
+
   res.send(sendData);
+});
+
+router.get("/tokencheck", async (req, res) => {
+  const result = {
+    code: "",
+    message: "",
+  };
+
+  if (req.session.is_logined && req.session.type === "social_kakao") {
+    try {
+      // 카카오 토큰 정보 보기 (6시간)
+      const tokeninfo = await axios.get(
+        `https://kapi.kakao.com/v1/user/access_token_info`,
+        {
+          headers: {
+            Authorization: `Bearer ${req.session.access_token}`,
+          },
+        }
+      );
+
+      // 10분 남았을 때 토큰 갱신
+      if (tokeninfo.data.expires_in <= 600) {
+        const KAKAO_OAUTH_TOKEN_API_URL = "https://kauth.kakao.com/oauth/token";
+        const KAKAO_GRANT_TYPE = "refresh_token";
+        const KAKAO_CLIENT_id = process.env.REACT_APP_KAKAO_RESTAPI_KEY;
+
+        // 카카오 로그인 유저 토큰 요청
+        const response = await axios.post(
+          `${KAKAO_OAUTH_TOKEN_API_URL}?grant_type=${KAKAO_GRANT_TYPE}&client_id=${KAKAO_CLIENT_id}&refresh_token=${req.session.refresh_token}`,
+          {
+            headers: {
+              "Content-type": "application/x-www-form-urlencoded;charset=utf-8",
+            },
+          }
+        );
+
+        const access_token = response.data.access_token;
+
+        result.code = "success";
+        result.message = "토큰 재발급 성공";
+
+        req.session.access_token = access_token;
+        req.session.save();
+      }
+    } catch (e) {
+      console.log(e);
+      res.send(e);
+    }
+  }
+
+  res.send(result);
 });
 
 router.get("/userinfo", async (req, res) => {

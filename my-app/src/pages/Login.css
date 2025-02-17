@@ -3,6 +3,7 @@
   height: 99vh;
   max-height: 1024px;
 }
+
 .login-container .loginbox {
   width: 40%;
   min-width: 540px;
@@ -12,6 +13,7 @@
   flex-direction: column;
   align-items: center;
 }
+
 .login-container .loginbox .first {
   width: 100%;
   height: 25%;
@@ -19,16 +21,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-.login-container .loginbox .first img {
-  width: 35%;
-  object-fit: contain;
-  cursor: pointer;
-  margin: auto;
+  justify-content: center;
 }
 
-.login-container .loginbox .first .title {
-  font-size: 1.75rem;
+.login-container .loginbox .first a {
+  width: 35%;
+}
+
+.login-container .loginbox .first img {
+  width: 100%;
+  object-fit: contain;
 }
 
 .login-container .loginbox .inputbox {
@@ -50,6 +52,7 @@
   border-bottom: solid 1px lightgrey;
   font-size: 1rem;
 }
+
 .login-container .loginbox .item:focus {
   border-bottom: solid 1px black;
 }
@@ -90,6 +93,7 @@
   background-repeat: no-repeat;
   background-color: #4a8522;
 }
+
 .login-container .loginbox .loginbtn {
   width: 50%;
   height: 15%;
@@ -130,6 +134,7 @@
   font-size: 0.75rem;
   margin: 10px 0px;
 }
+
 .login-container .loginbox .hr-sect::before,
 .login-container .loginbox .hr-sect::after {
   content: "";

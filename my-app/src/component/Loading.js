@@ -1,5 +1,6 @@
 import React from "react";
 import { FadeLoader } from "react-spinners";
+// import css
 import "./Loading.css";
 
 const override = {

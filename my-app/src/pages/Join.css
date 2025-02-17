@@ -29,10 +29,6 @@
   margin: auto;
   object-fit: contain;
 }
-.join-container .centerfix .first .title {
-  font-size: 1.75rem;
-  padding-top: 5%;
-}
 .join-container .centerfix .userinfo {
   width: 90%;
   margin-top: 10%;
@@ -147,7 +143,12 @@ select::-ms-expand {
 .join-container .centerfix .userinfo div .small {
   width: auto;
 }
-.join-container .centerfix .userinfo .birthcontainer .line > section:nth-child(2) {
+.join-container
+  .centerfix
+  .userinfo
+  .birthcontainer
+  .line
+  > section:nth-child(2) {
   margin-left: 16px;
   margin-right: 16px;
 }

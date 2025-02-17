@@ -1,16 +1,18 @@
 import React, { useContext, useState, useEffect, createContext } from "react";
-// import component
-import Menubar from "../../component/menubar";
-import Modal from "../../component/modal";
-import Loading from "../../component/Loading";
+// import css
+import "./Mymate.css";
+import "./MymateModal.css";
 // import src
 import greenpostit from "../../img/greenpostit.png";
 import userprofile from "../../img/userprofile.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquareCaretUp } from "@fortawesome/free-regular-svg-icons";
-// import css
-import "./Mymate.css";
-import "./MymateModal.css";
+// import component
+import Menubar from "../../component/menubar";
+import Modal from "../../component/modal";
+import Loading from "../../component/Loading";
+// import context
+import { SessionContext } from "../../App";
 // import api
 import { getUserInfo } from "../../api/My";
 import {
@@ -21,11 +23,9 @@ import {
   getMateDecline,
   getMateDelete,
 } from "../../api/Mymate";
-// import context
-import { SessionContext } from "../../App";
 
 function MateReq() {
-  const { loginUser, setLoginUser } = useContext(userInfoContext);
+  const { loginUser } = useContext(userInfoContext);
   const { mymate, fetchMateList } = useContext(MateContext);
 
   const MateAcceptHanlder = async (idx) => {
@@ -70,7 +70,7 @@ function MateReq() {
   );
 }
 function MateAddModal() {
-  const { loginUser, setLoginUser } = useContext(userInfoContext);
+  const { loginUser } = useContext(userInfoContext);
 
   const [searchdata, setSearchdata] = useState("");
   const [searchmsg, setSearchmsg] = useState({
@@ -143,7 +143,7 @@ function MateAddModal() {
   );
 }
 function MateDelModal() {
-  const { loginUser, setLoginUser } = useContext(userInfoContext);
+  const { loginUser } = useContext(userInfoContext);
   const { mymate, fetchMateList } = useContext(MateContext);
 
   const MateDeleteHandler = async (idx) => {
@@ -177,7 +177,7 @@ function MateDelModal() {
   );
 }
 function Modalcontainer() {
-  const { mymate, fetchMateList } = useContext(MateContext);
+  const { mymate } = useContext(MateContext);
   const [modalList, setModalList] = useState([false, false, false]);
 
   const modalHandler = (idx) => {
@@ -218,7 +218,7 @@ function Modalcontainer() {
   );
 }
 function Contents() {
-  const { mymate, fetchMateList } = useContext(MateContext);
+  const { mymate } = useContext(MateContext);
 
   return (
     <div className="content-mymate">

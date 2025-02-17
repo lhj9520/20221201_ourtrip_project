@@ -8,6 +8,8 @@ import "./MytripModal.css";
 import Menubar from "../../component/menubar";
 import Modal from "../../component/modal";
 import Loading from "../../component/Loading";
+// import context
+import { SessionContext } from "../../App";
 // import api
 import { getUserInfo } from "../../api/My";
 import { getMyMateList } from "../../api/Mymate";
@@ -18,8 +20,6 @@ import {
   getMyTripExit,
   getMyTripUpdate,
 } from "../../api/Mytrip";
-// import context
-import { SessionContext } from "../../App";
 
 function TripAddModal() {
   const { loginUser } = useContext(userInfoContext);
@@ -590,7 +590,7 @@ function Modalcontainer() {
 }
 function Contents() {
   const navigation = useNavigate();
-  const { mytrip, fetchTripList } = useContext(TripContext);
+  const { mytrip } = useContext(TripContext);
   // pagenation 변수
   const cnt = 5;
   const [viewlist, setViewlist] = useState([]);

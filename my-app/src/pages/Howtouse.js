@@ -1,6 +1,9 @@
 import React from "react";
+// import src
 import "./Howtouse.css";
+// import component
 import Menubar from "../component/menubar";
+// import src
 import mymatevideo from "../video/mymate.mp4";
 import mytripvideo from "../video/mytrip.mp4";
 import tripvideo1 from "../video/createtrip.mp4";

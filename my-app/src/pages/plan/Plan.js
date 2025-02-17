@@ -8,10 +8,10 @@ import React, {
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment-timezone";
 import Calendar from "react-calendar";
-// import component
-import SearchModal from "./SearchModal";
-import Loading from "../../component/Loading";
-import useDidMountEffect from "../../utils/useDidMountEffect";
+// import css
+import "react-calendar/dist/Calendar.css";
+import "./Calendar.css";
+import "./Plan.css";
 // import src
 import marking from "../../img/map_mark.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,10 +25,10 @@ import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarDay } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-// import css
-import "react-calendar/dist/Calendar.css";
-import "./Calendar.css";
-import "./Plan.css";
+// import component
+import SearchModal from "./SearchModal";
+import Loading from "../../component/Loading";
+import useDidMountEffect from "../../utils/useDidMountEffect";
 // import context
 import { SessionContext } from "../../App";
 // import api
@@ -164,7 +164,7 @@ function Htitle() {
 
 // 여행에 참여한 메이트 리스트
 function Matebar() {
-  const { tripdata, fetchPlanList } = useContext(PlanContext);
+  const { tripdata } = useContext(PlanContext);
   const [participants, setParticipants] = useState([]);
 
   useEffect(() => {
@@ -194,7 +194,7 @@ function Matebar() {
 // 여행에 등록된 타임라인 리스트
 function Timelinebar() {
   const { mode, setMode } = useContext(StoreContextM);
-  const { tripdata, fetchPlanList } = useContext(PlanContext);
+  const { tripdata } = useContext(PlanContext);
   const [timelinelist, setTimelinelist] = useState([]);
   const [cursel, Setcursel] = useState(0);
   const [status, setStatus] = useState(true);
@@ -1199,7 +1199,7 @@ function TimelineViewForm() {
 
 // 타임라인+작성/뷰폼
 function Content() {
-  const { tripdata, fetchPlanList } = useContext(PlanContext);
+  const { tripdata } = useContext(PlanContext);
   const [timelinelist, setTimelinelist] = useState([]);
   const [mode, setMode] = useState({
     code: "",

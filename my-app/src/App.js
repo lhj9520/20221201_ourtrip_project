@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, createContext, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 // import css
 import "./App.css";
@@ -18,12 +18,12 @@ import PublicRoutes from "./utils/PublicRoutes";
 // import api
 import { getLoginSession } from "./api/Auth";
 
-export const SessionContext = React.createContext({});
+export const SessionContext = createContext({});
 
 function App() {
   const seq = "";
-  const [loginSession, setLoginSession] = React.useState();
-  const [loginType, setLoginType] = React.useState();
+  const [loginSession, setLoginSession] = useState();
+  const [loginType, setLoginType] = useState();
 
   const fetchLoginSession = async () => {
     const { isLogin, type } = await getLoginSession();

@@ -30,10 +30,22 @@ export const getLogin = async (user_id, user_pw) => {
 export const getLoginSession = async () => {
   try {
     const response = await axios(`${BASE_URL}/auth/authcheck`);
-
+    console.log("로그인 세션 가져오기");
     return response.data;
   } catch (error) {
     console.error("로그인 세션 가져오기 실패:", error);
+    return false;
+  }
+};
+
+// 로그인 토큰 (카카오) 확인
+export const getTokenExpires = async () => {
+  try {
+    const response = await axios(`${BASE_URL}/auth/tokencheck`);
+
+    return response.data;
+  } catch (error) {
+    console.error("토큰 정보 가져오기 실패:", error);
     return false;
   }
 };

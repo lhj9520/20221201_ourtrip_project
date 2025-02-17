@@ -1,13 +1,13 @@
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-// import context
-import { SessionContext } from "../App";
-// import api
-import { getLogin } from "../api/Auth";
+import { useNavigate, Link } from "react-router-dom";
 // import src
 import logoimg from "../img/logo_oco.png";
 // import css
 import "./Login.css";
+// import context
+import { SessionContext } from "../App";
+// import api
+import { getLogin } from "../api/Auth";
 
 function Login() {
   const { loginSession, fetchLoginSession } = useContext(SessionContext);
@@ -15,7 +15,6 @@ function Login() {
   const navigation = useNavigate();
   const restapikey = process.env.REACT_APP_KAKAO_RESTAPI_KEY;
   const redirect_uri = process.env.REACT_APP_KAKAO_REDIRECT_URI;
-  // const jskey = process.env.REACT_APP_KAKAOMAP_API_KEY;
 
   const kakaosnsloginlink = `https://kauth.kakao.com/oauth/authorize?client_id=${restapikey}&redirect_uri=${redirect_uri}&response_type=code`;
 
@@ -87,12 +86,9 @@ function Login() {
         <div className="login-container">
           <form onSubmit={onSubmit} className="loginbox">
             <div className="first">
-              <img
-                src={logoimg}
-                alt="logo이미지"
-                onClick={() => navigation("/")}
-              />
-              <span className="title">로그인</span>
+              <Link to="/">
+                <img src={logoimg} alt="logo이미지" />
+              </Link>
             </div>
             <div className="inputbox">
               <input

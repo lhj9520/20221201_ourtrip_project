@@ -1,11 +1,9 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 // import css
 import "./Main.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../component/SimpleSlider.css";
-// import component
-import Menubar from "../component/menubar";
 // import src
 import geojson_ctp from "../assets/geojsondata/ctp_rvn.json";
 import geojson_sig from "../assets/geojsondata/sig.json";
@@ -14,12 +12,14 @@ import APILoading from "../component/APILoading";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretRight } from "@fortawesome/free-solid-svg-icons";
 import { faCaretLeft } from "@fortawesome/free-solid-svg-icons";
+// import component
+import Menubar from "../component/menubar";
 // import api
 import { getTourResourceAPI } from "../api/Main";
 
 const { kakao } = window;
 
-const korea = [
+const AreaCode = [
   { title: "서울", code: "11" },
   { title: "부산", code: "26" },
   { title: "대구", code: "27" },
@@ -42,18 +42,18 @@ const korea = [
 function Main() {
   const data_ctp = geojson_ctp.features;
   const data_sig = geojson_sig.features;
-  const [map, setMap] = React.useState(null);
-  const [code, setCode] = React.useState(0);
-  const [geojson, setGeojson] = React.useState({
+  const [map, setMap] = useState(null);
+  const [code, setCode] = useState(0);
+  const [geojson, setGeojson] = useState({
     ctp_name: "",
     polygon_ctp: [],
     sig: [],
   });
-  const [tourlist, setTourlist] = React.useState([]);
-  const horizontalScrollRef = React.useRef();
-  const [loading, setLoading] = React.useState(false);
+  const [tourlist, setTourlist] = useState([]);
+  const horizontalScrollRef = useRef();
+  const [loading, setLoading] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     window.scrollTo(0, 0);
     const container = document.getElementById("map"); //지도를 담을 영역의 DOM 레퍼런스
     const options = {
@@ -67,7 +67,7 @@ function Main() {
     setMap(map);
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (code !== 0) {
       DisplayAreaHandler(code);
     }
@@ -234,7 +234,7 @@ function Main() {
               />
               <div ref={horizontalScrollRef} className="selbox">
                 <ul className="citybox">
-                  {korea.map((data, idx) => (
+                  {AreaCode.map((data, idx) => (
                     <li
                       key={idx}
                       className={code === data.code ? "select" : ""}

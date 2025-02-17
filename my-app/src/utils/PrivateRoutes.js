@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
-
-import { SessionContext } from "../App";
 import { Outlet, Navigate } from "react-router-dom";
+import { SessionContext } from "../App";
 
 const PrivateRoutes = () => {
   const { loginSession } = useContext(SessionContext);

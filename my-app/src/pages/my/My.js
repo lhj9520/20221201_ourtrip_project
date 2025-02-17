@@ -5,16 +5,18 @@ import React, {
   useContext,
   createContext,
 } from "react";
+// import css
+import "./My.css";
+import "./MyModal.css";
 // import src
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { faEye } from "@fortawesome/free-regular-svg-icons";
-// import css
-import "./My.css";
-import "./MyModal.css";
 //import component
 import Menubar from "../../component/menubar";
 import Modal from "../../component/modal";
+// import context
+import { SessionContext } from "../../App";
 // import api
 import {
   getLogout,
@@ -32,9 +34,6 @@ import {
   getCheckPassword,
   getUpdatePassword,
 } from "../../api/My";
-// import context
-import { SessionContext } from "../../App";
-const userInfoContext = createContext(null);
 
 function NicknameValue() {
   const { loginUser, setLoginUser } = useContext(userInfoContext);
@@ -271,8 +270,7 @@ function EmailValue() {
   );
 }
 function EmailModModal() {
-  const { loginUser, setLoginUser, loginType } = useContext(userInfoContext);
-
+  const { loginUser, loginType } = useContext(userInfoContext);
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
@@ -725,6 +723,8 @@ function PwdModModal() {
   );
 }
 
+const userInfoContext = createContext(null);
+
 function My() {
   const { loginSession, loginType, fetchLoginSession } =
     useContext(SessionContext);
@@ -757,7 +757,9 @@ function My() {
   return (
     <>
       {loginSession && loginUser && loginType && (
-        <userInfoContext.Provider value={{ loginUser, setLoginUser }}>
+        <userInfoContext.Provider
+          value={{ loginUser, setLoginUser, loginType }}
+        >
           <Menubar />
           <div className="contents-container mycon">
             <div className="title my">

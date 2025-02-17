@@ -1,24 +1,27 @@
-import React from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
+// import css
 import "./SearchModal.css";
-import { StoreContextT } from "./Plan";
+// import src
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import marking from "../../img/map_mark.png";
+// import context
+import { StoreContextT } from "./Plan";
 
 const { kakao } = window;
 
 function SearchModal({ setModalOpen, day }) {
-  const { tmptimeline, setTmptimeline } = React.useContext(StoreContextT);
-  const [keyword, setKeyword] = React.useState("");
-  const [resultlist, setResultlist] = React.useState([]);
+  const { tmptimeline, setTmptimeline } = useContext(StoreContextT);
+  const [keyword, setKeyword] = useState("");
+  const [resultlist, setResultlist] = useState([]);
   const ps = new kakao.maps.services.Places();
 
   // Modal 창을 useRef로 취득
-  const modalRef = React.useRef(null);
+  const modalRef = useRef(null);
 
   // 모달 외부 클릭시 끄기 처리
-  React.useEffect(() => {
+  useEffect(() => {
     // 이벤트 핸들러 함수
     const handler = (event) => {
       // mousedown 이벤트가 발생한 영역이 모달창이 아닐 때, 모달창 제거 처리
