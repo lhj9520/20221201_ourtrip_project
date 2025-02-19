@@ -30,7 +30,6 @@ export const getLogin = async (user_id, user_pw) => {
 export const getLoginSession = async () => {
   try {
     const response = await axios(`${BASE_URL}/auth/authcheck`);
-    console.log("로그인 세션 가져오기");
     return response.data;
   } catch (error) {
     console.error("로그인 세션 가져오기 실패:", error);
